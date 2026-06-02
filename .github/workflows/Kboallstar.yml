@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kbo_allstar_${{ github.run_number }}
-          path: output/kbo_allstar.xlsx
+          path: output/*.xlsx
           retention-days: 1
 
       - name: 수집 데이터 커밋

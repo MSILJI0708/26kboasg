@@ -46,7 +46,7 @@ def fetch_all():
 
 def save(result, now):
     os.makedirs("data", exist_ok=True)
-    filename = f"data/{now.strftime('%Y-%m-%d_%H-%M')}.json"
+    filename = f"data/{now.strftime('%Y-%m-%d_%H-%M-%S')}.json"
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(f"\n💾 저장 완료: {filename}")

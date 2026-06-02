@@ -207,6 +207,7 @@ def build_excel(latest, prev):
 
     prev_map = get_vote_map(prev) if prev else {}
     timestamp = latest.get("timestamp", "")
+    timestamp_safe = timestamp.replace(":", "-").replace("T", "_") if timestamp else "latest"
 
     for pos_id, pos_name in POSITIONS.items():
         pos_data = latest["positions"].get(pos_id)
@@ -216,7 +217,7 @@ def build_excel(latest, prev):
         write_position_sheet(ws, pos_name, pos_data, prev_map.get(pos_id, {}), pos_id)
 
     os.makedirs("output", exist_ok=True)
-    outpath = "output/kbo_allstar.xlsx"
+    outpath = f"output/kbo_allstar_{timestamp_safe}.xlsx"
     wb.save(outpath)
     print(f"✅ 엑셀 저장 완료: {outpath}")
 
