@@ -39,15 +39,27 @@ def load_latest_two():
 def get_vote_map(data):
     """이전 데이터에서 {pos_id: {P_NM: VOTE_CN}} 맵 생성"""
     vote_map = {}
+
     for pos_id, pos_data in data["positions"].items():
         vote_map[pos_id] = {}
+
+        total_votes = 0
+
         for team_key in ("nanum", "dream"):
             for p in pos_data.get(team_key, []):
-                name = p.get("P_NM", "")
+
                 try:
-                    vote_map[pos_id][name] = int(p.get("VOTE_CN", "0").replace(",", ""))
+                    votes = int(p.get("VOTE_CN", "0").replace(",", ""))
                 except:
-                    vote_map[pos_id][name] = 0
+                    votes = 0
+
+                name = p.get("P_NM", "")
+
+                vote_map[pos_id][name] = votes
+                total_votes += votes
+
+        vote_map[pos_id]["_total"] = total_votes
+
     return vote_map
 
 def calc_total_votes(pos_data):
@@ -73,27 +85,38 @@ def write_header(ws, timestamp):
 def write_position_sheet(ws, pos_name, pos_data, prev_map, pos_id):
     ws.title = pos_name
 
-    timestamp_row = 1
     nanum_players = pos_data.get("nanum", [])
     dream_players = pos_data.get("dream", [])
     total = calc_total_votes(pos_data)
 
     # --- 헤더 ---
-    ws.merge_cells("A1:E1")
+    ws.merge_cells("A1:G1")
     ws["A1"] = "▶ 나눔 올스타"
     ws["A1"].font = Font(name="Arial", bold=True, color="FFFFFF", size=11)
     ws["A1"].fill = PatternFill("solid", fgColor=COLOR["nanum_header"])
     ws["A1"].alignment = Alignment(horizontal="center")
 
-    ws.merge_cells("G1:K1")
-    ws["G1"] = "▶ 드림 올스타"
-    ws["G1"].font = Font(name="Arial", bold=True, color="FFFFFF", size=11)
-    ws["G1"].fill = PatternFill("solid", fgColor=COLOR["dream_header"])
-    ws["G1"].alignment = Alignment(horizontal="center")
+    ws.merge_cells("I1:O1")
+    ws["I1"] = "▶ 드림 올스타"
+    ws["I1"].font = Font(name="Arial", bold=True, color="FFFFFF", size=11)
+    ws["I1"].fill = PatternFill("solid", fgColor=COLOR["dream_header"])
+    ws["I1"].alignment = Alignment(horizontal="center")
 
-    col_headers = ["순위", "선수명", "구단", "득표수", "득표율"]
+    col_headers = [
+        "순위",
+        "선수명",
+        "구단",
+        "득표수",
+        "득표수 증감",
+        "득표율",
+        "득표율 증감"
+    ]
+
     for i, h in enumerate(col_headers):
-        for col_offset, fill_color in [(0, COLOR["nanum_header"]), (6, COLOR["dream_header"])]:
+        for col_offset, fill_color in [
+            (0, COLOR["nanum_header"]),
+            (8, COLOR["dream_header"])
+        ]:
             c = ws.cell(row=2, column=i + 1 + col_offset, value=h)
             c.font = Font(name="Arial", bold=True, color="FFFFFF", size=10)
             c.fill = PatternFill("solid", fgColor=fill_color)
@@ -102,22 +125,55 @@ def write_position_sheet(ws, pos_name, pos_data, prev_map, pos_id):
 
     ws.row_dimensions[2].height = 20
 
-    def write_players(players, col_start, highlight_color):
+    def write_players(players, col_start):
         for idx, p in enumerate(players):
+
             row = idx + 3
+
             rank = int(p.get("RANK_CN", 0))
             name = p.get("P_NM", "")
             team = p.get("T_NM", "")
+
             try:
                 votes = int(p.get("VOTE_CN", "0").replace(",", ""))
             except:
                 votes = 0
-            rate = f"{votes / total * 100:.2f}%" if total > 0 else "0.00%"
 
-            is_first = (rank == 1)
-            bg = COLOR["highlight"] if is_first else ("FFFFFF" if idx % 2 == 0 else COLOR["light_gray"])
+            rate = votes / total * 100 if total > 0 else 0
 
-            vals = [f"{rank}위", name, team, f"{votes:,}", rate]
+            prev_votes = prev_map.get(name)
+            prev_total = prev_map.get("_total", 0)
+
+            if prev_votes is None or prev_total == 0:
+                vote_diff_text = "-"
+                rate_diff_text = "-"
+            else:
+                vote_diff = votes - prev_votes
+
+                prev_rate = prev_votes / prev_total * 100
+                rate_diff = rate - prev_rate
+
+                vote_diff_text = f"{vote_diff:+,}"
+                rate_diff_text = f"{rate_diff:+.2f}%p"
+
+            is_first = rank == 1
+
+            bg = (
+                COLOR["highlight"]
+                if is_first
+                else ("FFFFFF" if idx % 2 == 0 else COLOR["light_gray"])
+            )
+
+            vals = [
+                f"{rank}위",
+                name,
+                team,
+                f"{votes:,}",
+                vote_diff_text,
+                f"{rate:.2f}%",
+                rate_diff_text,
+            ]
+
             for i, v in enumerate(vals):
                 c = ws.cell(row=row, column=col_start + i, value=v)
                 c.font = Font(name="Arial", bold=is_first, size=10)
@@ -127,18 +183,24 @@ def write_position_sheet(ws, pos_name, pos_data, prev_map, pos_id):
 
             ws.row_dimensions[row].height = 18
 
-    write_players(nanum_players, 1, COLOR["nanum_1st"])
-    write_players(dream_players, 7, COLOR["dream_1st"])
+    write_players(nanum_players, 1)
+    write_players(dream_players, 9)
 
-    # 구분 열 (F열) 비워두기
-    ws.column_dimensions["F"].width = 2
+    # 구분 열
+    ws.column_dimensions["H"].width = 2
 
     # 열 너비
-    for col, width in zip("ABCDE", [6, 10, 8, 10, 8]):
-        ws.column_dimensions[get_column_letter(ord(col) - ord("A") + 1)].width = width
-    for col, width in zip("GHIJK", [6, 10, 8, 10, 8]):
-        ws.column_dimensions[get_column_letter(ord(col) - ord("A") + 1)].width = width
+    for col, width in zip(
+        "ABCDEFG",
+        [6, 10, 8, 12, 12, 9, 12]
+    ):
+        ws.column_dimensions[col].width = width
 
+    for col, width in zip(
+        "IJKLMNO",
+        [6, 10, 8, 12, 12, 9, 12]
+    ):
+        ws.column_dimensions[col].width = width
 def build_excel(latest, prev):
     wb = Workbook()
     wb.remove(wb.active)  # 기본 시트 제거
