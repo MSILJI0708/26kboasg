@@ -2,7 +2,7 @@ name: KBO 올스타 투표 수집
 
 on:
   schedule:
-    - cron: '0,30 * * * *'   # 매시 0분, 30분 실행 (UTC 기준)
+    - cron: '0,5 10,20,25,30,35,40,45,50,55 * * *'   # 매시 0분, 30분 실행 (UTC 기준)
   workflow_dispatch:           # 수동 실행 버튼
 
 jobs:
