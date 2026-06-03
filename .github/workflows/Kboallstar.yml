@@ -63,9 +63,9 @@ jobs:
             git push
           fi
       - name: 구글 드라이브 업로드
-              uses: adityak74/google-drive-upload-git-action@main
-              with:
-                credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
-                filename: output/kbo_allstar.xlsx
-                folderId: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
-                overwrite: "true"
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          credentials: ${{ secrets.GOOGLE_CREDENTIALS }}
+          filename: output/kbo_allstar.xlsx
+          folderId: ${{ secrets.GOOGLE_DRIVE_FOLDER_ID }}
+          overwrite: "true"
