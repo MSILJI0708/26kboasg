@@ -60,6 +60,7 @@ jobs:
             echo "변경사항 없음"
           else
             git commit -m "chore: 투표 데이터 수집 $(date +'%Y-%m-%d %H:%M UTC')"
+            git pull --rebase origin main
             git push
           fi
       - name: 구글 드라이브 업로드

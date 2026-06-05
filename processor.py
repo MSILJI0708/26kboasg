@@ -217,7 +217,7 @@ def build_excel(latest, prev):
         write_position_sheet(ws, pos_name, pos_data, prev_map.get(pos_id, {}), pos_id)
 
     os.makedirs("output", exist_ok=True)
-    outpath = f"output/kbo_allstar_{timestamp_safe}.xlsx"
+    outpath = f"output/kbo_allstar.xlsx"
     wb.save(outpath)
     print(f"✅ 엑셀 저장 완료: {outpath}")
 
