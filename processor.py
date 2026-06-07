@@ -220,6 +220,10 @@ def build_excel(latest, prev):
     outpath = f"output/kbo_allstar.xlsx"
     wb.save(outpath)
     print(f"✅ 엑셀 저장 완료: {outpath}")
+    # 타임스탬프 버전 (히스토리 보관용)
+    outpath_ts = f"output/kbo_allstar_{timestamp_safe}.xlsx"
+    wb.save(outpath_ts)
+    print(f"✅ 타임스탬프 엑셀 저장 완료: {outpath_ts}")
 
 if __name__ == "__main__":
     latest, prev = load_latest_two()
