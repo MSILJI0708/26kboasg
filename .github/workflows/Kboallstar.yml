@@ -69,3 +69,20 @@ jobs:
           RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
         with:
           args: copyto output/kbo_allstar.xlsx gdrive:kbo_allstar.xlsx
+      - name: 차트 생성
+        run: |
+          pip install plotly pandas --quiet
+          python chart_builder.py
+      - name: 구글 드라이브 업로드 (엑셀)
+        uses: wei/rclone@v1
+        env:
+          RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        with:
+          args: copyto output/kbo_allstar.xlsx gdrive:kbo_allstar.xlsx
+
+      - name: 구글 드라이브 업로드 (차트)
+        uses: wei/rclone@v1
+        env:
+          RCLONE_CONF: ${{ secrets.RCLONE_CONF }}
+        with:
+          args: copyto output/chart.html gdrive:chart.html
