@@ -55,6 +55,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add data/ output/
+          echo "=== git status ==="
+          git status
+          echo "=== staged files ==="
+          git diff --staged --name-only
 
           if git diff --staged --quiet; then
             echo "변경사항 없음"
@@ -63,6 +67,7 @@ jobs:
             git pull --rebase origin main
             git push
           fi
+          
       - name: 구글 드라이브 업로드
         uses: wei/rclone@v1
         env:
