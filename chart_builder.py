@@ -12,6 +12,12 @@ POSITIONS = {
     'SS': '유격수', 'OF': '외야수', 'DH': '지명타자'
 }
 
+TEAM_COLORS = {
+    'LG': '#C30452', 'KT': '#E84C4C', 'SSG': '#CE0E2D', 'NC': '#1D5D9B',
+    '두산': '#6B8CFF', 'KIA': '#EA0029', '롯데': '#4A9EFF', '삼성': '#74A9FF',
+    '한화': '#FF6600', '키움': '#FF4D7D'
+}
+
 TEAM_MARKERS = {
     'LG': {'symbol': 'circle', 'dash': 'solid'},
     'KT': {'symbol': 'square', 'dash': 'solid'},
