@@ -13,20 +13,12 @@ POSITIONS = {
 }
 
 TEAM_COLORS = {
-    'LG': '#C30452',
-    'KT': '#E84C4C',      # 검정 → 밝은 빨강
-    'SSG': '#CE0E2D',
-    'NC': '#1D5D9B',
-    '두산': '#6B8CFF',    # 거의 검정 → 밝은 파랑
-    'KIA': '#EA0029',
-    '롯데': '#4A9EFF',    # 거의 검정 → 하늘색
-    '삼성': '#74A9FF',
-    '한화': '#FF6600',
-    '키움': '#FF4D7D'
+    'LG': '#C30452', 'KT': '#E84C4C', 'SSG': '#CE0E2D', 'NC': '#1D5D9B',
+    '두산': '#6B8CFF', 'KIA': '#EA0029', '롯데': '#4A9EFF', '삼성': '#74A9FF',
+    '한화': '#FF6600', '키움': '#FF4D7D'
 }
 
 def load_all_data(days=7):
-    """모든 JSON 파일을 시계열 데이터로 로드 (최근 N일)"""
     files = sorted(glob.glob("data/*.json"))
     cutoff = datetime.now().astimezone() - timedelta(days=days)
     files = [f for f in files if datetime.fromisoformat(
@@ -64,59 +56,30 @@ def load_all_data(days=7):
     return pd.DataFrame(records)
 
 def calc_total_votes_per_snapshot(df):
-    """각 스냅샷 시간별 전체 투표수 계산"""
     return df.groupby("datetime")["votes"].sum().reset_index()
-    
-def resample_data(df, freq="10min"):
-    """시간 단위별 리샘플링"""
-    df = df.copy()
-    df = df.set_index("datetime")
-    
-    result = []
-    groups = df.groupby(["pos_id", "team", "player", "club"])
-    
-    for (pos_id, team, player, club), group in groups:
-        resampled = group["votes"].resample(freq).last().dropna()
-        for dt, votes in resampled.items():
-            result.append({
-                "datetime": dt,
-                "pos_id": pos_id,
-                "pos_name": POSITIONS.get(pos_id, pos_id),
-                "team": team,
-                "player": player,
-                "club": club,
-                "votes": votes,
-            })
-    
-    return pd.DataFrame(result)
 
 def calc_new_votes(df):
-    """선수별 신규 득표수(이전 스냅샷 대비 증가분) 계산"""
     df = df.sort_values("datetime")
     df["new_votes"] = df.groupby(["pos_id", "team", "player"])["votes"].diff().fillna(0).clip(lower=0)
     return df
 
 def calc_vote_rate(df):
-    """득표율 계산 (포지션 내 전체 대비)"""
     total = df.groupby(["datetime", "pos_id"])["votes"].transform("sum")
     df["vote_rate"] = (df["votes"] / total * 100).round(2)
     return df
 
 def build_chart(df):
-    """메인 인터랙티브 차트 HTML 생성"""
-
     df = calc_new_votes(df)
     df = calc_vote_rate(df)
     total_per_snap = calc_total_votes_per_snapshot(df)
-
-    # 일별 신규 투표수
     total_per_snap = total_per_snap.sort_values("datetime")
     total_per_snap["new_total"] = total_per_snap["votes"].diff().fillna(0).clip(lower=0)
 
-    pos_list = list(POSITIONS.keys())
-    pos_names = list(POSITIONS.values())
+    team_colors_js = json.dumps(
+        {v: TEAM_COLORS.get(v, '#4a6fa5') for v in df['club'].unique().tolist() if isinstance(v, str)},
+        ensure_ascii=False
+    )
 
-    # HTML 템플릿 생성
     html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -126,7 +89,7 @@ def build_chart(df):
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <style>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ 
+  body {{
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     background: #0a0e1a;
     color: #e0e6f0;
@@ -239,8 +202,8 @@ def build_chart(df):
   <div class="control-group">
     <label>시간 단위</label>
     <div class="toggle-group">
-      <button class="toggle-btn active" id="btn-10min" onclick="setTimeUnit('10min')">10분</button>
-      <button class="toggle-btn" id="btn-1hour" onclick="setTimeUnit('1hour')">1시간</button>
+      <button class="toggle-btn" id="btn-10min" onclick="setTimeUnit('10min')">10분</button>
+      <button class="toggle-btn active" id="btn-1hour" onclick="setTimeUnit('1hour')">1시간</button>
       <button class="toggle-btn" id="btn-1day" onclick="setTimeUnit('1day')">1일</button>
     </div>
   </div>
@@ -265,11 +228,11 @@ def build_chart(df):
 
 <script>
 const RAW_DATA = {df.to_json(orient='records', date_format='iso', force_ascii=False)};
-const TEAM_COLORS = {json.dumps({v: TEAM_COLORS.get(v, '#4a6fa5') for v in df['club'].unique().tolist() if isinstance(v, str)}, ensure_ascii=False)};
+const TEAM_COLORS = {team_colors_js};
 const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', force_ascii=False)};
 
 let currentMetric = 'rate';
-let currentTimeUnit = '10min';
+let currentTimeUnit = '1hour';
 
 function setMetric(m) {{
   currentMetric = m;
@@ -287,17 +250,12 @@ function setTimeUnit(u) {{
 
 function resampleData(data, unit) {{
   if (unit === '10min') return data;
-  
   const grouped = {{}};
   data.forEach(d => {{
     const dt = new Date(d.datetime);
-    let key;
-    if (unit === '1hour') {{
-      dt.setMinutes(0, 0, 0);
-    }} else if (unit === '1day') {{
-      dt.setHours(0, 0, 0, 0);
-    }}
-    key = dt.toISOString() + '|' + d.player;
+    if (unit === '1hour') dt.setMinutes(0, 0, 0);
+    else if (unit === '1day') dt.setHours(0, 0, 0, 0);
+    const key = dt.toISOString() + '|' + d.player;
     if (!grouped[key] || new Date(d.datetime) > new Date(grouped[key].datetime)) {{
       grouped[key] = {{ ...d, datetime: dt.toISOString() }};
     }}
@@ -309,32 +267,38 @@ function calcNewVotes(playerData) {{
   const sorted = playerData.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
   return sorted.map((d, i) => {{
     const prev = sorted[i-1];
-    const newV = prev ? Math.max(0, d.votes - prev.votes) : 0;
-    return {{ ...d, new_votes: newV }};
+    return {{ ...d, new_votes: prev ? Math.max(0, d.votes - prev.votes) : 0 }};
   }});
+}}
+
+function getVal(d, metric) {{
+  if (metric === 'rate') return d.vote_rate || 0;
+  if (metric === 'votes') return d.votes || 0;
+  return d.new_votes || 0;
 }}
 
 function buildTrace(playerData, metric) {{
   const data = calcNewVotes(playerData);
   const x = data.map(d => d.datetime);
-  let y, yLabel;
-  
-  if (metric === 'rate') {{ y = data.map(d => d.vote_rate); yLabel = '득표율 (%)'; }}
-  else if (metric === 'votes') {{ y = data.map(d => d.votes); yLabel = '득표수'; }}
-  else {{ y = data.map(d => d.new_votes); yLabel = '신규 득표수'; }}
-  
+  const y = data.map(d => getVal(d, metric));
   const name = data[0]?.player || '';
   const club = data[0]?.club || '';
   const color = TEAM_COLORS[club] || '#4a6fa5';
-  
+
+  // 우측 끝 팀명 레이블
+  const textArr = data.map((_, i) => i === data.length - 1 ? club : '');
+
   return {{
     x, y,
     name: `${{name}} (${{club}})`,
     type: 'scatter',
-    mode: 'lines+markers',
+    mode: 'lines+markers+text',
     line: {{ color, width: 2 }},
     marker: {{ size: 4, color }},
-    hovertemplate: `<b>${{name}}</b><br>%{{x|%Y-%m-%d %H:%M}}<br>${{yLabel}}: %{{y:.1f}}<extra></extra>`
+    text: textArr,
+    textposition: 'middle right',
+    textfont: {{ size: 10, color }},
+    hovertemplate: `<span style="color:${{color}}">●</span> <b>${{name}} (${{club}})</b>: %{{y:.1f}}<extra></extra>`
   }};
 }}
 
@@ -342,48 +306,45 @@ function updateCharts() {{
   const pos = document.getElementById('posSelect').value;
   const filtered = RAW_DATA.filter(d => d.pos_id === pos);
   const resampled = resampleData(filtered, currentTimeUnit);
-  
+
   ['nanum', 'dream'].forEach(team => {{
     const teamData = resampled.filter(d => d.team === team);
     const players = [...new Set(teamData.map(d => d.player))];
-    
-    const traces = players.map(p => {{
+
+    // 최신 값 기준 내림차순 정렬
+    const playerLatest = {{}};
+    players.forEach(p => {{
+      const pd = teamData.filter(d => d.player === p);
+      const latest = pd.sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+      playerLatest[p] = latest ? getVal(latest, currentMetric) : 0;
+    }});
+    const sortedPlayers = [...players].sort((a,b) => playerLatest[b] - playerLatest[a]);
+
+    const traces = sortedPlayers.map(p => {{
       const pd = teamData.filter(d => d.player === p);
       return buildTrace(pd, currentMetric);
     }});
-    
+
     const layout = {{
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: {{ color: '#a0b0d0', size: 11 }},
-      height: 300,
-      margin: {{ t: 10, b: 40, l: 50, r: 10 }},
-      xaxis: {{ 
-        gridcolor: '#1e2640', 
-        linecolor: '#2a3050',
-        tickfont: {{ size: 10 }}
-      }},
-      yaxis: {{ 
-        gridcolor: '#1e2640', 
-        linecolor: '#2a3050',
-        tickfont: {{ size: 10 }}
-      }},
-      legend: {{ 
-        bgcolor: 'rgba(0,0,0,0)', 
-        font: {{ size: 10 }},
-        orientation: 'h',
-        y: -0.2
-      }},
-      hovermode: 'x unified'
+      height: 320,
+      margin: {{ t: 10, b: 40, l: 50, r: 70 }},
+      xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
+      yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
+      legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.2 }},
+      hovermode: 'x unified',
+      hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }}
     }};
-    
+
     Plotly.react(`chart-${{team}}`, traces, layout, {{responsive: true, displayModeBar: false}});
   }});
-  
+
   // 전체 투표수 차트
   const totalResampled = resampleData(TOTAL_DATA, currentTimeUnit);
   const sortedTotal = totalResampled.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
-  
+
   const totalTrace = {{
     x: sortedTotal.map(d => d.datetime),
     y: sortedTotal.map(d => d.votes),
@@ -418,11 +379,10 @@ function updateCharts() {{
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
     hovermode: 'x unified'
   }};
-  
+
   Plotly.react('chart-total', [totalTrace, newTotalTrace], totalLayout, {{responsive: true, displayModeBar: false}});
 }}
 
-// 초기 렌더링
 updateCharts();
 </script>
 </body>
