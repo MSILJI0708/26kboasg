@@ -37,10 +37,15 @@ jobs:
       - name: 투표 데이터 수집
         run: |
           python collector.py
-
+          
       - name: 엑셀 파일 생성
         run: |
           python processor.py
+
+      - name: 차트 생성
+        run: |
+          pip install plotly pandas --quiet
+          python chart_builder.py
 
       - name: 엑셀 아티팩트 업로드
         uses: actions/upload-artifact@v4
