@@ -311,7 +311,12 @@ function buildTrace(playerData, metric) {{
     text: textArr,
     textposition: 'middle right',
     textfont: {{ size: 10, color }},
-    hovertemplate: `<span style="color:${{color}}">●</span> <b>${{name}} (${{club}})</b>: %{{y:.1f}}<extra></extra>`
+    customdata: data.map(d => {{
+      const dt = new Date(d.datetime);
+      dt.setHours(dt.getHours() + 9);
+      return dt.toISOString().slice(0, 16).replace('T', ' ') + ' KST';
+    }}),
+    hovertemplate: `<span style="color:${{color}}">●</span> <b>${{name}} (${{club}})</b>: %{{y:.1f}}<br>%{{customdata}}<extra></extra>`
   }};
 }}
 
