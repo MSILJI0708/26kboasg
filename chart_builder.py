@@ -362,29 +362,34 @@ function updateCharts() {{
   // 전체 투표수 차트
   const totalResampled = resampleData(TOTAL_DATA, currentTimeUnit);
   const sortedTotal = totalResampled.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+  
+  const kstTotal = sortedTotal.map(d => {{
+      const dt = new Date(d.datetime);
+      dt.setHours(dt.getHours() + 9);
+      return dt.toISOString().slice(0, 16).replace('T', ' ');
+}});
 
-  const totalTrace = {{
-    x: sortedTotal.map(d => d.datetime),
-    y: sortedTotal.map(d => d.votes),
-    name: '누적 투표수',
-    type: 'scatter',
-    mode: 'lines',
-    line: {{ color: '#4a9eff', width: 2 }},
-    fill: 'tozeroy',
-    fillcolor: 'rgba(74,158,255,0.1)',
-    hovertemplate: '%{{x|%Y-%m-%d %H:%M}}<br>누적: %{{y:,}}<extra></extra>'
-  }};
-
-  const newTotalTrace = {{
-    x: sortedTotal.map(d => d.datetime),
-    y: sortedTotal.map((d,i) => i > 0 ? Math.max(0, d.votes - sortedTotal[i-1].votes) : 0),
-    name: '신규 투표수',
-    type: 'bar',
-    marker: {{ color: 'rgba(255,180,50,0.6)' }},
-    hovertemplate: '%{{x|%Y-%m-%d %H:%M}}<br>신규: %{{y:,}}<extra></extra>',
-    yaxis: 'y2'
-  }};
-
+    const totalTrace = {{
+        x: kstTotal,
+        y: sortedTotal.map(d => d.votes),
+        name: '누적 투표수',
+        type: 'scatter',
+        mode: 'lines',
+        line: {{ color: '#4a9eff', width: 2 }},
+        fill: 'tozeroy',
+        fillcolor: 'rgba(74,158,255,0.1)',
+        hovertemplate: '%{{x}}<br>누적: %{{y:,}}<extra></extra>'
+    }};
+    
+    const newTotalTrace = {{
+        x: kstTotal,
+        y: sortedTotal.map((d,i) => i > 0 ? Math.max(0, d.votes - sortedTotal[i-1].votes) : 0),
+        name: '신규 투표수',
+        type: 'bar',
+        marker: {{ color: 'rgba(255,180,50,0.6)' }},
+        hovertemplate: '%{{x}}<br>신규: %{{y:,}}<extra></extra>',
+        yaxis: 'y2'
+    }};
   const totalLayout = {{
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
