@@ -290,10 +290,16 @@ const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', 
 let currentMetric = 'rate';
 let currentTimeUnit = '1hour';
 
-function toKST(isoStr) {{
-  const dt = new Date(isoStr);
-  dt.setHours(dt.getHours() + 9);
+// ISO 문자열 그대로 반환 (Plotly date축 전용)
+function toDateStr(isoStr) {{
+  // UTC → KST (+9h) 보정한 뒤 'YYYY-MM-DD HH:MM' 형태로 반환
+  const dt = new Date(new Date(isoStr).getTime() + 9 * 3600 * 1000);
   return dt.toISOString().slice(0, 16).replace('T', ' ');
+}}
+
+// 호버용 KST 표시 문자열 (기존 동일)
+function toKST(isoStr) {{
+  return toDateStr(isoStr);
 }}
 
 function setMetric(m) {{
@@ -411,6 +417,14 @@ function buildTrace(playerData, metric) {{
   }};
 }}
 
+// 시간 단위별 x축 틱 간격 (밀리초)
+function getXAxisConfig(unit) {{
+  if (unit === '10min') return {{ dtick: 3 * 3600 * 1000,  tickformat: '%m-%d %H:%M' }};
+  if (unit === '1hour') return {{ dtick: 6 * 3600 * 1000,  tickformat: '%m-%d %H시' }};
+  if (unit === '1day')  return {{ dtick: 24 * 3600 * 1000, tickformat: '%m-%d' }};
+  return {{ dtick: 6 * 3600 * 1000, tickformat: '%m-%d %H시' }};
+}}
+
 // 공통 스크롤 줌 설정
 const scrollZoomConfig = {{
   responsive: true,
@@ -440,15 +454,23 @@ function updateCharts() {{
       return buildTrace(pd, currentMetric);
     }});
 
+    const xCfg = getXAxisConfig(currentTimeUnit);
     const layout = {{
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
       font: {{ color: '#a0b0d0', size: 11 }},
       height: 320,
-      margin: {{ t: 10, b: 40, l: 50, r: 70 }},
-      xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category', fixedrange: false }},
+      margin: {{ t: 10, b: 60, l: 50, r: 70 }},
+      xaxis: {{
+        gridcolor: '#1e2640', linecolor: '#2a3050',
+        tickfont: {{ size: 10 }}, tickangle: -45,
+        type: 'date',
+        dtick: xCfg.dtick,
+        tickformat: xCfg.tickformat,
+        fixedrange: false
+      }},
       yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, fixedrange: false }},
-      legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.2 }},
+      legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
       hovermode: 'x unified',
       hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
       dragmode: 'pan'
@@ -489,11 +511,18 @@ function updateCharts() {{
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: {{ color: '#a0b0d0', size: 11 }},
     height: 250,
-    margin: {{ t: 10, b: 40, l: 60, r: 60 }},
-    xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category', fixedrange: false }},
+    margin: {{ t: 10, b: 60, l: 60, r: 60 }},
+    xaxis: {{
+      gridcolor: '#1e2640', linecolor: '#2a3050',
+      tickfont: {{ size: 10 }}, tickangle: -45,
+      type: 'date',
+      dtick: xCfg.dtick,
+      tickformat: xCfg.tickformat,
+      fixedrange: false
+    }},
     yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }}, fixedrange: false }},
     yaxis2: {{ overlaying: 'y', side: 'right', title: '신규', tickfont: {{ size: 10 }}, gridcolor: 'rgba(0,0,0,0)' }},
-    legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
+    legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.3 }},
     hovermode: 'x unified',
     dragmode: 'pan'
   }};
