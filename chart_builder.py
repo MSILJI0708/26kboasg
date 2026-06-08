@@ -402,14 +402,20 @@ function buildTrace(playerData, metric) {{
   const valFmt = metric === 'rate' ? '%{{y:.2f}}' : '%{{y:,}}';
   const valLabel = metric === 'rate' ? '%' : '표';
 
+  // 포인트가 많으면 마커 숨김 (선만 표시) — 빽빽한 점이 굵은 선처럼 보이는 현상 방지
+  // 1시간 단위 이하면 포인트가 많아 마커 불필요, 1일 단위만 마커 표시
+  const showMarkers = currentTimeUnit === '1day' || data.length <= 50;
+  const traceMode = showMarkers ? 'lines+markers+text' : 'lines+text';
+  const markerSize = showMarkers ? 6 : 0;
+
   return {{
     x, y,
     customdata,
     name: `${{name}} (${{club}})`,
     type: 'scatter',
-    mode: 'lines+markers+text',
+    mode: traceMode,
     line: {{ color, width: 2, dash: marker.dash }},
-    marker: {{ size: 5, color, symbol: marker.symbol }},
+    marker: {{ size: markerSize, color, symbol: marker.symbol }},
     text: textArr,
     textposition: 'middle right',
     textfont: {{ size: 10, color }},
