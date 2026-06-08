@@ -19,16 +19,16 @@ TEAM_COLORS = {
 }
 
 TEAM_MARKERS = {
-    'LG': {'symbol': 'circle', 'dash': 'solid'},
-    'KT': {'symbol': 'square', 'dash': 'solid'},
-    'SSG': {'symbol': 'diamond', 'dash': 'solid'},
-    'NC': {'symbol': 'triangle-up', 'dash': 'solid'},
-    '두산': {'symbol': 'circle', 'dash': 'dash'},
-    'KIA': {'symbol': 'square', 'dash': 'dash'},
-    '롯데': {'symbol': 'diamond', 'dash': 'dash'},
+    'LG':   {'symbol': 'circle',      'dash': 'solid'},
+    'KT':   {'symbol': 'square',      'dash': 'solid'},
+    'SSG':  {'symbol': 'diamond',     'dash': 'solid'},
+    'NC':   {'symbol': 'triangle-up', 'dash': 'solid'},
+    '두산': {'symbol': 'circle',      'dash': 'dash'},
+    'KIA':  {'symbol': 'square',      'dash': 'dash'},
+    '롯데': {'symbol': 'diamond',     'dash': 'dash'},
     '삼성': {'symbol': 'triangle-up', 'dash': 'dash'},
-    '한화': {'symbol': 'circle', 'dash': 'dot'},
-    '키움': {'symbol': 'square', 'dash': 'dot'},
+    '한화': {'symbol': 'circle',      'dash': 'dot'},
+    '키움': {'symbol': 'square',      'dash': 'dot'},
 }
 
 def load_all_data(days=7):
@@ -90,6 +90,10 @@ def build_chart(df):
 
     team_colors_js = json.dumps(
         {v: TEAM_COLORS.get(v, '#4a6fa5') for v in df['club'].unique().tolist() if isinstance(v, str)},
+        ensure_ascii=False
+    )
+    team_markers_js = json.dumps(
+        {v: TEAM_MARKERS.get(v, {'symbol': 'circle', 'dash': 'solid'}) for v in df['club'].unique().tolist() if isinstance(v, str)},
         ensure_ascii=False
     )
 
@@ -242,10 +246,17 @@ def build_chart(df):
 <script>
 const RAW_DATA = {df.to_json(orient='records', date_format='iso', force_ascii=False)};
 const TEAM_COLORS = {team_colors_js};
+const TEAM_MARKERS = {team_markers_js};
 const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', force_ascii=False)};
 
 let currentMetric = 'rate';
 let currentTimeUnit = '1hour';
+
+function toKST(isoStr) {{
+  const dt = new Date(isoStr);
+  dt.setHours(dt.getHours() + 9);
+  return dt.toISOString().slice(0, 16).replace('T', ' ');
+}}
 
 function setMetric(m) {{
   currentMetric = m;
@@ -290,33 +301,85 @@ function getVal(d, metric) {{
   return d.new_votes || 0;
 }}
 
+// 시간 단위(분)를 밀리초로 변환
+function unitToMs(unit) {{
+  if (unit === '10min') return 10 * 60 * 1000;
+  if (unit === '1hour') return 60 * 60 * 1000;
+  if (unit === '1day') return 24 * 60 * 60 * 1000;
+  return 60 * 60 * 1000;
+}}
+
+// 각 포인트에서 1단위 전 가장 가까운 값 찾기
+function findPrevVal(data, idx, metric, unit) {{
+  const curTime = new Date(data[idx].datetime).getTime();
+  const targetTime = curTime - unitToMs(unit);
+  
+  let closest = null;
+  let minDiff = Infinity;
+  
+  for (let i = 0; i < idx; i++) {{
+    const t = new Date(data[i].datetime).getTime();
+    const diff = Math.abs(t - targetTime);
+    if (diff < minDiff) {{
+      minDiff = diff;
+      closest = data[i];
+    }}
+  }}
+  
+  if (!closest) return null;
+  
+  // 실제 오차 분 계산
+  const diffMin = Math.round(minDiff / 60000);
+  return {{ val: getVal(closest, metric), diffMin }};
+}}
+
 function buildTrace(playerData, metric) {{
   const data = calcNewVotes(playerData);
-  const x = data.map(d => d.datetime);
-  const y = data.map(d => getVal(d, metric));
   const name = data[0]?.player || '';
   const club = data[0]?.club || '';
   const color = TEAM_COLORS[club] || '#4a6fa5';
+  const marker = TEAM_MARKERS[club] || {{ symbol: 'circle', dash: 'solid' }};
+
+  // KST x축
+  const x = data.map(d => toKST(d.datetime));
+  const y = data.map(d => getVal(d, metric));
 
   // 우측 끝 팀명 레이블
   const textArr = data.map((_, i) => i === data.length - 1 ? club : '');
 
+  // customdata: [KST시간, 변화량 텍스트]
+  const customdata = data.map((d, i) => {{
+    const kst = toKST(d.datetime);
+    if (metric === 'new') {{
+      return [kst, ''];
+    }}
+    const prev = findPrevVal(data, i, metric, currentTimeUnit);
+    if (!prev) return [kst, '-'];
+    const diff = getVal(d, metric) - prev.val;
+    const sign = diff >= 0 ? '▲' : '▼';
+    const unit = metric === 'rate' ? '%p' : '표';
+    const diffStr = metric === 'rate'
+      ? `${{sign}}${{Math.abs(diff).toFixed(2)}}${{unit}}`
+      : `${{sign}}${{Math.abs(Math.round(diff)).toLocaleString()}}${{unit}}`;
+    const note = prev.diffMin > 20 ? ` (${{prev.diffMin}}분 기준)` : '';
+    return [kst, diffStr + note];
+  }});
+
+  const valLabel = metric === 'rate' ? '%' : metric === 'votes' ? '표' : '표';
+  const valFmt = metric === 'rate' ? '%{{y:.2f}}' : '%{{y:,}}';
+
   return {{
     x, y,
+    customdata,
     name: `${{name}} (${{club}})`,
     type: 'scatter',
     mode: 'lines+markers+text',
-    line: {{ color, width: 2 }},
-    marker: {{ size: 4, color }},
+    line: {{ color, width: 2, dash: marker.dash }},
+    marker: {{ size: 5, color, symbol: marker.symbol }},
     text: textArr,
     textposition: 'middle right',
     textfont: {{ size: 10, color }},
-    customdata: data.map(d => {{
-      const dt = new Date(d.datetime);
-      dt.setHours(dt.getHours() + 9);
-      return dt.toISOString().slice(0, 16).replace('T', ' ') + ' KST';
-    }}),
-    hovertemplate: `<span style="color:${{color}}">●</span> <b>${{name}} (${{club}})</b>: %{{y:.1f}}<br>%{{customdata}}<extra></extra>`
+    hovertemplate: `<span style="color:${{color}}">●</span> <b>${{name}} (${{club}})</b>: ${{valFmt}}${{valLabel}}  %{{customdata[1]}}<extra></extra>`
   }};
 }}
 
@@ -329,7 +392,6 @@ function updateCharts() {{
     const teamData = resampled.filter(d => d.team === team);
     const players = [...new Set(teamData.map(d => d.player))];
 
-    // 최신 값 기준 내림차순 정렬
     const playerLatest = {{}};
     players.forEach(p => {{
       const pd = teamData.filter(d => d.player === p);
@@ -349,7 +411,7 @@ function updateCharts() {{
       font: {{ color: '#a0b0d0', size: 11 }},
       height: 320,
       margin: {{ t: 10, b: 40, l: 50, r: 70 }},
-      xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
+      xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category' }},
       yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
       legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.2 }},
       hovermode: 'x unified',
@@ -362,41 +424,37 @@ function updateCharts() {{
   // 전체 투표수 차트
   const totalResampled = resampleData(TOTAL_DATA, currentTimeUnit);
   const sortedTotal = totalResampled.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
-  
-  const kstTotal = sortedTotal.map(d => {{
-      const dt = new Date(d.datetime);
-      dt.setHours(dt.getHours() + 9);
-      return dt.toISOString().slice(0, 16).replace('T', ' ');
-}});
+  const kstTotal = sortedTotal.map(d => toKST(d.datetime));
 
-    const totalTrace = {{
-        x: kstTotal,
-        y: sortedTotal.map(d => d.votes),
-        name: '누적 투표수',
-        type: 'scatter',
-        mode: 'lines',
-        line: {{ color: '#4a9eff', width: 2 }},
-        fill: 'tozeroy',
-        fillcolor: 'rgba(74,158,255,0.1)',
-        hovertemplate: '%{{x}}<br>누적: %{{y:,}}<extra></extra>'
-    }};
-    
-    const newTotalTrace = {{
-        x: kstTotal,
-        y: sortedTotal.map((d,i) => i > 0 ? Math.max(0, d.votes - sortedTotal[i-1].votes) : 0),
-        name: '신규 투표수',
-        type: 'bar',
-        marker: {{ color: 'rgba(255,180,50,0.6)' }},
-        hovertemplate: '%{{x}}<br>신규: %{{y:,}}<extra></extra>',
-        yaxis: 'y2'
-    }};
+  const totalTrace = {{
+    x: kstTotal,
+    y: sortedTotal.map(d => d.votes),
+    name: '누적 투표수',
+    type: 'scatter',
+    mode: 'lines',
+    line: {{ color: '#4a9eff', width: 2 }},
+    fill: 'tozeroy',
+    fillcolor: 'rgba(74,158,255,0.1)',
+    hovertemplate: '%{{x}}<br>누적: %{{y:,}}<extra></extra>'
+  }};
+
+  const newTotalTrace = {{
+    x: kstTotal,
+    y: sortedTotal.map((d,i) => i > 0 ? Math.max(0, d.votes - sortedTotal[i-1].votes) : 0),
+    name: '신규 투표수',
+    type: 'bar',
+    marker: {{ color: 'rgba(255,180,50,0.6)' }},
+    hovertemplate: '%{{x}}<br>신규: %{{y:,}}<extra></extra>',
+    yaxis: 'y2'
+  }};
+
   const totalLayout = {{
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: {{ color: '#a0b0d0', size: 11 }},
     height: 250,
     margin: {{ t: 10, b: 40, l: 60, r: 60 }},
-    xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
+    xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category' }},
     yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }} }},
     yaxis2: {{ overlaying: 'y', side: 'right', title: '신규', tickfont: {{ size: 10 }}, gridcolor: 'rgba(0,0,0,0)' }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
