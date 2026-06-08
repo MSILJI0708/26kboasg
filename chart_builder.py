@@ -31,12 +31,19 @@ TEAM_MARKERS = {
     '키움': {'symbol': 'square',      'dash': 'dot'},
 }
 
+# 제거할 초기 테스트 데이터 파일들 (비정기 수집, 굵은 선 원인)
+# 2026-06-03에 수집 주기가 정착하기 전의 드문드문 파일들
+SKIP_BEFORE = "2026-06-03T15:00:00"
+
 def load_all_data(days=7):
     files = sorted(glob.glob("data/*.json"))
     cutoff = datetime.now().astimezone() - timedelta(days=days)
+    skip_dt = datetime.fromisoformat(SKIP_BEFORE).astimezone()
+
     files = [f for f in files if datetime.fromisoformat(
         json.load(open(f, encoding="utf-8")).get("timestamp", "1970-01-01T00:00:00+09:00")
     ) >= cutoff] if days else files
+
     records = []
     for f in files:
         try:
@@ -46,6 +53,9 @@ def load_all_data(days=7):
             if not ts:
                 continue
             dt = datetime.fromisoformat(ts)
+            # 초기 테스트 수집 기간 데이터 스킵
+            if dt.astimezone() < skip_dt:
+                continue
             for pos_id, pos_data in d["positions"].items():
                 for team_key in ("nanum", "dream"):
                     for p in pos_data.get(team_key, []):
@@ -97,6 +107,8 @@ def build_chart(df):
         ensure_ascii=False
     )
 
+    last_updated = df['datetime'].max().strftime('%Y-%m-%d %H:%M') if not df.empty else '-'
+
     html = f"""<!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -117,10 +129,22 @@ def build_chart(df):
     font-size: 1.3rem;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 16px;
+    margin-bottom: 8px;
     text-align: center;
     letter-spacing: -0.5px;
   }}
+  .header-links {{
+    text-align: center;
+    margin-bottom: 8px;
+  }}
+  .header-links a {{
+    color: #4a9eff;
+    text-decoration: none;
+    font-size: 0.8rem;
+    margin: 0 8px;
+    opacity: 0.8;
+  }}
+  .header-links a:hover {{ opacity: 1; text-decoration: underline; }}
   .updated {{
     font-size: 0.75rem;
     color: #6b7a99;
@@ -189,6 +213,13 @@ def build_chart(df):
     margin-bottom: 8px;
     padding-left: 4px;
   }}
+  .zoom-hint {{
+    font-size: 0.7rem;
+    color: #4a6070;
+    text-align: right;
+    padding-right: 4px;
+    margin-bottom: 4px;
+  }}
   .divider {{
     border: none;
     border-top: 1px solid #1e2640;
@@ -199,7 +230,11 @@ def build_chart(df):
 <body>
 
 <h1>⚾ 2026 KBO 올스타 팬투표 현황</h1>
-<div class="updated">마지막 업데이트: {df['datetime'].max().strftime('%Y-%m-%d %H:%M') if not df.empty else '-'} KST</div>
+<div class="header-links">
+  <a href="https://kbo.kr" target="_blank" rel="noopener">🔗 KBO 공식 투표</a>
+  <a href="https://github.com/your-repo" target="_blank" rel="noopener" id="github-link">📁 GitHub</a>
+</div>
+<div class="updated">마지막 업데이트: {last_updated} KST</div>
 
 <div class="controls">
   <div class="control-group">
@@ -228,11 +263,13 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">🔵 나눔 올스타</div>
+  <div class="zoom-hint">🖱 스크롤로 확대/축소 · 드래그로 이동</div>
   <div id="chart-nanum"></div>
 </div>
 
 <div class="chart-container">
   <div class="chart-title">🔴 드림 올스타</div>
+  <div class="zoom-hint">🖱 스크롤로 확대/축소 · 드래그로 이동</div>
   <div id="chart-dream"></div>
 </div>
 
@@ -240,6 +277,7 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">📊 전체 투표수 추이</div>
+  <div class="zoom-hint">🖱 스크롤로 확대/축소 · 드래그로 이동</div>
   <div id="chart-total"></div>
 </div>
 
@@ -301,7 +339,6 @@ function getVal(d, metric) {{
   return d.new_votes || 0;
 }}
 
-// 시간 단위(분)를 밀리초로 변환
 function unitToMs(unit) {{
   if (unit === '10min') return 10 * 60 * 1000;
   if (unit === '1hour') return 60 * 60 * 1000;
@@ -309,14 +346,11 @@ function unitToMs(unit) {{
   return 60 * 60 * 1000;
 }}
 
-// 각 포인트에서 1단위 전 가장 가까운 값 찾기
 function findPrevVal(data, idx, metric, unit) {{
   const curTime = new Date(data[idx].datetime).getTime();
   const targetTime = curTime - unitToMs(unit);
-  
   let closest = null;
   let minDiff = Infinity;
-  
   for (let i = 0; i < idx; i++) {{
     const t = new Date(data[i].datetime).getTime();
     const diff = Math.abs(t - targetTime);
@@ -325,10 +359,7 @@ function findPrevVal(data, idx, metric, unit) {{
       closest = data[i];
     }}
   }}
-  
   if (!closest) return null;
-  
-  // 실제 오차 분 계산
   const diffMin = Math.round(minDiff / 60000);
   return {{ val: getVal(closest, metric), diffMin }};
 }}
@@ -340,14 +371,11 @@ function buildTrace(playerData, metric) {{
   const color = TEAM_COLORS[club] || '#4a6fa5';
   const marker = TEAM_MARKERS[club] || {{ symbol: 'circle', dash: 'solid' }};
 
-  // KST x축
   const x = data.map(d => toKST(d.datetime));
   const y = data.map(d => getVal(d, metric));
 
-  // 우측 끝 팀명 레이블
   const textArr = data.map((_, i) => i === data.length - 1 ? club : '');
 
-  // customdata: [KST시간, 변화량 텍스트]
   const customdata = data.map((d, i) => {{
     const kst = toKST(d.datetime);
     if (metric === 'new') {{
@@ -365,8 +393,8 @@ function buildTrace(playerData, metric) {{
     return [kst, diffStr + note];
   }});
 
-  const valLabel = metric === 'rate' ? '%' : metric === 'votes' ? '표' : '표';
   const valFmt = metric === 'rate' ? '%{{y:.2f}}' : '%{{y:,}}';
+  const valLabel = metric === 'rate' ? '%' : '표';
 
   return {{
     x, y,
@@ -382,6 +410,13 @@ function buildTrace(playerData, metric) {{
     hovertemplate: `<span style="color:${{color}}">●</span> <b>${{name}} (${{club}})</b>: ${{valFmt}}${{valLabel}}  %{{customdata[1]}}<extra></extra>`
   }};
 }}
+
+// 공통 스크롤 줌 설정
+const scrollZoomConfig = {{
+  responsive: true,
+  scrollZoom: true,
+  displayModeBar: false
+}};
 
 function updateCharts() {{
   const pos = document.getElementById('posSelect').value;
@@ -411,21 +446,15 @@ function updateCharts() {{
       font: {{ color: '#a0b0d0', size: 11 }},
       height: 320,
       margin: {{ t: 10, b: 40, l: 50, r: 70 }},
-      xaxis: {{ 
-          gridcolor: '#1e2640', 
-          linecolor: '#2a3050', 
-          tickfont: {{ size: 10 }},
-          dtick: 86400000,
-          tickformat: '%m/%d',
-          ticklabelmode: 'period'
-        }},
-      yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
+      xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category', fixedrange: false }},
+      yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, fixedrange: false }},
       legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.2 }},
       hovermode: 'x unified',
-      hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }}
+      hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
+      dragmode: 'pan'
     }};
 
-    Plotly.react(`chart-${{team}}`, traces, layout, {{responsive: true, displayModeBar: false}});
+    Plotly.react(`chart-${{team}}`, traces, layout, scrollZoomConfig);
   }});
 
   // 전체 투표수 차트
@@ -461,21 +490,15 @@ function updateCharts() {{
     font: {{ color: '#a0b0d0', size: 11 }},
     height: 250,
     margin: {{ t: 10, b: 40, l: 60, r: 60 }},
-    xaxis: {{ 
-      gridcolor: '#1e2640', 
-      linecolor: '#2a3050', 
-      tickfont: {{ size: 10 }},
-      dtick: 86400000,
-      tickformat: '%m/%d',
-      ticklabelmode: 'period'
-    }},
-    yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }} }},
+    xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category', fixedrange: false }},
+    yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }}, fixedrange: false }},
     yaxis2: {{ overlaying: 'y', side: 'right', title: '신규', tickfont: {{ size: 10 }}, gridcolor: 'rgba(0,0,0,0)' }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
-    hovermode: 'x unified'
+    hovermode: 'x unified',
+    dragmode: 'pan'
   }};
 
-  Plotly.react('chart-total', [totalTrace, newTotalTrace], totalLayout, {{responsive: true, displayModeBar: false}});
+  Plotly.react('chart-total', [totalTrace, newTotalTrace], totalLayout, scrollZoomConfig);
 }}
 
 updateCharts();
