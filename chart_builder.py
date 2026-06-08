@@ -411,7 +411,14 @@ function updateCharts() {{
       font: {{ color: '#a0b0d0', size: 11 }},
       height: 320,
       margin: {{ t: 10, b: 40, l: 50, r: 70 }},
-      xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category' }},
+      xaxis: {{ 
+          gridcolor: '#1e2640', 
+          linecolor: '#2a3050', 
+          tickfont: {{ size: 10 }},
+          dtick: 86400000,
+          tickformat: '%m/%d',
+          ticklabelmode: 'period'
+        }},
       yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }} }},
       legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.2 }},
       hovermode: 'x unified',
@@ -454,7 +461,14 @@ function updateCharts() {{
     font: {{ color: '#a0b0d0', size: 11 }},
     height: 250,
     margin: {{ t: 10, b: 40, l: 60, r: 60 }},
-    xaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, type: 'category' }},
+    xaxis: {{ 
+      gridcolor: '#1e2640', 
+      linecolor: '#2a3050', 
+      tickfont: {{ size: 10 }},
+      dtick: 86400000,
+      tickformat: '%m/%d',
+      ticklabelmode: 'period'
+    }},
     yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }} }},
     yaxis2: {{ overlaying: 'y', side: 'right', title: '신규', tickfont: {{ size: 10 }}, gridcolor: 'rgba(0,0,0,0)' }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
