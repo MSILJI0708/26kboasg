@@ -84,7 +84,9 @@ jobs:
       - name: 구글 드라이브 업로드 (엑셀)
         run: |
           mkdir -p ~/.config/rclone
-          echo "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
+          cat << 'EOF' > ~/.config/rclone/rclone.conf
+          ${{ secrets.RCLONE_CONF }}
+          EOF
           rclone copyto output/kbo_allstar.xlsx gdrive:kbo_allstar.xlsx
 
       - name: 구글 드라이브 업로드 (차트)
