@@ -1,6 +1,8 @@
 name: Deploy static content to Pages
 
 on:
+  schedule:
+    - cron: '*/10 * * * *'
   push:
     branches: ["main"]
   workflow_dispatch:
@@ -36,29 +38,11 @@ jobs:
         run: python trigger.py
         continue-on-error: true
 
-      - name: Build chart (inject GitHub Pages URL)
+      - name: Build chart
         env:
           GITHUB_PAGES_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
           GITHUB_REPO_URL: "https://github.com/${{ github.repository }}"
         run: python chart_builder.py
-
-      - name: Inject site links into chart
-        env:
-          GITHUB_PAGES_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-          GITHUB_REPO_URL: "https://github.com/${{ github.repository }}"
-        run: |
-          python3 -c "
-          import os, re
-          pages_url = os.environ['GITHUB_PAGES_URL']
-          repo_url = os.environ['GITHUB_REPO_URL']
-          with open('output/chart.html', 'r', encoding='utf-8') as f:
-              html = f.read()
-          # GitHub 링크 실제 URL로 교체
-          html = html.replace('href=\"https://github.com/your-repo\"', f'href=\"{repo_url}\"')
-          with open('output/chart.html', 'w', encoding='utf-8') as f:
-              f.write(html)
-          print(f'✅ 링크 삽입 완료: {pages_url}')
-          "
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
