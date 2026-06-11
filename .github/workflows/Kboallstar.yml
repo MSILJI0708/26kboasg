@@ -3,8 +3,6 @@ name: KBO 올스타 투표 수집
 
 
 on:
-  schedule:
-    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 permissions:
