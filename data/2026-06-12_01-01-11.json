@@ -1,0 +1,1515 @@
+{
+  "timestamp": "2026-06-12T01:01:11.480638+09:00",
+  "positions": {
+    "SP": {
+      "name": "선발투수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51111,
+          "P_NM": "송승기",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SP",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "532,067",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51111.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56719,
+          "P_NM": "왕옌청",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SP",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 2,
+          "VOTE_CN": "459,660",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56719.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 55633,
+          "P_NM": "올러",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SP",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 3,
+          "VOTE_CN": "392,659",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/55633.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65933,
+          "P_NM": "구창모",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SP",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 4,
+          "VOTE_CN": "129,968",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65933.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68341,
+          "P_NM": "안우진",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SP",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "126,163",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68341.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68220,
+          "P_NM": "곽빈",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SP",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "796,697",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68220.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 69446,
+          "P_NM": "원태인",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SP",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 2,
+          "VOTE_CN": "412,676",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/69446.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51516,
+          "P_NM": "김진욱",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SP",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 3,
+          "VOTE_CN": "160,671",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51516.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51867,
+          "P_NM": "김건우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SP",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 4,
+          "VOTE_CN": "139,762",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51867.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56036,
+          "P_NM": "보쉴리",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SP",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 5,
+          "VOTE_CN": "130,711",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56036.png"
+        }
+      ]
+    },
+    "MP": {
+      "name": "중간투수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50662,
+          "P_NM": "정해영",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "MP",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 1,
+          "VOTE_CN": "559,678",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50662.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51526,
+          "P_NM": "우강훈",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "MP",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 2,
+          "VOTE_CN": "517,376",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51526.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65117,
+          "P_NM": "이상규",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "MP",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 3,
+          "VOTE_CN": "357,709",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65117.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 64995,
+          "P_NM": "배재환",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "MP",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 4,
+          "VOTE_CN": "104,475",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/64995.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 76118,
+          "P_NM": "원종현",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "MP",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "101,279",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/76118.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68830,
+          "P_NM": "김정우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "MP",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "613,151",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68830.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50464,
+          "P_NM": "이승민",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "MP",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 2,
+          "VOTE_CN": "397,349",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50464.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 61666,
+          "P_NM": "한승혁",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "MP",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 3,
+          "VOTE_CN": "293,142",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/61666.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62869,
+          "P_NM": "문승원",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "MP",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 4,
+          "VOTE_CN": "172,015",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62869.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56536,
+          "P_NM": "박정민",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "MP",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 5,
+          "VOTE_CN": "164,860",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56536.png"
+        }
+      ]
+    },
+    "CP": {
+      "name": "마무리투수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 54610,
+          "P_NM": "성영탁",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "CP",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 1,
+          "VOTE_CN": "584,513",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/54610.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 67143,
+          "P_NM": "손주영",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "CP",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 2,
+          "VOTE_CN": "539,673",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/67143.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65616,
+          "P_NM": "이민우",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "CP",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 3,
+          "VOTE_CN": "338,719",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65616.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65949,
+          "P_NM": "류진욱",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "CP",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 4,
+          "VOTE_CN": "93,219",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65949.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56348,
+          "P_NM": "유토",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "CP",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "84,393",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56348.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 66291,
+          "P_NM": "이영하",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "CP",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "620,945",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/66291.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51897,
+          "P_NM": "조병현",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "CP",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 2,
+          "VOTE_CN": "357,990",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51897.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65062,
+          "P_NM": "김재윤",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "CP",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 3,
+          "VOTE_CN": "332,380",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65062.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52060,
+          "P_NM": "박영현",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "CP",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 4,
+          "VOTE_CN": "174,785",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52060.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50556,
+          "P_NM": "최준용",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "CP",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 5,
+          "VOTE_CN": "154,417",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50556.png"
+        }
+      ]
+    },
+    "C": {
+      "name": "포수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79365,
+          "P_NM": "박동원",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "C",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "570,492",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79365.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52764,
+          "P_NM": "허인서",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "C",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 2,
+          "VOTE_CN": "513,497",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52764.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68646,
+          "P_NM": "한준수",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "C",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 3,
+          "VOTE_CN": "336,030",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68646.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68912,
+          "P_NM": "김형준",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "C",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 4,
+          "VOTE_CN": "117,971",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68912.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 53312,
+          "P_NM": "김건희",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "C",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "102,527",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/53312.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 76232,
+          "P_NM": "양의지",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "C",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "872,081",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/76232.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 74540,
+          "P_NM": "강민호",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "C",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 2,
+          "VOTE_CN": "372,678",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/74540.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51865,
+          "P_NM": "조형우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "C",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 3,
+          "VOTE_CN": "182,929",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51865.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51528,
+          "P_NM": "손성빈",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "C",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 4,
+          "VOTE_CN": "110,734",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51528.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 63722,
+          "P_NM": "한승택",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "C",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 5,
+          "VOTE_CN": "102,095",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/63722.png"
+        }
+      ]
+    },
+    "1B": {
+      "name": "1루수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 53123,
+          "P_NM": "오스틴",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "1B",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "730,280",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/53123.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 66704,
+          "P_NM": "김태연",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "1B",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 2,
+          "VOTE_CN": "375,643",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/66704.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52634,
+          "P_NM": "박상준",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "1B",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 3,
+          "VOTE_CN": "303,685",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52634.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 76267,
+          "P_NM": "최주환",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "1B",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 4,
+          "VOTE_CN": "117,824",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/76267.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 54944,
+          "P_NM": "데이비슨",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "1B",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 5,
+          "VOTE_CN": "113,085",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/54944.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 54400,
+          "P_NM": "디아즈",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "1B",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 1,
+          "VOTE_CN": "621,465",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/54400.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 63123,
+          "P_NM": "강승호",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "1B",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 2,
+          "VOTE_CN": "547,720",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/63123.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 76290,
+          "P_NM": "김현수",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "1B",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 3,
+          "VOTE_CN": "251,565",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/76290.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 60558,
+          "P_NM": "오태곤",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "1B",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 4,
+          "VOTE_CN": "132,971",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/60558.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51551,
+          "P_NM": "나승엽",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "1B",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 5,
+          "VOTE_CN": "86,796",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51551.png"
+        }
+      ]
+    },
+    "2B": {
+      "name": "2루수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65207,
+          "P_NM": "신민재",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "2B",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "562,285",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65207.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62907,
+          "P_NM": "박민우",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "2B",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 2,
+          "VOTE_CN": "342,275",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62907.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65703,
+          "P_NM": "이도윤",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "2B",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 3,
+          "VOTE_CN": "322,206",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65703.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 55926,
+          "P_NM": "정현창",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "2B",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 4,
+          "VOTE_CN": "317,316",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/55926.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79608,
+          "P_NM": "안치홍",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "2B",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "96,435",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79608.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 55252,
+          "P_NM": "박준순",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "2B",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "766,616",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/55252.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62234,
+          "P_NM": "류지혁",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "2B",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 2,
+          "VOTE_CN": "494,324",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62234.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 54812,
+          "P_NM": "정준재",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "2B",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 3,
+          "VOTE_CN": "198,469",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/54812.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79402,
+          "P_NM": "김상수",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "2B",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 4,
+          "VOTE_CN": "97,909",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79402.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 69517,
+          "P_NM": "고승민",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "2B",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 5,
+          "VOTE_CN": "83,199",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/69517.png"
+        }
+      ]
+    },
+    "3B": {
+      "name": "3루수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52605,
+          "P_NM": "김도영",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "3B",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 1,
+          "VOTE_CN": "675,360",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52605.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50054,
+          "P_NM": "천성호",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "3B",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 2,
+          "VOTE_CN": "425,501",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50054.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 69737,
+          "P_NM": "노시환",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "3B",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 3,
+          "VOTE_CN": "351,628",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/69737.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51344,
+          "P_NM": "김휘집",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "3B",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 4,
+          "VOTE_CN": "109,410",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51344.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65898,
+          "P_NM": "김웅빈",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "3B",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "78,618",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65898.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50204,
+          "P_NM": "박지훈",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "3B",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "622,098",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50204.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 75847,
+          "P_NM": "최정",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "3B",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 2,
+          "VOTE_CN": "514,639",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/75847.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65586,
+          "P_NM": "전병우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "3B",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 3,
+          "VOTE_CN": "283,160",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65586.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79240,
+          "P_NM": "허경민",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "3B",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 4,
+          "VOTE_CN": "112,968",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79240.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68525,
+          "P_NM": "한동희",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "3B",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 5,
+          "VOTE_CN": "107,652",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68525.png"
+        }
+      ]
+    },
+    "SS": {
+      "name": "유격수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79109,
+          "P_NM": "오지환",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SS",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "534,223",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79109.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 51907,
+          "P_NM": "김주원",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SS",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 2,
+          "VOTE_CN": "401,457",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/51907.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 64006,
+          "P_NM": "심우준",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SS",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 3,
+          "VOTE_CN": "324,715",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/64006.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50657,
+          "P_NM": "박민",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SS",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 4,
+          "VOTE_CN": "307,272",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50657.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 55371,
+          "P_NM": "권혁빈",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "SS",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 5,
+          "VOTE_CN": "72,850",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/55371.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 64646,
+          "P_NM": "박찬호",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SS",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "770,126",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/64646.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52415,
+          "P_NM": "이재현",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SS",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 2,
+          "VOTE_CN": "346,477",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52415.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 67893,
+          "P_NM": "박성한",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SS",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 3,
+          "VOTE_CN": "308,563",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/67893.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68205,
+          "P_NM": "전민재",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SS",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 4,
+          "VOTE_CN": "107,704",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68205.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56006,
+          "P_NM": "이강민",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "SS",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 5,
+          "VOTE_CN": "107,647",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56006.png"
+        }
+      ]
+    },
+    "OF": {
+      "name": "외야수",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62415,
+          "P_NM": "박해민",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "672,132",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62415.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 55636,
+          "P_NM": "박재현",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 2,
+          "VOTE_CN": "569,092",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/55636.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 53764,
+          "P_NM": "문현빈",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 3,
+          "VOTE_CN": "557,918",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/53764.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 65653,
+          "P_NM": "김호령",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 4,
+          "VOTE_CN": "515,131",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/65653.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 66108,
+          "P_NM": "홍창기",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 5,
+          "VOTE_CN": "508,470",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/66108.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 54730,
+          "P_NM": "페라자",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 6,
+          "VOTE_CN": "424,283",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/54730.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68110,
+          "P_NM": "송찬의",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 7,
+          "VOTE_CN": "398,309",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68110.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62947,
+          "P_NM": "나성범",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 8,
+          "VOTE_CN": "311,803",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62947.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68700,
+          "P_NM": "이원석",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 9,
+          "VOTE_CN": "299,547",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68700.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79215,
+          "P_NM": "박건우",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 10,
+          "VOTE_CN": "286,901",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79215.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 63260,
+          "P_NM": "이우성",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 11,
+          "VOTE_CN": "84,485",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/63260.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 69992,
+          "P_NM": "최정원",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 12,
+          "VOTE_CN": "80,082",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/69992.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50167,
+          "P_NM": "이주형",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 13,
+          "VOTE_CN": "74,032",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50167.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50357,
+          "P_NM": "박주홍",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 14,
+          "VOTE_CN": "69,747",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50357.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 64346,
+          "P_NM": "임병욱",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "OF",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 15,
+          "VOTE_CN": "69,619",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/64346.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 79231,
+          "P_NM": "정수빈",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "780,144",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/79231.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 53554,
+          "P_NM": "김민석",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 2,
+          "VOTE_CN": "665,772",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/53554.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62404,
+          "P_NM": "구자욱",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 3,
+          "VOTE_CN": "636,007",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62404.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56251,
+          "P_NM": "카메론",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 4,
+          "VOTE_CN": "510,640",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56251.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 69418,
+          "P_NM": "박승규",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 5,
+          "VOTE_CN": "392,949",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/69418.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 67449,
+          "P_NM": "김성윤",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 6,
+          "VOTE_CN": "324,327",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/67449.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 66606,
+          "P_NM": "최원준",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 7,
+          "VOTE_CN": "317,108",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/66606.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 54529,
+          "P_NM": "레이예스",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 8,
+          "VOTE_CN": "238,151",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/54529.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52001,
+          "P_NM": "안현민",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 9,
+          "VOTE_CN": "212,661",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52001.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 50854,
+          "P_NM": "최지훈",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 10,
+          "VOTE_CN": "196,293",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/50854.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 52591,
+          "P_NM": "윤동희",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 11,
+          "VOTE_CN": "154,371",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/52591.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 53827,
+          "P_NM": "에레디아",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 12,
+          "VOTE_CN": "138,047",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/53827.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 56034,
+          "P_NM": "힐리어드",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 13,
+          "VOTE_CN": "123,082",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/56034.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 62895,
+          "P_NM": "한유섬",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 14,
+          "VOTE_CN": "120,150",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/62895.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68507,
+          "P_NM": "장두성",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "OF",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 15,
+          "VOTE_CN": "111,849",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68507.png"
+        }
+      ]
+    },
+    "DH": {
+      "name": "지명타자",
+      "nanum": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 69102,
+          "P_NM": "문보경",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "DH",
+          "T_ID": "LG",
+          "T_NM": "LG",
+          "RANK_CN": 1,
+          "VOTE_CN": "621,131",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/69102.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68050,
+          "P_NM": "강백호",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "DH",
+          "T_ID": "HH",
+          "T_NM": "한화",
+          "RANK_CN": 2,
+          "VOTE_CN": "567,734",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68050.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 78603,
+          "P_NM": "김선빈",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "DH",
+          "T_ID": "HT",
+          "T_NM": "KIA",
+          "RANK_CN": 3,
+          "VOTE_CN": "310,892",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/78603.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 78168,
+          "P_NM": "서건창",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "DH",
+          "T_ID": "WO",
+          "T_NM": "키움",
+          "RANK_CN": 4,
+          "VOTE_CN": "70,434",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/78168.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 68904,
+          "P_NM": "오영수",
+          "ALLSTAR_T_ID": "WE",
+          "POS_ID": "DH",
+          "T_ID": "NC",
+          "T_NM": "NC",
+          "RANK_CN": 5,
+          "VOTE_CN": "70,326",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/68904.png"
+        }
+      ],
+      "dream": [
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 77532,
+          "P_NM": "손아섭",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "DH",
+          "T_ID": "OB",
+          "T_NM": "두산",
+          "RANK_CN": 1,
+          "VOTE_CN": "848,378",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/77532.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 72443,
+          "P_NM": "최형우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "DH",
+          "T_ID": "SS",
+          "T_NM": "삼성",
+          "RANK_CN": 2,
+          "VOTE_CN": "565,294",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/72443.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 78513,
+          "P_NM": "전준우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "DH",
+          "T_ID": "LT",
+          "T_NM": "롯데",
+          "RANK_CN": 3,
+          "VOTE_CN": "100,995",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/78513.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 78224,
+          "P_NM": "김재환",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "DH",
+          "T_ID": "SK",
+          "T_NM": "SSG",
+          "RANK_CN": 4,
+          "VOTE_CN": "65,880",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/78224.png"
+        },
+        {
+          "SEASON_ID": 2026,
+          "P_ID": 78548,
+          "P_NM": "장성우",
+          "ALLSTAR_T_ID": "EA",
+          "POS_ID": "DH",
+          "T_ID": "KT",
+          "T_NM": "KT",
+          "RANK_CN": 5,
+          "VOTE_CN": "59,970",
+          "P_IMG_LK": "//qlotfqlu5749.edge.naverncp.com/KBO_IMAGE/person/kbo/2026/78548.png"
+        }
+      ]
+    }
+  }
+}
