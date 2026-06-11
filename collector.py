@@ -4,6 +4,8 @@ import os
 from datetime import datetime, timezone, timedelta
 
 KST = timezone(timedelta(hours=9))
+
+
 POSITIONS = {
     'SP': '선발투수', 'MP': '중간투수', 'CP': '마무리투수',
     'C': '포수', '1B': '1루수', '2B': '2루수', '3B': '3루수',
@@ -15,6 +17,20 @@ HEADERS = {
     "Referer": "https://allstar.koreabaseball.com/Default.aspx",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
+def fetch_position(pos_id, pos_name, retries=3):
+    for attempt in range(retries):
+        try:
+            r = requests.post(URL, headers=HEADERS, data={"pos": pos_id}, timeout=15)
+            r.raise_for_status()
+            data = r.json()
+            if data.get("code") == "100":
+                return data
+        except Exception as e:
+            print(f"❌ {pos_name} 시도 {attempt+1}/{retries} 실패: {e}")
+            if attempt < retries - 1:
+                time.sleep(3)
+    return None
+
 
 def fetch_all():
     now = datetime.now(KST)
