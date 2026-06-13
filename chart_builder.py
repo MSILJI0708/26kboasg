@@ -623,33 +623,43 @@ updateCharts();
   // 최초 로드 후에도 한번 시도
   requestAnimationFrame(() => requestAnimationFrame(tryAttach));
 
-  // 마우스 이동: 드래그 중일 때만 축 범위 조정
+  // 마우스 이동: rAF로 throttle — 프레임당 최대 1번만 relayout
+  let rafPending = false;
+  let lastE = null;
+
   window.addEventListener('mousemove', e => {{
     if (!drag) return;
-    const dx = e.clientX - drag.startX;
-    const dy = e.clientY - drag.startY;
+    lastE = e;
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {{
+      rafPending = false;
+      if (!drag || !lastE) return;
+      const dx = lastE.clientX - drag.startX;
+      const dy = lastE.clientY - drag.startY;
 
-    if (drag.mode === 'x') {{
-      // Shift+좌우: x축(시간) 확대/축소. 오른쪽→축소, 왼쪽→확대
-      const span = drag.x1 - drag.x0;
-      const factor = Math.pow(1.003, dx);
-      const mid = (drag.x0 + drag.x1) / 2;
-      const half = span / 2 * factor;
-      Plotly.relayout(drag.gd, {{'xaxis.range[0]': mid - half, 'xaxis.range[1]': mid + half}});
-    }} else {{
-      // Ctrl+상하: y축(득표) 확대/축소. 위→축소, 아래→확대
-      const span = drag.y1 - drag.y0;
-      const factor = Math.pow(1.003, -dy);
-      const mid = (drag.y0 + drag.y1) / 2;
-      const half = span / 2 * factor;
-      Plotly.relayout(drag.gd, {{
-        'yaxis.range[0]': Math.max(0, mid - half),
-        'yaxis.range[1]': mid + half
-      }});
-    }}
+      if (drag.mode === 'x') {{
+        // Shift+좌우: x축(시간) 확대/축소. 오른쪽→축소, 왼쪽→확대
+        const span = drag.x1 - drag.x0;
+        const factor = Math.pow(1.003, dx);
+        const mid = (drag.x0 + drag.x1) / 2;
+        const half = Math.min(span / 2 * factor, 30 * 24 * 3600 * 1000); // 최대 30일
+        Plotly.relayout(drag.gd, {{'xaxis.range[0]': mid - half, 'xaxis.range[1]': mid + half}});
+      }} else {{
+        // Ctrl+상하: y축(득표) 확대/축소. 위→축소, 아래→확대
+        const span = drag.y1 - drag.y0;
+        const factor = Math.pow(1.003, -dy);
+        const mid = (drag.y0 + drag.y1) / 2;
+        const half = Math.min(span / 2 * factor, 1e9); // 최대값 제한
+        Plotly.relayout(drag.gd, {{
+          'yaxis.range[0]': Math.max(0, mid - half),
+          'yaxis.range[1]': mid + half
+        }});
+      }}
+    }});
   }});
 
-  window.addEventListener('mouseup', () => {{ drag = null; }});
+  window.addEventListener('mouseup', () => {{ drag = null; lastE = null; rafPending = false; }});
 }})();
 </script>
 </body>
