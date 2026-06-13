@@ -323,7 +323,8 @@ function resampleData(data, unit) {{
     const dt = new Date(d.datetime);
     if (unit === '1hour') dt.setMinutes(0, 0, 0);
     else if (unit === '1day') dt.setHours(0, 0, 0, 0);
-    const key = dt.toISOString() + '|' + d.player;
+    // TOTAL_DATA는 player 필드가 없으므로 빈 문자열로 대체
+    const key = dt.toISOString() + '|' + (d.player ?? '');
     if (!grouped[key] || new Date(d.datetime) > new Date(grouped[key].datetime)) {{
       grouped[key] = {{ ...d, datetime: dt.toISOString() }};
     }}
