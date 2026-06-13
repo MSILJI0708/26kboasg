@@ -79,7 +79,10 @@ def load_all_data(days=7):
     return pd.DataFrame(records)
 
 def calc_total_votes_per_snapshot(df):
-    return df.groupby("datetime")["votes"].sum().reset_index()
+    # 드림팀 한 포지션(SP)의 전체 득표합 = 해당 스냅샷의 실제 총투표수
+    # (포지션별 투표가 독립적이므로 SP dream 전체합이 총투표 대리값)
+    sp_dream = df[(df["pos_id"] == "SP") & (df["team"] == "dream")]
+    return sp_dream.groupby("datetime")["votes"].sum().reset_index()
 
 def calc_new_votes(df):
     df = df.sort_values("datetime")
@@ -87,7 +90,8 @@ def calc_new_votes(df):
     return df
 
 def calc_vote_rate(df):
-    total = df.groupby(["datetime", "pos_id"])["votes"].transform("sum")
+    # 나눔/드림 각각의 포지션 내 득표율 (team을 모수 기준에 포함)
+    total = df.groupby(["datetime", "pos_id", "team"])["votes"].transform("sum")
     df["vote_rate"] = (df["votes"] / total * 100).round(2)
     return df
 
@@ -316,6 +320,7 @@ function setTimeUnit(u) {{
   updateCharts();
 }}
 
+// 선수별 데이터 리샘플 (나눔/드림 차트용)
 function resampleData(data, unit) {{
   if (unit === '10min') return data;
   const grouped = {{}};
@@ -323,13 +328,29 @@ function resampleData(data, unit) {{
     const dt = new Date(d.datetime);
     if (unit === '1hour') dt.setMinutes(0, 0, 0);
     else if (unit === '1day') dt.setHours(0, 0, 0, 0);
-    // TOTAL_DATA는 player 필드가 없으므로 빈 문자열로 대체
-    const key = dt.toISOString() + '|' + (d.player ?? '');
+    const key = dt.toISOString() + '|' + (d.player || '');
     if (!grouped[key] || new Date(d.datetime) > new Date(grouped[key].datetime)) {{
       grouped[key] = {{ ...d, datetime: dt.toISOString() }};
     }}
   }});
   return Object.values(grouped);
+}}
+
+// 총투표 데이터 리샘플 (player 없이 시간대별 마지막 votes값 사용)
+function resampleTotal(data, unit) {{
+  if (unit === '10min') return [...data].sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+  const grouped = {{}};
+  data.forEach(d => {{
+    const dt = new Date(d.datetime);
+    if (unit === '1hour') dt.setMinutes(0, 0, 0);
+    else if (unit === '1day') dt.setHours(0, 0, 0, 0);
+    const key = dt.toISOString();
+    // 해당 시간대의 마지막(최신) 값으로 갱신
+    if (!grouped[key] || new Date(d.datetime) > new Date(grouped[key]._raw)) {{
+      grouped[key] = {{ datetime: key, votes: d.votes, _raw: d.datetime }};
+    }}
+  }});
+  return Object.values(grouped).sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
 }}
 
 function calcNewVotes(playerData) {{
@@ -491,8 +512,7 @@ function updateCharts() {{
   }});
 
   // 전체 투표수 차트
-  const totalResampled = resampleData(TOTAL_DATA, currentTimeUnit);
-  const sortedTotal = totalResampled.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+  const sortedTotal = resampleTotal(TOTAL_DATA, currentTimeUnit);
   const kstTotal = sortedTotal.map(d => toKST(d.datetime));
 
   const totalTrace = {{
