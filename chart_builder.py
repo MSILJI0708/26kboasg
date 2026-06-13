@@ -276,13 +276,13 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">🔵 나눔 올스타</div>
-  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그: 시간축만 이동 · y축 위 드래그: 값축만 이동</div>
+  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
   <div id="chart-nanum"></div>
 </div>
 
 <div class="chart-container">
   <div class="chart-title">🔴 드림 올스타</div>
-  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그: 시간축만 이동 · y축 위 드래그: 값축만 이동</div>
+  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
   <div id="chart-dream"></div>
 </div>
 
@@ -290,7 +290,7 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">📊 전체 투표수 추이</div>
-  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그: 시간축만 이동 · y축 위 드래그: 값축만 이동</div>
+  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
   <div id="chart-total"></div>
 </div>
 
@@ -566,6 +566,106 @@ function updateCharts() {{
 }}
 
 updateCharts();
+
+// ── 축 위 드래그로 해당 축만 확대/축소 ──────────────────────────────
+// x축 영역 드래그(좌우) → 시간축 zoom / y축 영역 드래그(상하) → 값축 zoom
+// 그래프 본체 드래그는 Plotly 기본 pan 그대로 유지
+(function() {{
+  const CHART_IDS = ['chart-nanum', 'chart-dream', 'chart-total'];
+  let drag = null;
+  let rafPending = false;
+
+  function getAxisRangeMs(gd, axis) {{
+    // Plotly date축 range는 날짜 문자열 또는 ms 숫자
+    const r = gd._fullLayout[axis].range;
+    return [new Date(r[0]).getTime(), new Date(r[1]).getTime()];
+  }}
+
+  function attachAxisZoom(id) {{
+    const gd = document.getElementById(id);
+    if (!gd || !gd._fullLayout || gd.__axisZoom) return;
+    gd.__axisZoom = true;
+
+    // Plotly가 그리는 축 레이어 선택자
+    // .xaxislayer-above / .yaxislayer-above 안의 tick, line 영역이 축 영역
+    const xLayer = gd.querySelector('.xaxislayer-above') || gd.querySelector('.x.axis');
+    const yLayer = gd.querySelector('.yaxislayer-above') || gd.querySelector('.y.axis');
+
+    function onAxisMousedown(e, mode) {{
+      e.preventDefault();
+      e.stopPropagation();
+      const [x0, x1] = getAxisRangeMs(gd, 'xaxis');
+      const yr = gd._fullLayout.yaxis.range;
+      drag = {{
+        gd, mode,
+        startX: e.clientX, startY: e.clientY,
+        x0, x1, xSpan: x1 - x0,
+        y0: +yr[0], y1: +yr[1], ySpan: +yr[1] - +yr[0],
+      }};
+    }}
+
+    if (xLayer) {{
+      xLayer.style.cursor = 'ew-resize';
+      xLayer.addEventListener('mousedown', e => onAxisMousedown(e, 'x'), true);
+    }}
+    if (yLayer) {{
+      yLayer.style.cursor = 'ns-resize';
+      yLayer.addEventListener('mousedown', e => onAxisMousedown(e, 'y'), true);
+    }}
+  }}
+
+  function tryAttach() {{
+    CHART_IDS.forEach(id => {{
+      const gd = document.getElementById(id);
+      if (gd && gd._fullLayout && !gd.__axisZoom) attachAxisZoom(id);
+    }});
+  }}
+
+  // updateCharts 래핑: 차트 재렌더링 후 재등록
+  const _orig = window.updateCharts;
+  window.updateCharts = function() {{
+    CHART_IDS.forEach(id => {{ const g = document.getElementById(id); if(g) g.__axisZoom = false; }});
+    _orig();
+    requestAnimationFrame(() => requestAnimationFrame(tryAttach));
+  }};
+  requestAnimationFrame(() => requestAnimationFrame(tryAttach));
+
+  // mousemove: rAF throttle으로 렉 방지
+  window.addEventListener('mousemove', e => {{
+    if (!drag) return;
+    if (rafPending) return;
+    rafPending = true;
+    const cx = e.clientX, cy = e.clientY;
+    requestAnimationFrame(() => {{
+      rafPending = false;
+      if (!drag) return;
+      const dx = cx - drag.startX;
+      const dy = cy - drag.startY;
+
+      if (drag.mode === 'x') {{
+        // 좌우 드래그 → x축 zoom. 오른쪽: 축소(범위 넓힘), 왼쪽: 확대(범위 좁힘)
+        const factor = Math.pow(1.004, dx);
+        const mid = (drag.x0 + drag.x1) / 2;
+        const half = Math.max(3600000, Math.min(drag.xSpan / 2 * factor, 25 * 24 * 3600000));
+        Plotly.relayout(drag.gd, {{
+          'xaxis.range[0]': new Date(mid - half).toISOString(),
+          'xaxis.range[1]': new Date(mid + half).toISOString(),
+        }});
+      }} else {{
+        // 상하 드래그 → y축 zoom. 위: 축소(범위 넓힘), 아래: 확대(범위 좁힘)
+        const factor = Math.pow(1.004, -dy);
+        const mid = (drag.y0 + drag.y1) / 2;
+        const half = Math.max(0.01, drag.ySpan / 2 * factor);
+        Plotly.relayout(drag.gd, {{
+          'yaxis.range[0]': Math.max(0, mid - half),
+          'yaxis.range[1]': mid + half,
+        }});
+      }}
+    }});
+  }});
+
+  window.addEventListener('mouseup', () => {{ drag = null; rafPending = false; }});
+}})();
 </script>
 </body>
 </html>"""
