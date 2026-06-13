@@ -467,6 +467,18 @@ function updateCharts() {{
   const filtered = RAW_DATA.filter(d => d.pos_id === pos);
   const resampled = resampleData(filtered, currentTimeUnit);
 
+  // xAxisBase를 updateCharts 스코프 최상단에 선언 → 총투표 차트 포함 전체 공유
+  const xCfg = getXAxisConfig(currentTimeUnit);
+  const xAxisBase = {{
+    gridcolor: '#1e2640', linecolor: '#2a3050',
+    tickfont: {{ size: 10 }}, tickangle: -45,
+    type: 'date',
+    dtick: xCfg.dtick,
+    tickformat: xCfg.tickformat,
+    range: ['2026-06-03 15:00', '2026-06-25 00:00'],
+    fixedrange: false
+  }};
+
   ['nanum', 'dream'].forEach(team => {{
     const teamData = resampled.filter(d => d.team === team);
     const players = [...new Set(teamData.map(d => d.player))];
@@ -484,16 +496,6 @@ function updateCharts() {{
       return buildTrace(pd, currentMetric);
     }});
 
-    const xCfg = getXAxisConfig(currentTimeUnit);
-    const xAxisBase = {{
-      gridcolor: '#1e2640', linecolor: '#2a3050',
-      tickfont: {{ size: 10 }}, tickangle: -45,
-      type: 'date',
-      dtick: xCfg.dtick,
-      tickformat: xCfg.tickformat,
-      range: ['2026-06-03 15:00', '2026-06-25 00:00'],
-      fixedrange: false
-    }};
     const layout = {{
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
