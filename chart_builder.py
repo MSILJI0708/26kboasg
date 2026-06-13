@@ -276,13 +276,13 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">🔵 나눔 올스타</div>
-  <div class="zoom-hint">🖱 스크롤: 확대/축소 · 드래그: 이동 · <kbd>Shift</kbd>+드래그: 시간축 조절 · <kbd>Ctrl</kbd>+드래그: 값축 조절</div>
+  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그: 시간축만 이동 · y축 위 드래그: 값축만 이동</div>
   <div id="chart-nanum"></div>
 </div>
 
 <div class="chart-container">
   <div class="chart-title">🔴 드림 올스타</div>
-  <div class="zoom-hint">🖱 스크롤: 확대/축소 · 드래그: 이동 · <kbd>Shift</kbd>+드래그: 시간축 조절 · <kbd>Ctrl</kbd>+드래그: 값축 조절</div>
+  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그: 시간축만 이동 · y축 위 드래그: 값축만 이동</div>
   <div id="chart-dream"></div>
 </div>
 
@@ -290,7 +290,7 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">📊 전체 투표수 추이</div>
-  <div class="zoom-hint">🖱 스크롤: 확대/축소 · 드래그: 이동 · <kbd>Shift</kbd>+드래그: 시간축 조절 · <kbd>Ctrl</kbd>+드래그: 값축 조절</div>
+  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그: 시간축만 이동 · y축 위 드래그: 값축만 이동</div>
   <div id="chart-total"></div>
 </div>
 
@@ -566,101 +566,6 @@ function updateCharts() {{
 }}
 
 updateCharts();
-
-// ── Shift+드래그: x축(시간)만 / Ctrl+드래그: y축(값)만 확대·축소 ──────
-// Plotly가 각 차트를 렌더링한 뒤 gd 객체에 직접 이벤트를 붙임
-(function() {{
-  const CHART_IDS = ['chart-nanum', 'chart-dream', 'chart-total'];
-  let drag = null;  // {{ gd, mode, startX, startY, x0, x1, y0, y1 }}
-
-  function attachToDom(id) {{
-    const gd = document.getElementById(id);
-    if (!gd || !gd._fullLayout) return false;
-
-    // Plotly가 그린 드래그 레이어(dragcover 또는 xy 레이어)에 mousedown 등록
-    const dragLayer = gd.querySelector('.nsewdrag') || gd.querySelector('.drag') || gd;
-
-    dragLayer.addEventListener('mousedown', e => {{
-      if (!e.shiftKey && !e.ctrlKey) return;
-      e.preventDefault();
-      e.stopPropagation();
-
-      const fl = gd._fullLayout;
-      const xa = fl.xaxis, ya = fl.yaxis;
-
-      drag = {{
-        gd,
-        mode:   e.shiftKey ? 'x' : 'y',
-        startX: e.clientX,
-        startY: e.clientY,
-        // Plotly date축은 range가 ms 숫자로 저장됨
-        x0: xa.range[0], x1: xa.range[1],
-        y0: ya.range[0], y1: ya.range[1],
-      }};
-    }}, true);  // capture phase — Plotly 이벤트보다 먼저 잡음
-
-    return true;
-  }}
-
-  // Plotly.react 직후 gd가 준비되어 있지만, 확실히 하기 위해 updateCharts 후 시도
-  function tryAttach() {{
-    CHART_IDS.forEach(id => {{
-      const gd = document.getElementById(id);
-      if (gd && gd._fullLayout && !gd.__axisZoomAttached) {{
-        if (attachToDom(id)) gd.__axisZoomAttached = true;
-      }}
-    }});
-  }}
-
-  // updateCharts() 호출마다 재등록 (포지션 변경 시 Plotly.react가 DOM을 재생성)
-  const _orig = window.updateCharts;
-  window.updateCharts = function() {{
-    _orig();
-    // 렌더링 완료 후 attach
-    requestAnimationFrame(() => requestAnimationFrame(tryAttach));
-  }};
-
-  // 최초 로드 후에도 한번 시도
-  requestAnimationFrame(() => requestAnimationFrame(tryAttach));
-
-  // 마우스 이동: rAF로 throttle — 프레임당 최대 1번만 relayout
-  let rafPending = false;
-  let lastE = null;
-
-  window.addEventListener('mousemove', e => {{
-    if (!drag) return;
-    lastE = e;
-    if (rafPending) return;
-    rafPending = true;
-    requestAnimationFrame(() => {{
-      rafPending = false;
-      if (!drag || !lastE) return;
-      const dx = lastE.clientX - drag.startX;
-      const dy = lastE.clientY - drag.startY;
-
-      if (drag.mode === 'x') {{
-        // Shift+좌우: x축(시간) 확대/축소. 오른쪽→축소, 왼쪽→확대
-        const span = drag.x1 - drag.x0;
-        const factor = Math.pow(1.003, dx);
-        const mid = (drag.x0 + drag.x1) / 2;
-        const half = Math.min(span / 2 * factor, 30 * 24 * 3600 * 1000); // 최대 30일
-        Plotly.relayout(drag.gd, {{'xaxis.range[0]': mid - half, 'xaxis.range[1]': mid + half}});
-      }} else {{
-        // Ctrl+상하: y축(득표) 확대/축소. 위→축소, 아래→확대
-        const span = drag.y1 - drag.y0;
-        const factor = Math.pow(1.003, -dy);
-        const mid = (drag.y0 + drag.y1) / 2;
-        const half = Math.min(span / 2 * factor, 1e9); // 최대값 제한
-        Plotly.relayout(drag.gd, {{
-          'yaxis.range[0]': Math.max(0, mid - half),
-          'yaxis.range[1]': mid + half
-        }});
-      }}
-    }});
-  }});
-
-  window.addEventListener('mouseup', () => {{ drag = null; lastE = null; rafPending = false; }});
-}})();
 </script>
 </body>
 </html>"""
