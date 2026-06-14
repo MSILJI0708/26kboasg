@@ -257,10 +257,13 @@ def build_chart(df):
 <div class="updated">마지막 업데이트: {last_updated} KST</div>
 
 <div class="controls">
-  <div class="control-group">
-    <label>포지션</label>
+  <div class="control-group" id="selector-group">
+    <label id="selector-label">포지션</label>
     <select id="posSelect" onchange="updateCharts()">
       {''.join(f'<option value="{k}">{v}</option>' for k, v in POSITIONS.items())}
+    </select>
+    <select id="clubSelect" onchange="updateCharts()" style="display:none">
+      {''.join(f'<option value="{c}">{c}</option>' for c in ['KIA','KT','LG','NC','SSG','두산','롯데','삼성','키움','한화'])}
     </select>
   </div>
   <div class="control-group">
@@ -279,6 +282,13 @@ def build_chart(df):
       <button class="toggle-btn" id="btn-1day" onclick="setTimeUnit('1day')">1일</button>
     </div>
   </div>
+  <div class="control-group">
+    <label>보기 방식</label>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="btn-bypos" onclick="setViewMode('position')">포지션별</button>
+      <button class="toggle-btn" id="btn-byclub" onclick="setViewMode('club')">구단별</button>
+    </div>
+  </div>
 </div>
 
 <div class="chart-container">
@@ -291,6 +301,19 @@ def build_chart(df):
   <div class="chart-title">🔴 드림 올스타</div>
   <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
   <div id="chart-dream"></div>
+</div>
+
+<div id="of-section" style="display:none">
+  <div class="chart-container">
+    <div class="chart-title">🔵 나눔 올스타 — 외야수</div>
+    <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+    <div id="chart-of-nanum"></div>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">🔴 드림 올스타 — 외야수</div>
+    <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+    <div id="chart-of-dream"></div>
+  </div>
 </div>
 
 <hr class="divider">
@@ -464,7 +487,7 @@ function buildTrace(playerData, metric) {{
 // 시간 단위별 x축 틱 간격 (밀리초)
 function getXAxisConfig(unit) {{
   const H = 60 * 60 * 1000;
-  if (unit === '10min') return {{ dtick: 6 * H,  tickformat: '%m-%d %H:%M' }};
+  if (unit === '10min') return {{ dtick: 2 * H,  tickformat: '%m-%d %H:%M' }};
   if (unit === '1hour') return {{ dtick: 6 * H,  tickformat: '%m-%d %H시'  }};
   if (unit === '1day')  return {{ dtick: 24 * H, tickformat: '%m-%d'       }};
   return {{ dtick: 6 * H, tickformat: '%m-%d %H시' }};
@@ -477,12 +500,51 @@ const scrollZoomConfig = {{
   displayModeBar: false
 }};
 
-function updateCharts() {{
-  const pos = document.getElementById('posSelect').value;
-  const filtered = RAW_DATA.filter(d => d.pos_id === pos);
-  const resampled = resampleData(filtered, currentTimeUnit);
+let currentViewMode = 'position';
 
-  // xAxisBase를 updateCharts 스코프 최상단에 선언 → 총투표 차트 포함 전체 공유
+let currentViewMode = 'position';
+
+function setViewMode(mode) {{
+  currentViewMode = mode;
+  document.getElementById('btn-bypos').classList.toggle('active', mode === 'position');
+  document.getElementById('btn-byclub').classList.toggle('active', mode === 'club');
+  document.getElementById('posSelect').style.display  = mode === 'position' ? '' : 'none';
+  document.getElementById('clubSelect').style.display = mode === 'club'     ? '' : 'none';
+  document.getElementById('selector-label').textContent = mode === 'position' ? '포지션' : '구단';
+  updateCharts();
+}}
+
+function renderTeamChart(chartId, traces, xAxisBase, title) {{
+  const layout = {{
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: {{ color: '#a0b0d0', size: 11 }},
+    height: 320,
+    margin: {{ t: 30, b: 60, l: 50, r: 70 }},
+    xaxis: xAxisBase,
+    yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+    legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
+    hovermode: 'x unified',
+    hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
+    dragmode: 'pan',
+    title: {{ text: title, font: {{ color: '#a0b0d0', size: 13 }}, x: 0.01, xanchor: 'left' }}
+  }};
+  Plotly.react(chartId, traces, layout, scrollZoomConfig);
+}}
+
+function buildChartTraces(data) {{
+  const players = [...new Set(data.map(d => d.player))];
+  const playerLatest = {{}};
+  players.forEach(p => {{
+    const pd = data.filter(d => d.player === p);
+    const latest = pd.sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+    playerLatest[p] = latest ? getVal(latest, currentMetric) : 0;
+  }});
+  const sortedPlayers = [...players].sort((a,b) => playerLatest[b] - playerLatest[a]);
+  return sortedPlayers.map(p => buildTrace(data.filter(d => d.player === p), currentMetric));
+}}
+
+function updateCharts() {{
   const xCfg = getXAxisConfig(currentTimeUnit);
   const xAxisBase = {{
     gridcolor: '#1e2640', linecolor: '#2a3050',
@@ -494,39 +556,77 @@ function updateCharts() {{
     fixedrange: false
   }};
 
-  ['nanum', 'dream'].forEach(team => {{
-    const teamData = resampled.filter(d => d.team === team);
-    const players = [...new Set(teamData.map(d => d.player))];
+  // 구단별 모드 - 외야수 차트 표시 여부
+  const ofDiv = document.getElementById('of-section');
 
-    const playerLatest = {{}};
-    players.forEach(p => {{
-      const pd = teamData.filter(d => d.player === p);
-      const latest = pd.sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
-      playerLatest[p] = latest ? getVal(latest, currentMetric) : 0;
+  if (currentViewMode === 'position') {{
+    if (ofDiv) ofDiv.style.display = 'none';
+    const pos = document.getElementById('posSelect').value;
+    const filtered = RAW_DATA.filter(d => d.pos_id === pos);
+    const resampled = resampleData(filtered, currentTimeUnit);
+
+    ['nanum', 'dream'].forEach(team => {{
+      const teamData = resampled.filter(d => d.team === team);
+      const traces = buildChartTraces(teamData);
+      const layout = {{
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {{ color: '#a0b0d0', size: 11 }},
+        height: 320,
+        margin: {{ t: 10, b: 60, l: 50, r: 70 }},
+        xaxis: xAxisBase,
+        yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+        legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
+        hovermode: 'x unified',
+        hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
+        dragmode: 'pan'
+      }};
+      Plotly.react(`chart-${{team}}`, traces, layout, scrollZoomConfig);
     }});
-    const sortedPlayers = [...players].sort((a,b) => playerLatest[b] - playerLatest[a]);
+  }} else {{
+    // 구단별 모드
+    if (ofDiv) ofDiv.style.display = '';
+    const club = document.getElementById('clubSelect').value;
+    const NON_OF_POS = ['SP','MP','CP','C','1B','2B','3B','SS','DH'];
 
-    const traces = sortedPlayers.map(p => {{
-      const pd = teamData.filter(d => d.player === p);
-      return buildTrace(pd, currentMetric);
+    ['nanum', 'dream'].forEach(team => {{
+      // 외야수 제외 9개 포지션
+      const nonOfData = resampleData(
+        RAW_DATA.filter(d => d.club === club && d.team === team && NON_OF_POS.includes(d.pos_id)),
+        currentTimeUnit
+      );
+      // 각 포지션의 1위 선수만
+      const top1PerPos = {{}};
+      NON_OF_POS.forEach(pos => {{
+        const posData = nonOfData.filter(d => d.pos_id === pos);
+        const players = [...new Set(posData.map(d => d.player))];
+        const playerLatest = {{}};
+        players.forEach(p => {{
+          const pd = posData.filter(d => d.player === p);
+          const latest = pd.sort((a,b) => new Date(b.datetime) - new Date(a.datetime))[0];
+          playerLatest[p] = latest ? getVal(latest, currentMetric) : 0;
+        }});
+        const top = players.sort((a,b) => playerLatest[b] - playerLatest[a])[0];
+        if (top) top1PerPos[pos] = posData.filter(d => d.player === top);
+      }});
+
+      const traces = Object.entries(top1PerPos).map(([pos, pd]) => {{
+        const t = buildTrace(pd, currentMetric);
+        t.name = `${{pos}} ${{t.name}}`;
+        return t;
+      }});
+      const teamLabel = team === 'nanum' ? '🔵 나눔 올스타' : '🔴 드림 올스타';
+      renderTeamChart(`chart-${{team}}`, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
+
+      // 외야수
+      const ofData = resampleData(
+        RAW_DATA.filter(d => d.club === club && d.team === team && d.pos_id === 'OF'),
+        currentTimeUnit
+      );
+      const ofTraces = buildChartTraces(ofData);
+      renderTeamChart(`chart-of-${{team}}`, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
     }});
-
-    const layout = {{
-      paper_bgcolor: 'rgba(0,0,0,0)',
-      plot_bgcolor: 'rgba(0,0,0,0)',
-      font: {{ color: '#a0b0d0', size: 11 }},
-      height: 320,
-      margin: {{ t: 10, b: 60, l: 50, r: 70 }},
-      xaxis: xAxisBase,
-      yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
-      legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
-      hovermode: 'x unified',
-      hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
-      dragmode: 'pan'
-    }};
-
-    Plotly.react(`chart-${{team}}`, traces, layout, scrollZoomConfig);
-  }});
+  }}
 
   // 전체 투표수 차트
   const sortedTotal = resampleTotal(TOTAL_DATA, currentTimeUnit);
@@ -575,7 +675,7 @@ updateCharts();
 
 // ── 축 위에 투명 div 덮어씌워 드래그로 축 zoom ──────────────────────
 (function() {{
-  const CHART_IDS = ['chart-nanum', 'chart-dream', 'chart-total'];
+  const CHART_IDS = ['chart-nanum', 'chart-dream', 'chart-of-nanum', 'chart-of-dream', 'chart-total'];
   let drag = null;
   let rafId = null;
 
@@ -709,30 +809,6 @@ updateCharts();
 
   window.addEventListener('mouseup', () => {{ drag = null; rafId = null; }});
   // 윈도우 리사이즈 시 오버레이 재생성
-  // 스크롤 줌 시 dtick 자동 조정
-  CHART_IDS.forEach(id => {{
-    const gd = document.getElementById(id);
-    if (!gd) return;
-    gd.on('plotly_relayout', (eventData) => {{
-      if (!eventData['xaxis.range[0]'] && !eventData['xaxis.autorange']) return;
-      const layout = gd._fullLayout;
-      if (!layout || !layout.xaxis || !layout.xaxis.range) return;
-      const H = 3600000;
-      const r0 = new Date(layout.xaxis.range[0]).getTime();
-      const r1 = new Date(layout.xaxis.range[1]).getTime();
-      const spanMs = r1 - r0;
-      let dtick;
-      if      (spanMs <= 6  * H)          dtick = 30 * 60000;
-      else if (spanMs <= 12 * H)          dtick = H;
-      else if (spanMs <= 24 * H)          dtick = 2  * H;
-      else if (spanMs <= 3  * 86400000)   dtick = 6  * H;
-      else if (spanMs <= 7  * 86400000)   dtick = 12 * H;
-      else if (spanMs <= 14 * 86400000)   dtick = 24 * H;
-      else                                dtick = 2  * 86400000;
-      if (layout.xaxis.dtick === dtick) return;
-      Plotly.relayout(gd, {{ 'xaxis.dtick': dtick }});
-    }});
-  }});
   window.addEventListener('resize', () => {{
     CHART_IDS.forEach(id => {{
       const gd = document.getElementById(id);
