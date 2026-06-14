@@ -521,7 +521,7 @@ function renderTeamChart(chartId, traces, xAxisBase, title) {{
     font: {{ color: '#a0b0d0', size: 11 }},
     height: 320,
     margin: {{ t: 30, b: 60, l: 50, r: 70 }},
-    xaxis: xAxisBase,
+    xaxis: {{ ...xAxisBase }},  // 복사해서 Plotly의 내부 mutate 방지
     yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
     hovermode: 'x unified',
@@ -574,7 +574,7 @@ function updateCharts() {{
         font: {{ color: '#a0b0d0', size: 11 }},
         height: 320,
         margin: {{ t: 10, b: 60, l: 50, r: 70 }},
-        xaxis: xAxisBase,
+        xaxis: {{ ...xAxisBase }},  // 복사해서 Plotly의 내부 mutate 방지
         yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
         legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
         hovermode: 'x unified',
@@ -660,7 +660,7 @@ function updateCharts() {{
     font: {{ color: '#a0b0d0', size: 11 }},
     height: 260,
     margin: {{ t: 10, b: 60, l: 60, r: 60 }},
-    xaxis: xAxisBase,
+    xaxis: {{ ...xAxisBase }},
     yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
     yaxis2: {{ overlaying: 'y', side: 'right', title: '신규', tickfont: {{ size: 10 }}, gridcolor: 'rgba(0,0,0,0)', rangemode: 'nonnegative' }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.3 }},
