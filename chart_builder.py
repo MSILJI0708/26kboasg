@@ -709,6 +709,30 @@ updateCharts();
 
   window.addEventListener('mouseup', () => {{ drag = null; rafId = null; }});
   // 윈도우 리사이즈 시 오버레이 재생성
+  // 스크롤 줌 시 dtick 자동 조정
+  CHART_IDS.forEach(id => {{
+    const gd = document.getElementById(id);
+    if (!gd) return;
+    gd.on('plotly_relayout', (eventData) => {{
+      if (!eventData['xaxis.range[0]'] && !eventData['xaxis.autorange']) return;
+      const layout = gd._fullLayout;
+      if (!layout || !layout.xaxis || !layout.xaxis.range) return;
+      const H = 3600000;
+      const r0 = new Date(layout.xaxis.range[0]).getTime();
+      const r1 = new Date(layout.xaxis.range[1]).getTime();
+      const spanMs = r1 - r0;
+      let dtick;
+      if      (spanMs <= 6  * H)          dtick = 30 * 60000;
+      else if (spanMs <= 12 * H)          dtick = H;
+      else if (spanMs <= 24 * H)          dtick = 2  * H;
+      else if (spanMs <= 3  * 86400000)   dtick = 6  * H;
+      else if (spanMs <= 7  * 86400000)   dtick = 12 * H;
+      else if (spanMs <= 14 * 86400000)   dtick = 24 * H;
+      else                                dtick = 2  * 86400000;
+      if (layout.xaxis.dtick === dtick) return;
+      Plotly.relayout(gd, {{ 'xaxis.dtick': dtick }});
+    }});
+  }});
   window.addEventListener('resize', () => {{
     CHART_IDS.forEach(id => {{
       const gd = document.getElementById(id);
