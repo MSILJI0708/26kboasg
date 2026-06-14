@@ -111,6 +111,13 @@ def build_chart(df):
         ensure_ascii=False
     )
 
+    # 실제 데이터 범위 계산 → 초기 x축 범위로 사용
+    dt_min = df['datetime'].min()
+    dt_max = df['datetime'].max()
+    from datetime import timedelta
+    x_range_start = (dt_min - timedelta(hours=1)).strftime('%Y-%m-%d %H:%M')
+    x_range_end   = (dt_max + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M')
+
     last_updated = df['datetime'].max().strftime('%Y-%m-%d %H:%M') if not df.empty else '-'
 
     html = f"""<!DOCTYPE html>
@@ -483,7 +490,7 @@ function updateCharts() {{
     type: 'date',
     dtick: xCfg.dtick,
     tickformat: xCfg.tickformat,
-    range: ['2026-06-03 15:00', '2026-06-25 00:00'],
+    range: ['{x_range_start}', '{x_range_end}'],
     fixedrange: false
   }};
 
