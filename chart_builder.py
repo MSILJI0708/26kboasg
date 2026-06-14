@@ -464,7 +464,7 @@ function buildTrace(playerData, metric) {{
 // 시간 단위별 x축 틱 간격 (밀리초)
 function getXAxisConfig(unit) {{
   const H = 60 * 60 * 1000;
-  if (unit === '10min') return {{ dtick: 2 * H,  tickformat: '%m-%d %H:%M' }};
+  if (unit === '10min') return {{ dtick: 6 * H,  tickformat: '%m-%d %H:%M' }};
   if (unit === '1hour') return {{ dtick: 6 * H,  tickformat: '%m-%d %H시'  }};
   if (unit === '1day')  return {{ dtick: 24 * H, tickformat: '%m-%d'       }};
   return {{ dtick: 6 * H, tickformat: '%m-%d %H시' }};
