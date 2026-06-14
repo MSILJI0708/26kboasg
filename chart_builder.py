@@ -640,6 +640,10 @@ updateCharts();
 
     xDiv.addEventListener('mousedown', e => startDrag(e, 'x'));
     yDiv.addEventListener('mousedown', e => startDrag(e, 'y'));
+    // 더블클릭으로 전체 범위 초기화
+    gd.addEventListener('dblclick', () => {{
+      Plotly.relayout(gd, {{'xaxis.autorange': true, 'yaxis.autorange': true}});
+    }});
     gd.appendChild(xDiv);
     gd.appendChild(yDiv);
     gd.__overlayDone = true;
@@ -672,7 +676,7 @@ updateCharts();
       const dx = cx - drag.sx;
       const dy = cy - drag.sy;
       if (drag.mode === 'x') {{
-        const factor = Math.pow(1.004, dx);
+        const factor = Math.pow(1.002, dx);
         const mid  = (drag.x0 + drag.x1) / 2;
         const half = Math.max(1800000, Math.min(drag.xSpan / 2 * factor, 25 * 86400000));
         const spanMs = half * 2;
@@ -692,7 +696,7 @@ updateCharts();
           'xaxis.dtick':    dtick,
         }});
       }} else {{
-        const factor = Math.pow(1.004, -dy);
+        const factor = Math.pow(1.002, -dy);
         const mid  = (drag.y0 + drag.y1) / 2;
         const half = Math.max(0.1, drag.ySpan / 2 * factor);
         Plotly.relayout(drag.gd, {{
