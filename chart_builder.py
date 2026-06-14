@@ -626,8 +626,10 @@ updateCharts();
     function startDrag(e, mode) {{
       e.preventDefault();
       e.stopPropagation();
-      const xr = [msOf(fl.xaxis.range[0]), msOf(fl.xaxis.range[1])];
-      const yr = [+fl.yaxis.range[0], +fl.yaxis.range[1]];
+      // 매번 gd._fullLayout을 새로 읽어야 이전 zoom 상태가 정확히 반영됨
+      const curLayout = gd._fullLayout;
+      const xr = [msOf(curLayout.xaxis.range[0]), msOf(curLayout.xaxis.range[1])];
+      const yr = [+curLayout.yaxis.range[0], +curLayout.yaxis.range[1]];
       drag = {{
         gd, mode,
         sx: e.clientX, sy: e.clientY,
