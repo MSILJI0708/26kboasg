@@ -502,8 +502,6 @@ const scrollZoomConfig = {{
 
 let currentViewMode = 'position';
 
-let currentViewMode = 'position';
-
 function setViewMode(mode) {{
   currentViewMode = mode;
   document.getElementById('btn-bypos').classList.toggle('active', mode === 'position');
