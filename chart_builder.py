@@ -291,26 +291,26 @@ def build_chart(df):
   </div>
 </div>
 
+<div id="pos-section">
 <div class="chart-container">
-  <div class="chart-title">🔵 나눔 올스타</div>
+  <div class="chart-title" id="title-nanum">🔵 나눔 올스타</div>
   <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
   <div id="chart-nanum"></div>
 </div>
 
 <div class="chart-container">
-  <div class="chart-title">🔴 드림 올스타</div>
+  <div class="chart-title" id="title-dream">🔴 드림 올스타</div>
   <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
   <div id="chart-dream"></div>
+</div>
 </div>
 
 <div id="of-section" style="display:none">
   <div class="chart-container">
-    <div class="chart-title">🔵 나눔 올스타 — 외야수</div>
     <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
     <div id="chart-of-nanum"></div>
   </div>
   <div class="chart-container">
-    <div class="chart-title">🔴 드림 올스타 — 외야수</div>
     <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
     <div id="chart-of-dream"></div>
   </div>
@@ -509,6 +509,10 @@ function setViewMode(mode) {{
   document.getElementById('posSelect').style.display  = mode === 'position' ? '' : 'none';
   document.getElementById('clubSelect').style.display = mode === 'club'     ? '' : 'none';
   document.getElementById('selector-label').textContent = mode === 'position' ? '포지션' : '구단';
+  // 포지션별 모드: 고정 제목 표시 / 구단별 모드: Plotly title로 대체하므로 고정 제목 숨김
+  const showStaticTitle = mode === 'position';
+  document.getElementById('title-nanum').style.display = showStaticTitle ? '' : 'none';
+  document.getElementById('title-dream').style.display = showStaticTitle ? '' : 'none';
   updateCharts();
 }}
 
@@ -555,10 +559,12 @@ function updateCharts() {{
   }};
 
   // 구단별 모드 - 외야수 차트 표시 여부
-  const ofDiv = document.getElementById('of-section');
+  const ofDiv  = document.getElementById('of-section');
+  const posDiv = document.getElementById('pos-section');
 
   if (currentViewMode === 'position') {{
-    if (ofDiv) ofDiv.style.display = 'none';
+    if (ofDiv)  ofDiv.style.display  = 'none';
+    if (posDiv) posDiv.style.display = '';  // 포지션별: 나눔/드림 div 표시
     const pos = document.getElementById('posSelect').value;
     const filtered = RAW_DATA.filter(d => d.pos_id === pos);
     const resampled = resampleData(filtered, currentTimeUnit);
@@ -583,7 +589,8 @@ function updateCharts() {{
     }});
   }} else {{
     // 구단별 모드
-    if (ofDiv) ofDiv.style.display = '';
+    if (ofDiv)  ofDiv.style.display  = '';
+    if (posDiv) posDiv.style.display = 'none';  // 구단별: 나눔/드림 div 숨김 (chart-of-* 사용)
     const club = document.getElementById('clubSelect').value;
     const NON_OF_POS = ['SP','MP','CP','C','1B','2B','3B','SS','DH'];
 
@@ -632,15 +639,25 @@ function updateCharts() {{
         return t;
       }});
       const teamLabel = team === 'nanum' ? '🔵 나눔 올스타' : '🔴 드림 올스타';
-      renderTeamChart(`chart-${{team}}`, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
+      // 구단별 모드: pos-section이 숨겨지므로 of-section 안의 div를 재활용
+      renderTeamChart(`chart-of-${{team}}`, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
 
-      // 외야수
+      // 외야수 — 새 div 필요, of-section 안에 추가 div를 동적 생성
       const ofData = resampleData(
         RAW_DATA.filter(d => d.club === club && d.team === team && d.pos_id === 'OF'),
         currentTimeUnit
       );
       const ofTraces = buildChartTraces(ofData);
-      renderTeamChart(`chart-of-${{team}}`, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
+      // 외야수 전용 div (동적 생성)
+      const ofChartId = `chart-of2-${{team}}`;
+      let ofChartDiv = document.getElementById(ofChartId);
+      if (!ofChartDiv) {{
+        ofChartDiv = document.createElement('div');
+        ofChartDiv.id = ofChartId;
+        const ofSection = document.getElementById('of-section');
+        ofSection.appendChild(ofChartDiv);
+      }}
+      renderTeamChart(ofChartId, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
     }});
   }}
 
