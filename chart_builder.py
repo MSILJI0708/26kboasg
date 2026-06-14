@@ -608,9 +608,27 @@ function updateCharts() {{
         if (top) top1PerPos[pos] = posData.filter(d => d.player === top);
       }});
 
+      // 포지션별 고유 색상 (구단 색 대신 사용)
+      const POS_COLORS = {{
+        'SP': '#ff6b6b', 'MP': '#ffa500', 'CP': '#ffd700',
+        'C':  '#00d4aa', '1B': '#4a9eff', '2B': '#a78bfa',
+        '3B': '#f472b6', 'SS': '#34d399', 'DH': '#fb923c'
+      }};
+      const POS_DASHES = {{
+        'SP': 'solid', 'MP': 'dash', 'CP': 'dot',
+        'C': 'solid', '1B': 'dash', '2B': 'dot',
+        '3B': 'solid', 'SS': 'dash', 'DH': 'dot'
+      }};
+
       const traces = Object.entries(top1PerPos).map(([pos, pd]) => {{
         const t = buildTrace(pd, currentMetric);
         t.name = `${{pos}} ${{t.name}}`;
+        // 포지션마다 다른 색/선 스타일로 구분
+        const posColor = POS_COLORS[pos] || '#4a6fa5';
+        const posDash  = POS_DASHES[pos] || 'solid';
+        t.line   = {{ ...t.line,   color: posColor, dash: posDash, width: 2 }};
+        t.marker = {{ ...t.marker, color: posColor }};
+        t.textfont = {{ ...t.textfont, color: posColor }};
         return t;
       }});
       const teamLabel = team === 'nanum' ? '🔵 나눔 올스타' : '🔴 드림 올스타';
@@ -826,7 +844,7 @@ updateCharts();
 
 if __name__ == "__main__":
     print("📊 데이터 로딩 중...")
-    df = load_all_data()
+    df = load_all_data(days=0)  # 전체 기간 로드
     print(f"✅ {len(df)}개 레코드 로드 완료")
     df = calc_vote_rate(df)
     build_chart(df)
