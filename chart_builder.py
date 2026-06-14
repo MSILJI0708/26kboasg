@@ -257,6 +257,7 @@ def build_chart(df):
 <div class="updated">마지막 업데이트: {last_updated} KST</div>
 
 <div class="controls">
+<<<<<<< HEAD
   <div class="control-group" id="selector-group">
     <label id="selector-label">포지션</label>
     <select id="posSelect" onchange="updateCharts()">
@@ -274,6 +275,8 @@ def build_chart(df):
       <button class="toggle-btn" id="btn-new" onclick="setMetric('new')">신규득표</button>
     </div>
   </div>
+=======
+>>>>>>> 9208349 (dfertw)
   <div class="control-group">
     <label>시간 단위</label>
     <div class="toggle-group">
@@ -291,6 +294,7 @@ def build_chart(df):
   </div>
 </div>
 
+<<<<<<< HEAD
 <div id="pos-section">
 <div class="chart-container">
   <div class="chart-title" id="title-nanum">🔵 나눔 올스타</div>
@@ -316,6 +320,8 @@ def build_chart(df):
   </div>
 </div>
 
+=======
+>>>>>>> 9208349 (dfertw)
 <hr class="divider">
 
 <div class="chart-container">
@@ -325,6 +331,7 @@ def build_chart(df):
 </div>
 
 <script>
+<<<<<<< HEAD
 const RAW_DATA = {df.to_json(orient='records', date_format='iso', force_ascii=False)};
 const TEAM_COLORS = {team_colors_js};
 const TEAM_MARKERS = {team_markers_js};
@@ -344,13 +351,11 @@ function toDateStr(isoStr) {{
 function toKST(isoStr) {{
   return toDateStr(isoStr);
 }}
+=======
+const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', force_ascii=False)};
 
-function setMetric(m) {{
-  currentMetric = m;
-  ['rate','votes','new'].forEach(x => document.getElementById('btn-'+x).classList.remove('active'));
-  document.getElementById('btn-'+m).classList.add('active');
-  updateCharts();
-}}
+let currentTimeUnit = '10min';
+>>>>>>> 9208349 (dfertw)
 
 function setTimeUnit(u) {{
   currentTimeUnit = u;
@@ -367,7 +372,11 @@ function resampleData(data, unit) {{
     const dt = new Date(d.datetime);
     if (unit === '1hour') dt.setMinutes(0, 0, 0);
     else if (unit === '1day') dt.setHours(0, 0, 0, 0);
+<<<<<<< HEAD
     const key = dt.toISOString() + '|' + (d.player || '');
+=======
+    const key = dt.toISOString();
+>>>>>>> 9208349 (dfertw)
     if (!grouped[key] || new Date(d.datetime) > new Date(grouped[key].datetime)) {{
       grouped[key] = {{ ...d, datetime: dt.toISOString() }};
     }}
@@ -375,6 +384,7 @@ function resampleData(data, unit) {{
   return Object.values(grouped);
 }}
 
+<<<<<<< HEAD
 // 총투표 데이터 리샘플 (player 없이 시간대별 마지막 votes값 사용)
 function resampleTotal(data, unit) {{
   if (unit === '10min') return [...data].sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
@@ -665,6 +675,12 @@ function updateCharts() {{
   const sortedTotal = resampleTotal(TOTAL_DATA, currentTimeUnit);
   const kstTotal = sortedTotal.map(d => toKST(d.datetime));
 
+=======
+function updateCharts() {{
+  const totalResampled = resampleData(TOTAL_DATA, currentTimeUnit);
+  const sortedTotal = totalResampled.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+  
+>>>>>>> 9208349 (dfertw)
   const totalTrace = {{
     x: kstTotal,
     y: sortedTotal.map(d => d.votes),
