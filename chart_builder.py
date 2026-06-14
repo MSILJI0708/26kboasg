@@ -605,7 +605,7 @@ updateCharts();
         `width:${{width}}px`, `height:${{height}}px`,
         `cursor:${{cursor}}`, 'z-index:1000',
         // 'outline: 2px solid rgba(255,100,100,0.4)',
-        'outline: 2px solid rgba(255,100,100,0.5)',
+        // 'outline: 2px solid rgba(255,100,100,0.5)',
       ].join(';');
       d.title = title;
       return d;
@@ -666,9 +666,21 @@ updateCharts();
         const factor = Math.pow(1.004, dx);
         const mid  = (drag.x0 + drag.x1) / 2;
         const half = Math.max(1800000, Math.min(drag.xSpan / 2 * factor, 25 * 86400000));
+        const spanMs = half * 2;
+        // 범위에 따라 dtick 자동 조정 (틱이 5~12개 정도 나오도록)
+        const H = 3600000;
+        let dtick;
+        if      (spanMs <= 6  * H)   dtick = 30 * 60000;   // 30분
+        else if (spanMs <= 12 * H)   dtick = H;             // 1시간
+        else if (spanMs <= 24 * H)   dtick = 2  * H;        // 2시간
+        else if (spanMs <= 3  * 86400000) dtick = 6  * H;   // 6시간
+        else if (spanMs <= 7  * 86400000) dtick = 12 * H;   // 12시간
+        else if (spanMs <= 14 * 86400000) dtick = 24 * H;   // 1일
+        else                              dtick = 2  * 86400000; // 2일
         Plotly.relayout(drag.gd, {{
           'xaxis.range[0]': new Date(mid - half).toISOString(),
           'xaxis.range[1]': new Date(mid + half).toISOString(),
+          'xaxis.dtick':    dtick,
         }});
       }} else {{
         const factor = Math.pow(1.004, -dy);
