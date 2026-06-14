@@ -567,95 +567,118 @@ function updateCharts() {{
 
 updateCharts();
 
-// ── 축 위 드래그로 해당 축만 확대/축소 ──────────────────────────────
-// x축 영역 드래그(좌우) → 시간축 zoom / y축 영역 드래그(상하) → 값축 zoom
-// 그래프 본체 드래그는 Plotly 기본 pan 그대로 유지
+// ── 축 위에 투명 div 덮어씌워 드래그로 축 zoom ──────────────────────
+// Plotly가 축 이벤트를 가로채므로, 축 영역 위에 별도 div를 생성해 이벤트 처리
 (function() {{
   const CHART_IDS = ['chart-nanum', 'chart-dream', 'chart-total'];
   let drag = null;
-  let rafPending = false;
+  let rafId  = null;
 
-  function getAxisRangeMs(gd, axis) {{
-    // Plotly date축 range는 날짜 문자열 또는 ms 숫자
-    const r = gd._fullLayout[axis].range;
-    return [new Date(r[0]).getTime(), new Date(r[1]).getTime()];
-  }}
+  function msOf(v) {{ return typeof v === 'number' ? v : new Date(v).getTime(); }}
 
-  function attachAxisZoom(id) {{
+  function buildOverlays(id) {{
     const gd = document.getElementById(id);
-    if (!gd || !gd._fullLayout || gd.__axisZoom) return;
-    gd.__axisZoom = true;
+    if (!gd || !gd._fullLayout || gd.__overlayDone) return;
 
-    // Plotly가 그리는 축 레이어 선택자
-    // .xaxislayer-above / .yaxislayer-above 안의 tick, line 영역이 축 영역
-    const xLayer = gd.querySelector('.xaxislayer-above') || gd.querySelector('.x.axis');
-    const yLayer = gd.querySelector('.yaxislayer-above') || gd.querySelector('.y.axis');
+    const fl   = gd._fullLayout;
+    const xa   = fl.xaxis, ya = fl.yaxis;
+    const rect = gd.getBoundingClientRect();
+    const gdRect = gd.getBoundingClientRect();
 
-    function onAxisMousedown(e, mode) {{
+    // Plotly 내부 plot 영역 좌표 (margin 기준)
+    const margin = fl.margin;
+    const plotL  = margin.l, plotR = rect.width  - margin.r;
+    const plotT  = margin.t, plotB = rect.height - margin.b;
+
+    // ── X축 오버레이: plot 아래쪽 여백(x축 틱 영역) ──
+    const xDiv = document.createElement('div');
+    xDiv.style.cssText = `
+      position:absolute; cursor:ew-resize; z-index:999;
+      left:${{plotL}}px; top:${{plotB}}px;
+      width:${{plotR - plotL}}px; height:${{margin.b}}px;
+    `;
+    xDiv.title = '좌우 드래그: 시간축 확대/축소';
+
+    // ── Y축 오버레이: plot 왼쪽 여백(y축 틱 영역) ──
+    const yDiv = document.createElement('div');
+    yDiv.style.cssText = `
+      position:absolute; cursor:ns-resize; z-index:999;
+      left:0; top:${{plotT}}px;
+      width:${{plotL}}px; height:${{plotB - plotT}}px;
+    `;
+    yDiv.title = '상하 드래그: 값축 확대/축소';
+
+    // gd는 position:relative가 필요
+    gd.style.position = 'relative';
+    gd.appendChild(xDiv);
+    gd.appendChild(yDiv);
+
+    function startDrag(e, mode) {{
       e.preventDefault();
-      e.stopPropagation();
-      const [x0, x1] = getAxisRangeMs(gd, 'xaxis');
-      const yr = gd._fullLayout.yaxis.range;
+      const xr = [msOf(xa.range[0]), msOf(xa.range[1])];
+      const yr  = [+ya.range[0], +ya.range[1]];
       drag = {{
         gd, mode,
-        startX: e.clientX, startY: e.clientY,
-        x0, x1, xSpan: x1 - x0,
-        y0: +yr[0], y1: +yr[1], ySpan: +yr[1] - +yr[0],
+        sx: e.clientX, sy: e.clientY,
+        x0: xr[0], x1: xr[1], xSpan: xr[1] - xr[0],
+        y0: yr[0], y1: yr[1], ySpan: yr[1] - yr[0],
       }};
     }}
 
-    if (xLayer) {{
-      xLayer.style.cursor = 'ew-resize';
-      xLayer.addEventListener('mousedown', e => onAxisMousedown(e, 'x'), true);
-    }}
-    if (yLayer) {{
-      yLayer.style.cursor = 'ns-resize';
-      yLayer.addEventListener('mousedown', e => onAxisMousedown(e, 'y'), true);
-    }}
+    xDiv.addEventListener('mousedown', e => startDrag(e, 'x'));
+    yDiv.addEventListener('mousedown', e => startDrag(e, 'y'));
+
+    gd.__overlayDone = true;
   }}
 
-  function tryAttach() {{
+  function tryBuild() {{
     CHART_IDS.forEach(id => {{
       const gd = document.getElementById(id);
-      if (gd && gd._fullLayout && !gd.__axisZoom) attachAxisZoom(id);
+      if (gd && gd._fullLayout && !gd.__overlayDone) buildOverlays(id);
     }});
   }}
 
-  // updateCharts 래핑: 차트 재렌더링 후 재등록
+  // updateCharts 래핑: 재렌더링 시 오버레이 재생성
   const _orig = window.updateCharts;
   window.updateCharts = function() {{
-    CHART_IDS.forEach(id => {{ const g = document.getElementById(id); if(g) g.__axisZoom = false; }});
+    CHART_IDS.forEach(id => {{
+      const gd = document.getElementById(id);
+      if (gd) {{
+        gd.__overlayDone = false;
+        // 기존 오버레이 div 제거
+        gd.querySelectorAll('div[title*="드래그"]').forEach(d => d.remove());
+      }}
+    }});
     _orig();
-    requestAnimationFrame(() => requestAnimationFrame(tryAttach));
+    requestAnimationFrame(() => requestAnimationFrame(tryBuild));
   }};
-  requestAnimationFrame(() => requestAnimationFrame(tryAttach));
+  requestAnimationFrame(() => requestAnimationFrame(tryBuild));
 
-  // mousemove: rAF throttle으로 렉 방지
+  // mousemove: rAF throttle
   window.addEventListener('mousemove', e => {{
     if (!drag) return;
-    if (rafPending) return;
-    rafPending = true;
+    if (rafId) return;
     const cx = e.clientX, cy = e.clientY;
-    requestAnimationFrame(() => {{
-      rafPending = false;
+    rafId = requestAnimationFrame(() => {{
+      rafId = null;
       if (!drag) return;
-      const dx = cx - drag.startX;
-      const dy = cy - drag.startY;
+      const dx = cx - drag.sx;
+      const dy = cy - drag.sy;
 
       if (drag.mode === 'x') {{
-        // 좌우 드래그 → x축 zoom. 오른쪽: 축소(범위 넓힘), 왼쪽: 확대(범위 좁힘)
+        // 오른쪽: 축소(범위 넓힘), 왼쪽: 확대(범위 좁힘)
         const factor = Math.pow(1.004, dx);
-        const mid = (drag.x0 + drag.x1) / 2;
-        const half = Math.max(3600000, Math.min(drag.xSpan / 2 * factor, 25 * 24 * 3600000));
+        const mid  = (drag.x0 + drag.x1) / 2;
+        const half = Math.max(1800000, Math.min(drag.xSpan / 2 * factor, 25 * 86400000));
         Plotly.relayout(drag.gd, {{
           'xaxis.range[0]': new Date(mid - half).toISOString(),
           'xaxis.range[1]': new Date(mid + half).toISOString(),
         }});
       }} else {{
-        // 상하 드래그 → y축 zoom. 위: 축소(범위 넓힘), 아래: 확대(범위 좁힘)
+        // 위: 축소(범위 넓힘), 아래: 확대(범위 좁힘)
         const factor = Math.pow(1.004, -dy);
-        const mid = (drag.y0 + drag.y1) / 2;
-        const half = Math.max(0.01, drag.ySpan / 2 * factor);
+        const mid  = (drag.y0 + drag.y1) / 2;
+        const half = Math.max(0.1, drag.ySpan / 2 * factor);
         Plotly.relayout(drag.gd, {{
           'yaxis.range[0]': Math.max(0, mid - half),
           'yaxis.range[1]': mid + half,
@@ -664,7 +687,7 @@ updateCharts();
     }});
   }});
 
-  window.addEventListener('mouseup', () => {{ drag = null; rafPending = false; }});
+  window.addEventListener('mouseup', () => {{ drag = null; rafId = null; }});
 }})();
 </script>
 </body>
