@@ -128,28 +128,76 @@ def build_chart(df):
 <title>2026 KBO 올스타 투표 현황</title>
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 <style>
+  /* ── 다크/라이트 CSS 변수 ── */
+  :root {{
+    --bg:          #0a0e1a;
+    --bg2:         #111520;
+    --bg3:         #151929;
+    --border:      #1e2640;
+    --border2:     #2a3050;
+    --text:        #e0e6f0;
+    --text-muted:  #6b7a99;
+    --text-dim:    #a0b0d0;
+    --text-hint:   #4a6070;
+    --active-bg:   #2a4a8a;
+    --active-text: #fff;
+    --grid:        #1e2640;
+    --grid2:       #2a3050;
+    --kbd-bg:      #1e2a40;
+    --kbd-border:  #3a4a6a;
+    --kbd-text:    #8090b0;
+    --hover-bg:    #1a2030;
+    --hover-border:#2a3050;
+    --hover-text:  #e0e6f0;
+    --link:        #4a9eff;
+  }}
+  body.light-mode {{
+    --bg:          #f0f4fa;
+    --bg2:         #ffffff;
+    --bg3:         #e8edf5;
+    --border:      #ccd6e8;
+    --border2:     #b0bdd4;
+    --text:        #1a2540;
+    --text-muted:  #5a6a88;
+    --text-dim:    #3a4a6a;
+    --text-hint:   #7a8aaa;
+    --active-bg:   #2a5ab8;
+    --active-text: #fff;
+    --grid:        #dde5f0;
+    --grid2:       #c8d4e8;
+    --kbd-bg:      #dde5f0;
+    --kbd-border:  #b0bdd4;
+    --kbd-text:    #5a6a88;
+    --hover-bg:    #f5f8ff;
+    --hover-border:#b0bdd4;
+    --hover-text:  #1a2540;
+    --link:        #1a6fd4;
+  }}
+
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{
     font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
-    background: #0a0e1a;
-    color: #e0e6f0;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     padding: 16px;
+    transition: background 0.2s, color 0.2s;
   }}
   h1 {{
     font-size: 1.3rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--active-text);
     margin-bottom: 8px;
     text-align: center;
     letter-spacing: -0.5px;
   }}
+  body.light-mode h1 {{ color: var(--text); }}
   .header-links {{
     text-align: center;
     margin-bottom: 8px;
   }}
   .header-links a {{
-    color: #4a9eff;
+    color: var(--link);
     text-decoration: none;
     font-size: 0.8rem;
     margin: 0 8px;
@@ -158,7 +206,7 @@ def build_chart(df):
   .header-links a:hover {{ opacity: 1; text-decoration: underline; }}
   .updated {{
     font-size: 0.75rem;
-    color: #6b7a99;
+    color: var(--text-muted);
     text-align: center;
     margin-bottom: 20px;
   }}
@@ -176,21 +224,21 @@ def build_chart(df):
   }}
   .control-group label {{
     font-size: 0.7rem;
-    color: #6b7a99;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }}
   select, .toggle-group {{
-    background: #151929;
-    border: 1px solid #2a3050;
-    color: #e0e6f0;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
     border-radius: 8px;
     padding: 6px 10px;
     font-size: 0.85rem;
     cursor: pointer;
     outline: none;
   }}
-  select:focus {{ border-color: #4a6fa5; }}
+  select:focus {{ border-color: var(--active-bg); }}
   .toggle-group {{
     display: flex;
     gap: 0;
@@ -202,17 +250,17 @@ def build_chart(df):
     font-size: 0.8rem;
     cursor: pointer;
     border: none;
-    background: #151929;
-    color: #6b7a99;
+    background: var(--bg3);
+    color: var(--text-muted);
     transition: all 0.2s;
   }}
   .toggle-btn.active {{
-    background: #2a4a8a;
-    color: #fff;
+    background: var(--active-bg);
+    color: var(--active-text);
   }}
   .chart-container {{
-    background: #111520;
-    border: 1px solid #1e2640;
+    background: var(--bg2);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 12px;
     margin-bottom: 16px;
@@ -220,34 +268,99 @@ def build_chart(df):
   .chart-title {{
     font-size: 0.9rem;
     font-weight: 600;
-    color: #a0b0d0;
+    color: var(--text-dim);
     margin-bottom: 8px;
     padding-left: 4px;
   }}
   .zoom-hint {{
     font-size: 0.7rem;
-    color: #4a6070;
+    color: var(--text-hint);
     text-align: right;
     padding-right: 4px;
     margin-bottom: 4px;
   }}
   .zoom-hint kbd {{
-    background: #1e2a40;
-    border: 1px solid #3a4a6a;
+    background: var(--kbd-bg);
+    border: 1px solid var(--kbd-border);
     border-radius: 3px;
     padding: 0px 4px;
     font-size: 0.65rem;
     font-family: monospace;
-    color: #8090b0;
+    color: var(--kbd-text);
   }}
   .divider {{
     border: none;
-    border-top: 1px solid #1e2640;
+    border-top: 1px solid var(--border);
     margin: 20px 0;
+  }}
+
+  /* ── 라이트모드 토글 버튼 (우상단 고정) ── */
+  #theme-toggle {{
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 9999;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    border-radius: 20px;
+    padding: 5px 11px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }}
+  #theme-toggle:hover {{ border-color: var(--active-bg); }}
+
+  /* ── 모바일 툴팁 토글 버튼 (우하단 고정, 모바일 only) ── */
+  #hover-toggle {{
+    display: none;               /* JS가 모바일 감지 시 flex로 변경 */
+    position: fixed;
+    bottom: 20px;
+    right: 12px;
+    z-index: 9999;
+    background: var(--active-bg);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.45);
+    letter-spacing: -0.2px;
+    transition: background 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    align-items: center;
+    gap: 6px;
+  }}
+  #hover-toggle:active {{ opacity: 0.8; }}
+  #hover-toggle.visible {{ display: flex; }}
+  #hover-toggle.tooltip-hidden {{
+    background: var(--bg3);
+    color: var(--text-muted);
+    border: 1px solid var(--border2);
+  }}
+
+  /* 모바일/데스크탑별 zoom-hint 텍스트 분기 */
+  @media (pointer: coarse) {{
+    .zoom-hint .desktop-hint {{ display: none; }}
+    .zoom-hint .mobile-hint  {{ display: inline; }}
+  }}
+  @media (pointer: fine) {{
+    .zoom-hint .desktop-hint {{ display: inline; }}
+    .zoom-hint .mobile-hint  {{ display: none; }}
   }}
 </style>
 </head>
 <body>
+
+<!-- 라이트/다크 모드 토글 (우상단 고정) -->
+<button id="theme-toggle" onclick="toggleTheme()" title="라이트/다크 모드 전환">🌙 다크</button>
+
+<!-- 모바일 전용: 호버 팝업 숨김/표시 버튼 (JS에서 모바일 감지 시 visible) -->
+<button id="hover-toggle" onclick="toggleHoverLabel()" title="툴팁 숨기기/보이기">👁 툴팁 끄기</button>
 
 <h1>⚾ 2026 KBO 올스타 팬투표 현황</h1>
 <div class="header-links">
@@ -294,24 +407,36 @@ def build_chart(df):
 <div id="pos-section">
 <div class="chart-container">
   <div class="chart-title" id="title-nanum">🔵 나눔 올스타</div>
-  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+  <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+    <span class="mobile-hint">👆 1핑거: 이동 · 핀치: 시간축 줌 · 더블탭: 초기화 · 우하단 버튼: 툴팁 ON/OFF</span>
+  </div>
   <div id="chart-nanum"></div>
 </div>
 
 <div class="chart-container">
   <div class="chart-title" id="title-dream">🔴 드림 올스타</div>
-  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+  <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+    <span class="mobile-hint">👆 1핑거: 이동 · 핀치: 시간축 줌 · 더블탭: 초기화 · 우하단 버튼: 툴팁 ON/OFF</span>
+  </div>
   <div id="chart-dream"></div>
 </div>
 </div>
 
 <div id="of-section" style="display:none">
   <div class="chart-container">
-    <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+    <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+    <span class="mobile-hint">👆 1핑거: 이동 · 핀치: 시간축 줌 · 더블탭: 초기화 · 우하단 버튼: 툴팁 ON/OFF</span>
+  </div>
     <div id="chart-of-nanum"></div>
   </div>
   <div class="chart-container">
-    <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+    <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+    <span class="mobile-hint">👆 1핑거: 이동 · 핀치: 시간축 줌 · 더블탭: 초기화 · 우하단 버튼: 툴팁 ON/OFF</span>
+  </div>
     <div id="chart-of-dream"></div>
   </div>
 </div>
@@ -320,7 +445,10 @@ def build_chart(df):
 
 <div class="chart-container">
   <div class="chart-title">📊 전체 투표수 추이</div>
-  <div class="zoom-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 위 드래그↔: 시간축 줌 · y축 위 드래그↕: 값축 줌</div>
+  <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+    <span class="mobile-hint">👆 1핑거: 이동 · 핀치: 시간축 줌 · 더블탭: 초기화 · 우하단 버튼: 툴팁 ON/OFF</span>
+  </div>
   <div id="chart-total"></div>
 </div>
 
@@ -330,8 +458,14 @@ const TEAM_COLORS = {team_colors_js};
 const TEAM_MARKERS = {team_markers_js};
 const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', force_ascii=False)};
 
+// 모바일 감지 (스크립트 최상단 — scrollZoomConfig 등에서 참조)
+const IS_MOBILE = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+               || (window.matchMedia && window.matchMedia('(pointer:coarse)').matches);
+
 let currentMetric = 'rate';
 let currentTimeUnit = '1hour';
+// 모바일이면 첫 로드 시 툴팁 숨김 (그래프 조작 방해 방지), 데스크탑은 표시
+let hoverHidden = IS_MOBILE;
 
 // ISO 문자열 그대로 반환 (Plotly date축 전용)
 function toDateStr(isoStr) {{
@@ -544,11 +678,12 @@ function getXAxisConfig(unit) {{
   return {{ dtick, tickformat: '%m-%d %H시' }};
 }}
 
-// 공통 스크롤 줌 설정
+// 공통 스크롤 줌 설정 (데스크탑: scrollZoom 활성 / 모바일: Plotly 내장 터치 비활성화)
 const scrollZoomConfig = {{
   responsive: true,
-  scrollZoom: true,
-  displayModeBar: false
+  // 모바일에서는 커스텀 터치 핸들러를 쓰므로 Plotly 내장 터치줌 끔
+  scrollZoom: !IS_MOBILE,
+  displayModeBar: false,
 }};
 
 let currentViewMode = 'position';
@@ -568,19 +703,26 @@ function setViewMode(mode) {{
 }}
 
 function renderTeamChart(chartId, traces, xAxisBase, title) {{
+  const c = (typeof getPlotlyColors === 'function') ? getPlotlyColors() : {{}};
+  const grid  = c.grid  || '#1e2640';
+  const line  = c.line  || '#2a3050';
+  const font  = c.font  || '#a0b0d0';
+  const hbg   = c.hover_bg     || '#1a2030';
+  const hbrd  = c.hover_border || '#2a3050';
+  const hfont = c.hover_font   || '#e0e6f0';
   const layout = {{
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    font: {{ color: '#a0b0d0', size: 11 }},
+    font: {{ color: font, size: 11 }},
     height: 320,
     margin: {{ t: 30, b: 60, l: 50, r: 70 }},
-    xaxis: {{ ...xAxisBase }},  // 복사해서 Plotly의 내부 mutate 방지
-    yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+    xaxis: {{ ...xAxisBase, gridcolor: grid, linecolor: line }},
+    yaxis: {{ gridcolor: grid, linecolor: line, tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
-    hovermode: 'x unified',
-    hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
-    dragmode: 'pan',
-    title: {{ text: title, font: {{ color: '#a0b0d0', size: 13 }}, x: 0.01, xanchor: 'left' }}
+    hovermode: hoverHidden ? false : 'x unified',
+    hoverlabel: {{ namelength: -1, bgcolor: hbg, bordercolor: hbrd, font: {{ color: hfont }} }},
+    dragmode: IS_MOBILE ? false : 'pan',
+    title: {{ text: title, font: {{ color: font, size: 13 }}, x: 0.01, xanchor: 'left' }}
   }};
   Plotly.react(chartId, traces, layout, scrollZoomConfig);
 }}
@@ -599,9 +741,10 @@ function buildChartTraces(data) {{
 
 function updateCharts() {{
   const xCfg = getXAxisConfig(currentTimeUnit);
+  const c2 = (typeof getPlotlyColors === 'function') ? getPlotlyColors() : {{}};
   const xAxisBase = {{
-    gridcolor: '#1e2640', linecolor: '#2a3050',
-    tickfont: {{ size: 10 }}, tickangle: -45,
+    gridcolor: c2.grid || '#1e2640', linecolor: c2.line || '#2a3050',
+    tickfont: {{ size: 10, color: c2.font || '#a0b0d0' }}, tickangle: -45,
     type: 'date',
     dtick: xCfg.dtick,
     tickformat: xCfg.tickformat,
@@ -626,15 +769,15 @@ function updateCharts() {{
       const layout = {{
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        font: {{ color: '#a0b0d0', size: 11 }},
+        font: {{ color: c2.font || '#a0b0d0', size: 11 }},
         height: 320,
         margin: {{ t: 10, b: 60, l: 50, r: 70 }},
-        xaxis: {{ ...xAxisBase }},  // 복사해서 Plotly의 내부 mutate 방지
-        yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+        xaxis: {{ ...xAxisBase }},
+        yaxis: {{ gridcolor: c2.grid || '#1e2640', linecolor: c2.line || '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
         legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
-        hovermode: 'x unified',
-        hoverlabel: {{ namelength: -1, bgcolor: '#1a2030', bordercolor: '#2a3050', font: {{ color: '#e0e6f0' }} }},
-        dragmode: 'pan'
+        hovermode: hoverHidden ? false : 'x unified',
+        hoverlabel: {{ namelength: -1, bgcolor: c2.hover_bg || '#1a2030', bordercolor: c2.hover_border || '#2a3050', font: {{ color: c2.hover_font || '#e0e6f0' }} }},
+        dragmode: IS_MOBILE ? false : 'pan'
       }};
       Plotly.react(`chart-${{team}}`, traces, layout, scrollZoomConfig);
     }});
@@ -741,15 +884,15 @@ function updateCharts() {{
   const totalLayout = {{
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    font: {{ color: '#a0b0d0', size: 11 }},
+    font: {{ color: c2.font || '#a0b0d0', size: 11 }},
     height: 260,
     margin: {{ t: 10, b: 60, l: 60, r: 60 }},
     xaxis: {{ ...xAxisBase }},
-    yaxis: {{ gridcolor: '#1e2640', linecolor: '#2a3050', title: '누적', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+    yaxis: {{ gridcolor: c2.grid || '#1e2640', linecolor: c2.line || '#2a3050', title: '누적', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
     yaxis2: {{ overlaying: 'y', side: 'right', title: '신규', tickfont: {{ size: 10 }}, gridcolor: 'rgba(0,0,0,0)', rangemode: 'nonnegative' }},
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.3 }},
-    hovermode: 'x unified',
-    dragmode: 'pan'
+    hovermode: hoverHidden ? false : 'x unified',
+    dragmode: IS_MOBILE ? false : 'pan'
   }};
 
   Plotly.react('chart-total', [totalTrace, newTotalTrace], totalLayout, scrollZoomConfig);
@@ -893,6 +1036,250 @@ updateCharts();
     }});
     requestAnimationFrame(tryBuild);
   }});
+}})();
+
+// ═══════════════════════════════════════════════════════
+// ① 라이트/다크 모드 토글
+// ═══════════════════════════════════════════════════════
+function getPlotlyColors() {{
+  const light = document.body.classList.contains('light-mode');
+  return {{
+    paper: light ? 'rgba(255,255,255,0)' : 'rgba(0,0,0,0)',
+    plot:  light ? 'rgba(255,255,255,0)' : 'rgba(0,0,0,0)',
+    font:  light ? '#3a4a6a'             : '#a0b0d0',
+    grid:  light ? '#dde5f0'             : '#1e2640',
+    line:  light ? '#c8d4e8'             : '#2a3050',
+    hover_bg:     light ? '#f5f8ff' : '#1a2030',
+    hover_border: light ? '#b0bdd4' : '#2a3050',
+    hover_font:   light ? '#1a2540' : '#e0e6f0',
+  }};
+}}
+
+function applyPlotlyTheme() {{
+  const c = getPlotlyColors();
+  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total'];
+  CHART_IDS.forEach(id => {{
+    const gd = document.getElementById(id);
+    if (!gd || !gd.data) return;
+    Plotly.relayout(gd, {{
+      paper_bgcolor: c.paper,
+      plot_bgcolor:  c.plot,
+      'font.color':  c.font,
+      'xaxis.gridcolor': c.grid, 'xaxis.linecolor': c.line,
+      'yaxis.gridcolor': c.grid, 'yaxis.linecolor': c.line,
+      'hoverlabel.bgcolor':   c.hover_bg,
+      'hoverlabel.bordercolor': c.hover_border,
+      'hoverlabel.font.color': c.hover_font,
+    }});
+  }});
+}}
+
+function toggleTheme() {{
+  const isLight = document.body.classList.toggle('light-mode');
+  // 라이트 모드일 때: "🌙 다크" (클릭하면 다크로 전환)
+  // 다크 모드일 때: "☀️ 라이트" (클릭하면 라이트로 전환)
+  document.getElementById('theme-toggle').textContent = isLight ? '🌙 다크' : '☀️ 라이트';
+  localStorage.setItem('kbo-theme', isLight ? 'light' : 'dark');
+  // 차트 재렌더 (색상 변수 재적용)
+  updateCharts();
+}}
+
+// 저장된 테마 복원
+(function() {{
+  const saved = localStorage.getItem('kbo-theme');
+  if (saved === 'light') {{
+    document.body.classList.add('light-mode');
+    document.getElementById('theme-toggle').textContent = '🌙 다크';
+  }} else {{
+    // 다크 모드 기본
+    document.getElementById('theme-toggle').textContent = '☀️ 라이트';
+  }}
+}})();
+
+// ═══════════════════════════════════════════════════════
+// ② 모바일 감지 + 호버 팝업 토글 + 터치 pan/pinch/더블탭
+// ═══════════════════════════════════════════════════════
+// IS_MOBILE은 스크립트 최상단에서 선언됨
+
+// hoverHidden은 전역에서 선언됨
+
+function toggleHoverLabel() {{
+  hoverHidden = !hoverHidden;
+  const btn = document.getElementById('hover-toggle');
+  if (hoverHidden) {{
+    btn.innerHTML = '👁 툴팁 켜기';
+    btn.classList.add('tooltip-hidden');
+  }} else {{
+    btn.innerHTML = '👁 툴팁 끄기';
+    btn.classList.remove('tooltip-hidden');
+  }}
+  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total'];
+  CHART_IDS.forEach(id => {{
+    const gd = document.getElementById(id);
+    if (!gd || !gd.data) return;
+    Plotly.relayout(gd, {{ hovermode: hoverHidden ? false : 'x unified' }});
+  }});
+}}
+
+// 모바일이면 툴팁 버튼 표시 + 버튼 텍스트 초기화
+if (IS_MOBILE) {{
+  const btn = document.getElementById('hover-toggle');
+  btn.classList.add('visible');
+  // hoverHidden은 IS_MOBILE 기반으로 전역에서 이미 true로 초기화됨
+  btn.innerHTML = '👁 툴팁 켜기';
+  btn.classList.add('tooltip-hidden');
+}}
+
+// ── 모바일 터치: 1핑거 pan + 2핑거 핀치줌 + 더블탭 초기화 ──
+(function() {{
+  if (!IS_MOBILE) return;
+
+  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total'];
+
+  function msOf(v) {{ return typeof v === 'number' ? v : new Date(v).getTime(); }}
+
+  function clampSpan(half) {{
+    return Math.max(1800000, Math.min(half, 25 * 86400000));
+  }}
+
+  function applyXRange(gd, mid, half) {{
+    const spanMs = half * 2;
+    const pxW = getChartPlotWidth(gd.id);
+    const dtick = calcDtickByPixel(spanMs, pxW, 50);
+    Plotly.relayout(gd, {{
+      'xaxis.range[0]': new Date(mid - half).toISOString(),
+      'xaxis.range[1]': new Date(mid + half).toISOString(),
+      'xaxis.dtick': dtick,
+    }});
+  }}
+
+  function attachTouch(id) {{
+    const gd = document.getElementById(id);
+    if (!gd || gd.__touchDone) return;
+    gd.__touchDone = true;
+
+    // 더블탭 감지용
+    let lastTap = 0;
+
+    // 터치 상태
+    let state = null; // {{ mode: 'pan'|'pinch', ... }}
+    let rafId = null;
+    let pendingRelayout = null;
+
+    function getXRange() {{
+      if (!gd._fullLayout) return null;
+      const xr = gd._fullLayout.xaxis.range;
+      return [msOf(xr[0]), msOf(xr[1])];
+    }}
+
+    gd.addEventListener('touchstart', e => {{
+      // 더블탭 체크
+      const now = Date.now();
+      if (e.touches.length === 1 && (now - lastTap) < 300) {{
+        e.preventDefault();
+        Plotly.relayout(gd, {{ 'xaxis.autorange': true, 'yaxis.autorange': true }});
+        lastTap = 0;
+        state = null;
+        return;
+      }}
+      lastTap = e.touches.length === 1 ? now : 0;
+
+      const xr = getXRange();
+      if (!xr) return;
+
+      if (e.touches.length === 1) {{
+        // 1핑거: pan
+        e.preventDefault();
+        state = {{
+          mode: 'pan',
+          startX: e.touches[0].clientX,
+          xr0: xr,
+          span: xr[1] - xr[0],
+        }};
+      }} else if (e.touches.length === 2) {{
+        // 2핑거: 핀치줌
+        e.preventDefault();
+        const [a, b] = [e.touches[0], e.touches[1]];
+        const dist = Math.abs(a.clientX - b.clientX);
+        state = {{
+          mode: 'pinch',
+          dist0: Math.max(dist, 1),
+          xr0: xr,
+          mid: (xr[0] + xr[1]) / 2,
+          half0: (xr[1] - xr[0]) / 2,
+        }};
+      }}
+    }}, {{ passive: false }});
+
+    gd.addEventListener('touchmove', e => {{
+      if (!state) return;
+      e.preventDefault();
+
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {{
+        rafId = null;
+        if (!state) return;
+
+        if (state.mode === 'pan' && e.touches.length >= 1) {{
+          // 1핑거 pan: 손가락 이동량 → x축 이동
+          const pxW = getChartPlotWidth(id);
+          const dx = e.touches[0].clientX - state.startX;
+          // 픽셀당 ms 비율: span / plotWidth
+          const msPerPx = state.span / Math.max(pxW, 1);
+          const shift = -dx * msPerPx;  // 오른쪽으로 밀면 시간축 앞으로
+          const newMid = (state.xr0[0] + state.xr0[1]) / 2 + shift;
+          const half = state.span / 2;
+          pendingRelayout = {{ gd, mid: newMid, half }};
+        }} else if (state.mode === 'pinch' && e.touches.length >= 2) {{
+          // 2핑거 핀치줌
+          const [a, b] = [e.touches[0], e.touches[1]];
+          const dist = Math.abs(a.clientX - b.clientX);
+          // 손가락이 벌어질수록(dist↑) 화면이 확대 → 시간범위 축소
+          const scale = state.dist0 / Math.max(dist, 1);
+          const half = clampSpan(state.half0 * scale);
+          pendingRelayout = {{ gd, mid: state.mid, half }};
+        }}
+
+        if (pendingRelayout) {{
+          const {{ gd: g, mid, half }} = pendingRelayout;
+          applyXRange(g, mid, half);
+          pendingRelayout = null;
+        }}
+      }});
+    }}, {{ passive: false }});
+
+    gd.addEventListener('touchend', e => {{
+      if (e.touches.length === 0) state = null;
+      else if (e.touches.length === 1 && state && state.mode === 'pinch') {{
+        // 핀치 → 1핑거로 전환: pan 상태로 리셋
+        const xr = getXRange();
+        if (xr) {{
+          state = {{
+            mode: 'pan',
+            startX: e.touches[0].clientX,
+            xr0: xr,
+            span: xr[1] - xr[0],
+          }};
+        }}
+      }}
+    }}, {{ passive: true }});
+  }}
+
+  function attachAll() {{
+    CHART_IDS.forEach(id => {{
+      const gd = document.getElementById(id);
+      if (gd) gd.__touchDone = false; // 재부착 허용
+      attachTouch(id);
+    }});
+  }}
+
+  // updateCharts 이후 재부착
+  const _origTouch = window.updateCharts;
+  window.updateCharts = function() {{
+    _origTouch();
+    requestAnimationFrame(attachAll);
+  }};
+  requestAnimationFrame(attachAll);
 }})();
 </script>
 </body>
