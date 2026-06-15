@@ -484,13 +484,64 @@ function buildTrace(playerData, metric) {{
   }};
 }}
 
-// 시간 단위별 x축 틱 간격 (밀리초)
+// 화면 픽셀 기반으로 dtick 계산
+// spanMs: 현재 x축 범위(ms), pxWidth: 차트 플롯 영역 픽셀 너비, minPx: 눈금 최소 간격(px)
+function calcDtickByPixel(spanMs, pxWidth, minPx) {{
+  if (!pxWidth || pxWidth <= 0) pxWidth = 800; // 폴백
+  const msPerPx = spanMs / pxWidth;
+  const minMs = msPerPx * minPx;
+  const H = 3600000;
+  // 정돈된 간격 후보 (작은 것부터)
+  const candidates = [
+    5 * 60000,      // 5분
+    10 * 60000,     // 10분
+    30 * 60000,     // 30분
+    H,              // 1시간
+    2 * H,          // 2시간
+    3 * H,          // 3시간
+    6 * H,          // 6시간
+    12 * H,         // 12시간
+    24 * H,         // 1일
+    2 * 86400000,   // 2일
+    3 * 86400000,   // 3일
+    7 * 86400000,   // 7일
+  ];
+  for (const c of candidates) {{
+    if (c >= minMs) return c;
+  }}
+  return candidates[candidates.length - 1];
+}}
+
+// 차트 플롯 영역의 픽셀 너비 반환 (마진 제외)
+function getChartPlotWidth(chartId) {{
+  const gd = document.getElementById(chartId);
+  if (!gd) return 800;
+  try {{
+    const layout = gd._fullLayout;
+    if (layout && layout.width && layout._size) {{
+      return layout._size.w; // 실제 플롯 영역 너비 (마진 제외)
+    }}
+    return gd.getBoundingClientRect().width - 120; // 마진 추정
+  }} catch(e) {{
+    return gd.getBoundingClientRect().width - 120;
+  }}
+}}
+
+// 시간 단위별 x축 틱 간격 (밀리초) — 초기 렌더 시 사용
 function getXAxisConfig(unit) {{
   const H = 60 * 60 * 1000;
-  if (unit === '10min') return {{ dtick: 2 * H,  tickformat: '%m-%d %H:%M' }};
-  if (unit === '1hour') return {{ dtick: 6 * H,  tickformat: '%m-%d %H시'  }};
-  if (unit === '1day')  return {{ dtick: 24 * H, tickformat: '%m-%d'       }};
-  return {{ dtick: 6 * H, tickformat: '%m-%d %H시' }};
+  // 초기 범위(spanMs)를 전체 x 범위로 계산
+  const rangeStart = new Date('{x_range_start}').getTime();
+  const rangeEnd   = new Date('{x_range_end}').getTime();
+  const spanMs     = rangeEnd - rangeStart;
+  // 첫 번째 차트 너비를 기준으로 dtick 계산 (아직 렌더 전이므로 DOM 너비 사용)
+  const firstChart = document.querySelector('.chart-container') || document.body;
+  const pxWidth    = Math.max(300, firstChart.getBoundingClientRect().width - 120);
+  const dtick      = calcDtickByPixel(spanMs, pxWidth, 50);
+  if (unit === '10min') return {{ dtick, tickformat: '%m-%d %H:%M' }};
+  if (unit === '1hour') return {{ dtick, tickformat: '%m-%d %H시'  }};
+  if (unit === '1day')  return {{ dtick, tickformat: '%m-%d'       }};
+  return {{ dtick, tickformat: '%m-%d %H시' }};
 }}
 
 // 공통 스크롤 줌 설정
@@ -813,16 +864,9 @@ updateCharts();
         const mid  = (drag.x0 + drag.x1) / 2;
         const half = Math.max(1800000, Math.min(drag.xSpan / 2 * factor, 25 * 86400000));
         const spanMs = half * 2;
-        // 범위에 따라 dtick 자동 조정 (틱이 5~12개 정도 나오도록)
-        const H = 3600000;
-        let dtick;
-        if      (spanMs <= 6  * H)   dtick = 30 * 60000;   // 30분
-        else if (spanMs <= 12 * H)   dtick = H;             // 1시간
-        else if (spanMs <= 24 * H)   dtick = 2  * H;        // 2시간
-        else if (spanMs <= 3  * 86400000) dtick = 6  * H;   // 6시간
-        else if (spanMs <= 7  * 86400000) dtick = 12 * H;   // 12시간
-        else if (spanMs <= 14 * 86400000) dtick = 24 * H;   // 1일
-        else                              dtick = 2  * 86400000; // 2일
+        // 화면 픽셀 기반으로 dtick 계산 (최소 50px 간격)
+        const pxW = getChartPlotWidth(drag.gd.id);
+        const dtick = calcDtickByPixel(spanMs, pxW, 50);
         Plotly.relayout(drag.gd, {{
           'xaxis.range[0]': new Date(mid - half).toISOString(),
           'xaxis.range[1]': new Date(mid + half).toISOString(),
