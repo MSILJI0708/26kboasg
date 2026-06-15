@@ -439,6 +439,18 @@ def build_chart(df):
   </div>
     <div id="chart-of-dream"></div>
   </div>
+  <div class="chart-container" id="of2-nanum-wrap">
+    <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+  </div>
+    <div id="chart-of2-nanum"></div>
+  </div>
+  <div class="chart-container" id="of2-dream-wrap">
+    <div class="zoom-hint">
+    <span class="desktop-hint">🖱 스크롤: 전체 줌 · 드래그: 이동 · x축 드래그↔: 시간축 줌 · y축 드래그↕: 값축 줌</span>
+  </div>
+    <div id="chart-of2-dream"></div>
+  </div>
 </div>
 
 <hr class="divider">
@@ -736,7 +748,23 @@ function buildChartTraces(data) {{
     playerLatest[p] = latest ? getVal(latest, currentMetric) : 0;
   }});
   const sortedPlayers = [...players].sort((a,b) => playerLatest[b] - playerLatest[a]);
-  return sortedPlayers.map(p => buildTrace(data.filter(d => d.player === p), currentMetric));
+
+  // 외야수 구단별 보기: 같은 구단 3명이라 색이 같음 → 고유 색 배정
+  const OF_COLORS = ['#4af0c8', '#ff9f43', '#a29bfe'];
+  const OF_DASHES = ['solid', 'dash', 'dot'];
+  const isOFClubMode = sortedPlayers.length > 1 &&
+    data.length > 0 && data[0].pos_id === 'OF' &&
+    [...new Set(data.map(d => d.club))].length === 1;
+
+  return sortedPlayers.map((p, i) => {{
+    const t = buildTrace(data.filter(d => d.player === p), currentMetric);
+    if (isOFClubMode) {{
+      t.line   = {{ ...t.line,   color: OF_COLORS[i % 3], dash: OF_DASHES[i % 3] }};
+      t.marker = {{ ...t.marker, color: OF_COLORS[i % 3] }};
+      t.textfont = {{ ...t.textfont, color: OF_COLORS[i % 3] }};
+    }}
+    return t;
+  }});
 }}
 
 function updateCharts() {{
@@ -836,22 +864,13 @@ function updateCharts() {{
       // 구단별 모드: pos-section이 숨겨지므로 of-section 안의 div를 재활용
       renderTeamChart(`chart-of-${{team}}`, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
 
-      // 외야수 — 새 div 필요, of-section 안에 추가 div를 동적 생성
+      // 외야수 차트 (미리 만들어진 고정 div 사용)
       const ofData = resampleData(
         RAW_DATA.filter(d => d.club === club && d.team === team && d.pos_id === 'OF'),
         currentTimeUnit
       );
       const ofTraces = buildChartTraces(ofData);
-      // 외야수 전용 div (동적 생성)
-      const ofChartId = `chart-of2-${{team}}`;
-      let ofChartDiv = document.getElementById(ofChartId);
-      if (!ofChartDiv) {{
-        ofChartDiv = document.createElement('div');
-        ofChartDiv.id = ofChartId;
-        const ofSection = document.getElementById('of-section');
-        ofSection.appendChild(ofChartDiv);
-      }}
-      renderTeamChart(ofChartId, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
+      renderTeamChart(`chart-of2-${{team}}`, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
     }});
   }}
 
