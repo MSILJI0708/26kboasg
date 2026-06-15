@@ -14,19 +14,19 @@ POSITIONS = {
 
 TEAM_COLORS = {
     'LG': '#C30452', 'KT': '#E84C4C', 'SSG': '#CE0E2D', 'NC': '#1D5D9B',
-    '두산': '#6B8CFF', 'KIA': '#EA0029', '롯데': '#4A9EFF', '삼성': '#74A9FF',
+    '두산': '#3F48CC', 'KIA': '#EA0029', '롯데': '#ED6D00', '삼성': '#74A9FF',
     '한화': '#FF6600', '키움': '#FF4D7D'
 }
 
 TEAM_MARKERS = {
     'LG':   {'symbol': 'circle',      'dash': 'solid'},
     'KT':   {'symbol': 'square',      'dash': 'solid'},
-    'SSG':  {'symbol': 'diamond',     'dash': 'solid'},
+    'SSG':  {'symbol': 'diamond',     'dash': 'dash'},
     'NC':   {'symbol': 'triangle-up', 'dash': 'solid'},
     '두산': {'symbol': 'circle',      'dash': 'dash'},
     'KIA':  {'symbol': 'square',      'dash': 'dash'},
-    '롯데': {'symbol': 'diamond',     'dash': 'dash'},
-    '삼성': {'symbol': 'triangle-up', 'dash': 'dash'},
+    '롯데': {'symbol': 'diamond',     'dash': 'solid'},
+    '삼성': {'symbol': 'triangle-up', 'dash': 'solid'},
     '한화': {'symbol': 'circle',      'dash': 'dot'},
     '키움': {'symbol': 'square',      'dash': 'dot'},
 }
