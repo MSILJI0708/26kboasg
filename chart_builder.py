@@ -861,16 +861,31 @@ function updateCharts() {{
         return t;
       }});
       const teamLabel = team === 'nanum' ? '🔵 나눔 올스타' : '🔴 드림 올스타';
-      // 구단별 모드: pos-section이 숨겨지므로 of-section 안의 div를 재활용
-      renderTeamChart(`chart-of-${{team}}`, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
+      const mainChartId = `chart-of-${{team}}`;
+      const ofChartId   = `chart-of2-${{team}}`;
+      const mainWrap = document.getElementById(mainChartId)?.closest('.chart-container');
+      const ofWrap   = document.getElementById(ofChartId)?.closest('.chart-container');
 
-      // 외야수 차트 (미리 만들어진 고정 div 사용)
+      // 후보가 없는 팀은 컨테이너 숨김
+      if (traces.length === 0) {{
+        if (mainWrap) mainWrap.style.display = 'none';
+      }} else {{
+        if (mainWrap) mainWrap.style.display = '';
+        renderTeamChart(mainChartId, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
+      }}
+
+      // 외야수 차트
       const ofData = resampleData(
         RAW_DATA.filter(d => d.club === club && d.team === team && d.pos_id === 'OF'),
         currentTimeUnit
       );
       const ofTraces = buildChartTraces(ofData);
-      renderTeamChart(`chart-of2-${{team}}`, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
+      if (ofTraces.length === 0) {{
+        if (ofWrap) ofWrap.style.display = 'none';
+      }} else {{
+        if (ofWrap) ofWrap.style.display = '';
+        renderTeamChart(ofChartId, ofTraces, xAxisBase, teamLabel + ` — ${{club}} 외야수`);
+      }}
     }});
   }}
 
@@ -894,8 +909,11 @@ function updateCharts() {{
     x: kstTotal,
     y: sortedTotal.map((d,i) => i > 0 ? Math.max(0, d.votes - sortedTotal[i-1].votes) : 0),
     name: '신규 투표수',
-    type: 'bar',
-    marker: {{ color: 'rgba(255,180,50,0.6)' }},
+    type: 'scatter',
+    mode: 'lines',
+    line: {{ color: '#ff4757', width: 2 }},
+    fill: 'tozeroy',
+    fillcolor: 'rgba(255,71,87,0.25)',
     hovertemplate: '%{{x}}<br>신규: %{{y:,}}<extra></extra>',
     yaxis: 'y2'
   }};
