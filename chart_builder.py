@@ -121,11 +121,19 @@ def build_chart(df):
 
     # ── 사전 집계 (JS 렉 방지) ──
     agg_data = preaggregate(df)
-    agg_data_js = json.dumps(
-        {k: [{kk: (str(vv) if hasattr(vv, 'isoformat') else vv) for kk, vv in row.items()} for row in v]
-         for k, v in agg_data.items()},
-        ensure_ascii=False
+    agg_data_clean = {
+        k: [{kk: (str(vv) if hasattr(vv, 'isoformat') else vv) for kk, vv in row.items()} for row in v]
+        for k, v in agg_data.items()
+    }
+    # lazy-load: 키별로 별도 <script type="application/json"> 태그 생성.
+    # 브라우저가 페이지 로드 시 자동으로 파싱/실행하지 않으므로 초기 로딩 비용이 거의 0.
+    # 포지션 탭을 열 때 JS에서 해당 id만 JSON.parse 한다.
+    agg_data_scripts = "\n".join(
+        f'<script type="application/json" id="agg-{k}">{json.dumps(v, ensure_ascii=False)}</script>'
+        for k, v in agg_data_clean.items()
     )
+    # 키 목록만 가벼운 JS 배열로 별도 전달 (어떤 포지션×팀 키가 존재하는지 확인용)
+    agg_keys_js = json.dumps(list(agg_data_clean.keys()), ensure_ascii=False)
 
     # ── 신한은행 vs 공식 비교 데이터 (사전 계산된 결과 파일 임베드) ──
     shinhan_compare_path = "shinhan_compare_data.json"
@@ -498,6 +506,13 @@ def build_chart(df):
   <div id="chart-total"></div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     포지션×팀 데이터 lazy-load 저장소
+     application/json 타입은 브라우저가 자동 파싱/실행하지 않으므로
+     초기 페이지 로드 비용이 거의 없다. 필요한 키만 그때그때 JSON.parse.
+     ══════════════════════════════════════════════ -->
+{agg_data_scripts}
+
 <hr class="divider">
 
 <!-- ══════════════════════════════════════════════
@@ -531,7 +546,21 @@ def build_chart(df):
 </style>
 
 <script>
-const AGG_DATA = {agg_data_js};
+// AGG 키 목록 (실제 데이터는 agg-(키이름) id의 script 태그에 분리 저장됨)
+const AGG_KEYS = {agg_keys_js};
+const _aggCache = {{}};
+
+// 포지션×팀 데이터를 그때그때 파싱해서 가져오는 lazy-load 함수.
+// 1회 파싱 후 메모리 캐시에 저장 (같은 포지션 재방문 시 재파싱 없음).
+function getAggData(key) {{
+  if (_aggCache[key]) return _aggCache[key];
+  const el = document.getElementById(`agg-${{key}}`);
+  if (!el) return [];
+  const parsed = JSON.parse(el.textContent);
+  _aggCache[key] = parsed;
+  return parsed;
+}}
+
 const SHINHAN_COMPARE = {shinhan_compare_js};
 const TEAM_COLORS = {team_colors_js};
 const TEAM_MARKERS = {team_markers_js};
@@ -857,7 +886,7 @@ function updateCharts() {{
     const pos = document.getElementById('posSelect').value;
 
     ['nanum', 'dream'].forEach(team => {{
-      const teamData = resampleData(AGG_DATA[`pos_${{pos}}_${{team}}`] || [], currentTimeUnit);
+      const teamData = resampleData(getAggData(`pos_${{pos}}_${{team}}`), currentTimeUnit);
       const traces = buildChartTraces(teamData);
       const layout = {{
         paper_bgcolor: 'rgba(0,0,0,0)',
@@ -885,7 +914,7 @@ function updateCharts() {{
       // AGG_DATA의 pos_* 키들을 모아 club으로 필터링 (중복 저장 없이 재사용)
       let nonOfRaw = [];
       NON_OF_POS.forEach(pos => {{
-        const posAll = AGG_DATA[`pos_${{pos}}_${{team}}`] || [];
+        const posAll = getAggData(`pos_${{pos}}_${{team}}`);
         nonOfRaw = nonOfRaw.concat(posAll.filter(d => d.club === club));
       }});
       const nonOfData = resampleData(nonOfRaw, currentTimeUnit);
@@ -942,7 +971,7 @@ function updateCharts() {{
       }}
 
       // 외야수 차트 — pos_OF_* 에서 club 필터링
-      const ofRaw  = (AGG_DATA[`pos_OF_${{team}}`] || []).filter(d => d.club === club);
+      const ofRaw  = getAggData(`pos_OF_${{team}}`).filter(d => d.club === club);
       const ofData = resampleData(ofRaw, currentTimeUnit);
       const ofTraces = buildChartTraces(ofData);
       if (ofTraces.length === 0) {{
