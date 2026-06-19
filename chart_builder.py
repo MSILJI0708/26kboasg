@@ -95,12 +95,46 @@ def calc_vote_rate(df):
     df["vote_rate"] = (df["votes"] / total * 100).round(2)
     return df
 
+def preaggregate(df):
+    """
+    JS 렉 방지: 포지션×팀 기준으로만 1회 집계 (중복 저장 없음).
+    구단별 모드는 JS에서 이 pos_* 데이터를 club으로 가볍게 필터링해서 재사용한다.
+    (포지션 1개당 보통 10구단×5명=50건, 외야는 10구단×15명=150건 수준이라 필터링 비용이 작다)
+    """
+    agg = {}
+    cols_pos = ['datetime', 'pos_id', 'player', 'club', 'votes', 'vote_rate', 'new_votes', 'rank']
+
+    for pos_id in df['pos_id'].unique():
+        for team in ('nanum', 'dream'):
+            sub = df[(df['pos_id'] == pos_id) & (df['team'] == team)]
+            agg[f"pos_{pos_id}_{team}"] = sub[cols_pos].to_dict('records')
+
+    return agg
+
+
 def build_chart(df):
     df = calc_new_votes(df)
     df = calc_vote_rate(df)
     total_per_snap = calc_total_votes_per_snapshot(df)
     total_per_snap = total_per_snap.sort_values("datetime")
     total_per_snap["new_total"] = total_per_snap["votes"].diff().fillna(0).clip(lower=0)
+
+    # ── 사전 집계 (JS 렉 방지) ──
+    agg_data = preaggregate(df)
+    agg_data_js = json.dumps(
+        {k: [{kk: (str(vv) if hasattr(vv, 'isoformat') else vv) for kk, vv in row.items()} for row in v]
+         for k, v in agg_data.items()},
+        ensure_ascii=False
+    )
+
+    # ── 신한은행 vs 공식 비교 데이터 (사전 계산된 결과 파일 임베드) ──
+    shinhan_compare_path = "shinhan_compare_data.json"
+    if os.path.exists(shinhan_compare_path):
+        with open(shinhan_compare_path, encoding="utf-8") as f:
+            shinhan_compare = json.load(f)
+        shinhan_compare_js = json.dumps(shinhan_compare, ensure_ascii=False)
+    else:
+        shinhan_compare_js = "null"
 
     team_colors_js = json.dumps(
         {v: TEAM_COLORS.get(v, '#4a6fa5') for v in df['club'].unique().tolist() if isinstance(v, str)},
@@ -464,8 +498,41 @@ def build_chart(df):
   <div id="chart-total"></div>
 </div>
 
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     신한은행 vs 공식 비교 차트 (1차/2차 통합 — 선수당 4막대)
+     ══════════════════════════════════════════════ -->
+<div class="chart-container" id="shinhan-section">
+  <div class="chart-title">🏦 신한 SOL트래블 vs 공식 비교 <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted)">(1차 6/7 14시 · 2차 6/14 14시, 선수별 1차공식·1차신한·2차공식·2차신한)</span></div>
+
+  <div style="display:flex;gap:6px;margin-bottom:8px;">
+    <button id="sh-team-nanum" class="sh-team-btn" onclick="setShinhanTeam('nanum')">🔵 나눔</button>
+    <button id="sh-team-dream" class="sh-team-btn" onclick="setShinhanTeam('dream')">🔴 드림</button>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;" id="shinhan-pos-tabs"></div>
+
+  <div id="chart-shinhan"></div>
+  <div id="shinhan-note" style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;"></div>
+</div>
+
+<style>
+  .sh-team-btn {{
+    padding:6px 14px;border-radius:6px;border:1px solid var(--border2);
+    background:var(--bg3);color:var(--text-muted);cursor:pointer;
+    font-size:0.85rem;font-weight:600;transition:all .15s;
+  }}
+  .sh-team-btn.active {{ background:var(--active-bg);color:#fff;border-color:var(--active-bg); }}
+  .sh-pos-btn {{
+    padding:5px 10px;border-radius:6px;border:1px solid var(--border2);
+    background:var(--bg3);color:var(--text-muted);cursor:pointer;font-size:0.8rem;transition:all .15s;
+  }}
+  .sh-pos-btn.active {{ background:#6c5ce7;color:#fff;border-color:#6c5ce7; }}
+</style>
+
 <script>
-const RAW_DATA = {df.to_json(orient='records', date_format='iso', force_ascii=False)};
+const AGG_DATA = {agg_data_js};
+const SHINHAN_COMPARE = {shinhan_compare_js};
 const TEAM_COLORS = {team_colors_js};
 const TEAM_MARKERS = {team_markers_js};
 const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', force_ascii=False)};
@@ -786,13 +853,11 @@ function updateCharts() {{
 
   if (currentViewMode === 'position') {{
     if (ofDiv)  ofDiv.style.display  = 'none';
-    if (posDiv) posDiv.style.display = '';  // 포지션별: 나눔/드림 div 표시
+    if (posDiv) posDiv.style.display = '';
     const pos = document.getElementById('posSelect').value;
-    const filtered = RAW_DATA.filter(d => d.pos_id === pos);
-    const resampled = resampleData(filtered, currentTimeUnit);
 
     ['nanum', 'dream'].forEach(team => {{
-      const teamData = resampled.filter(d => d.team === team);
+      const teamData = resampleData(AGG_DATA[`pos_${{pos}}_${{team}}`] || [], currentTimeUnit);
       const traces = buildChartTraces(teamData);
       const layout = {{
         paper_bgcolor: 'rgba(0,0,0,0)',
@@ -817,11 +882,13 @@ function updateCharts() {{
     const NON_OF_POS = ['SP','MP','CP','C','1B','2B','3B','SS','DH'];
 
     ['nanum', 'dream'].forEach(team => {{
-      // 외야수 제외 9개 포지션
-      const nonOfData = resampleData(
-        RAW_DATA.filter(d => d.club === club && d.team === team && NON_OF_POS.includes(d.pos_id)),
-        currentTimeUnit
-      );
+      // AGG_DATA의 pos_* 키들을 모아 club으로 필터링 (중복 저장 없이 재사용)
+      let nonOfRaw = [];
+      NON_OF_POS.forEach(pos => {{
+        const posAll = AGG_DATA[`pos_${{pos}}_${{team}}`] || [];
+        nonOfRaw = nonOfRaw.concat(posAll.filter(d => d.club === club));
+      }});
+      const nonOfData = resampleData(nonOfRaw, currentTimeUnit);
       // 각 포지션의 1위 선수만
       const top1PerPos = {{}};
       NON_OF_POS.forEach(pos => {{
@@ -874,11 +941,9 @@ function updateCharts() {{
         renderTeamChart(mainChartId, traces, xAxisBase, teamLabel + ` — ${{club}} (9포지션 1위)`);
       }}
 
-      // 외야수 차트
-      const ofData = resampleData(
-        RAW_DATA.filter(d => d.club === club && d.team === team && d.pos_id === 'OF'),
-        currentTimeUnit
-      );
+      // 외야수 차트 — pos_OF_* 에서 club 필터링
+      const ofRaw  = (AGG_DATA[`pos_OF_${{team}}`] || []).filter(d => d.club === club);
+      const ofData = resampleData(ofRaw, currentTimeUnit);
       const ofTraces = buildChartTraces(ofData);
       if (ofTraces.length === 0) {{
         if (ofWrap) ofWrap.style.display = 'none';
@@ -1317,6 +1382,109 @@ if (IS_MOBILE) {{
     requestAnimationFrame(attachAll);
   }};
   requestAnimationFrame(attachAll);
+}})();
+
+// ══════════════════════════════════════════════════════
+// 신한은행 vs 공식 비교 차트 (1차/2차 통합 — 선수당 4막대)
+// ══════════════════════════════════════════════════════
+(function() {{
+  const POS_LIST  = ['SP','MP','CP','C','1B','2B','3B','SS','DH','OF'];
+  const POS_LABEL = {{ SP:'선발', MP:'중간', CP:'마무리', C:'포수', '1B':'1루', '2B':'2루', '3B':'3루', SS:'유격', DH:'지명', OF:'외야' }};
+
+  if (!SHINHAN_COMPARE) {{
+    const sec = document.getElementById('shinhan-section');
+    if (sec) sec.style.display = 'none';
+    return;
+  }}
+
+  let currentTeam = 'nanum';
+  let currentPos  = 'SP';
+
+  function buildPosTabs() {{
+    const wrap = document.getElementById('shinhan-pos-tabs');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    POS_LIST.forEach(pos => {{
+      const btn = document.createElement('button');
+      btn.id = `sh-tab-${{pos}}`;
+      btn.className = 'sh-pos-btn' + (pos === currentPos ? ' active' : '');
+      btn.textContent = POS_LABEL[pos];
+      btn.onclick = () => {{
+        currentPos = pos;
+        document.querySelectorAll('.sh-pos-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderShinhanChart();
+      }};
+      wrap.appendChild(btn);
+    }});
+  }}
+
+  window.setShinhanTeam = function(team) {{
+    currentTeam = team;
+    document.getElementById('sh-team-nanum').classList.toggle('active', team === 'nanum');
+    document.getElementById('sh-team-dream').classList.toggle('active', team === 'dream');
+    renderShinhanChart();
+  }};
+
+  function renderShinhanChart() {{
+    const c = (typeof getPlotlyColors === 'function') ? getPlotlyColors() : {{}};
+    const rows = (SHINHAN_COMPARE[currentPos] && SHINHAN_COMPARE[currentPos][currentTeam]) || [];
+
+    if (!rows.length) {{
+      Plotly.purge('chart-shinhan');
+      const note = document.getElementById('shinhan-note');
+      if (note) note.textContent = '⚠️ 데이터 없음';
+      return;
+    }}
+
+    const sorted = [...rows].sort((a,b) => (a.rank2||99) - (b.rank2||99) || (a.rank1||99) - (b.rank1||99));
+    const players = sorted.map(r => `${{r.player}}<br><span style="font-size:9px">(${{r.club}})</span>`);
+
+    const mk = (key, name, color) => ({{
+      x: players,
+      y: sorted.map(r => r[key]),
+      name: name,
+      type: 'bar',
+      marker: {{ color: color, opacity: 0.9 }},
+      text: sorted.map(r => r[key] != null ? r[key].toLocaleString() : '-'),
+      textposition: 'outside',
+      textfont: {{ size: 9 }},
+      hovertemplate: `%{{x}}<br>${{name}}: %{{y:,}}표<extra></extra>`,
+    }});
+
+    const traces = [
+      mk('off1', '1차 공식 (6/7)',  '#4a9eff'),
+      mk('sh1',  '1차 신한 (6/7)',  '#ffd700'),
+      mk('off2', '2차 공식 (6/14)', '#2e6fd4'),
+      mk('sh2',  '2차 신한 (6/14)', '#ff9500'),
+    ];
+
+    const teamLabel = currentTeam === 'nanum' ? '🔵 나눔' : '🔴 드림';
+    Plotly.react('chart-shinhan', traces, {{
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {{ color: c.font || '#a0b0d0', size: 11 }},
+      barmode: 'group',
+      bargap: 0.18,
+      bargroupgap: 0.08,
+      height: Math.max(360, sorted.length > 8 ? 420 : 360),
+      margin: {{ t: 40, b: 70, l: 50, r: 20 }},
+      xaxis: {{ gridcolor: c.grid || '#1e2640', tickfont: {{ size: 10 }} }},
+      yaxis: {{ gridcolor: c.grid || '#1e2640', title: {{ text: '득표수', font: {{ size: 10 }} }}, rangemode: 'nonnegative' }},
+      legend: {{ orientation: 'h', y: -0.22, bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }} }},
+      title: {{ text: `${{teamLabel}} · ${{POS_LABEL[currentPos]}}(${{currentPos}}) — 1차 vs 2차 공식·신한 비교`,
+                font: {{ size: 13, color: c.font || '#a0b0d0' }}, x: 0.01 }},
+    }}, {{ responsive: true, displayModeBar: false }});
+
+    const note = document.getElementById('shinhan-note');
+    if (note) {{
+      note.textContent = '💡 1차=6/7 14시(11시·15시 데이터 선형보간 추정) · 2차=6/14 14시 · 신한 값은 PDF 합산 득표수에서 공식 득표수를 뺀 추정치입니다.';
+    }}
+  }}
+
+  buildPosTabs();
+  document.getElementById('sh-team-nanum').classList.add('active');
+  requestAnimationFrame(renderShinhanChart);
 }})();
 </script>
 </body>
