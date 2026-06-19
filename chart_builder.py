@@ -655,19 +655,34 @@ function unitToMs(unit) {{
   return 60 * 60 * 1000;
 }}
 
+// 이전: 매 포인트마다 idx 이전 전체를 선형탐색 → O(n²), 10분 단위(점 1700+개)에서 렉 발생
+// 변경: data가 시간순 정렬되어 있음을 이용해 이진탐색으로 targetTime 근처 인덱스를 바로 찾음 → O(log n)
 function findPrevVal(data, idx, metric, unit) {{
   const curTime = new Date(data[idx].datetime).getTime();
   const targetTime = curTime - unitToMs(unit);
-  let closest = null;
-  let minDiff = Infinity;
-  for (let i = 0; i < idx; i++) {{
-    const t = new Date(data[i].datetime).getTime();
-    const diff = Math.abs(t - targetTime);
-    if (diff < minDiff) {{
-      minDiff = diff;
-      closest = data[i];
-    }}
+
+  // data[0..idx-1] 구간에서 시간이 targetTime 이하인 마지막 위치를 이진탐색
+  let lo = 0, hi = idx - 1, pos = -1;
+  while (lo <= hi) {{
+    const mid = (lo + hi) >> 1;
+    const t = new Date(data[mid].datetime).getTime();
+    if (t <= targetTime) {{ pos = mid; lo = mid + 1; }}
+    else {{ hi = mid - 1; }}
   }}
+
+  // pos(targetTime 이하 마지막)와 pos+1(targetTime 초과 첫 값) 중 더 가까운 쪽 선택
+  let closest = null, minDiff = Infinity;
+  if (pos >= 0) {{
+    const t = new Date(data[pos].datetime).getTime();
+    const diff = Math.abs(t - targetTime);
+    if (diff < minDiff) {{ minDiff = diff; closest = data[pos]; }}
+  }}
+  if (pos + 1 < idx) {{
+    const t = new Date(data[pos + 1].datetime).getTime();
+    const diff = Math.abs(t - targetTime);
+    if (diff < minDiff) {{ minDiff = diff; closest = data[pos + 1]; }}
+  }}
+
   if (!closest) return null;
   const diffMin = Math.round(minDiff / 60000);
   return {{ val: getVal(closest, metric), diffMin }};
