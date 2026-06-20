@@ -809,6 +809,15 @@ const scrollZoomConfig = {{
   displayModeBar: false,
 }};
 
+// 신한 비교 차트(chart-shinhan) 전용 설정.
+// 막대그래프는 카테고리 축이라 시간축 전용 커스텀 터치 핸들러를 적용하지 않으므로,
+// 모바일에서도 Plotly 기본 핀치줌/팬이 동작하도록 scrollZoom을 항상 켠다.
+const barChartZoomConfig = {{
+  responsive: true,
+  scrollZoom: true,
+  displayModeBar: false,
+}};
+
 let currentViewMode = 'position';
 
 function setViewMode(mode) {{
@@ -1203,7 +1212,7 @@ function getPlotlyColors() {{
 
 function applyPlotlyTheme() {{
   const c = getPlotlyColors();
-  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total'];
+  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total','chart-shinhan'];
   CHART_IDS.forEach(id => {{
     const gd = document.getElementById(id);
     if (!gd || !gd.data) return;
@@ -1259,7 +1268,7 @@ function toggleHoverLabel() {{
     btn.innerHTML = '👁 툴팁 끄기';
     btn.classList.remove('tooltip-hidden');
   }}
-  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total'];
+  const CHART_IDS = ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-total','chart-shinhan'];
   CHART_IDS.forEach(id => {{
     const gd = document.getElementById(id);
     if (!gd || !gd.data) return;
@@ -1503,6 +1512,16 @@ if (IS_MOBILE) {{
       mk('sh2',  '2차 신한 (6/14)', '#ff9500'),
     ];
 
+    // 다른 차트들과 동일한 줌/팬 동작 통일:
+    // - 스크롤: 전체 줌 (scrollZoomConfig)
+    // - 드래그: 좌우 이동 (dragmode: 'pan')
+    // 막대그래프는 카테고리(문자열) x축이라 초기 range를 인덱스로 잘라
+    // "상위 5명만" 보이게 하고, 드래그하면 나머지 후보가 드러나도록 한다.
+    const INITIAL_VISIBLE = 5;
+    const xRange = players.length > INITIAL_VISIBLE
+      ? [-0.5, INITIAL_VISIBLE - 0.5]
+      : undefined; // 5명 이하면 전체 표시, range 제한 없음
+
     const teamLabel = currentTeam === 'nanum' ? '🔵 나눔' : '🔴 드림';
     Plotly.react('chart-shinhan', traces, {{
       paper_bgcolor: 'rgba(0,0,0,0)',
@@ -1513,16 +1532,27 @@ if (IS_MOBILE) {{
       bargroupgap: 0.08,
       height: Math.max(360, sorted.length > 8 ? 420 : 360),
       margin: {{ t: 40, b: 70, l: 50, r: 20 }},
-      xaxis: {{ gridcolor: c.grid || '#1e2640', tickfont: {{ size: 10 }} }},
-      yaxis: {{ gridcolor: c.grid || '#1e2640', title: {{ text: '득표수', font: {{ size: 10 }} }}, rangemode: 'nonnegative' }},
+      xaxis: {{
+        gridcolor: c.grid || '#1e2640',
+        tickfont: {{ size: 10 }},
+        range: xRange,
+        fixedrange: false,
+      }},
+      yaxis: {{ gridcolor: c.grid || '#1e2640', title: {{ text: '득표수', font: {{ size: 10 }} }}, rangemode: 'nonnegative', fixedrange: false }},
       legend: {{ orientation: 'h', y: -0.22, bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }} }},
       title: {{ text: `${{teamLabel}} · ${{POS_LABEL[currentPos]}}(${{currentPos}}) — 1차 vs 2차 공식·신한 비교`,
                 font: {{ size: 13, color: c.font || '#a0b0d0' }}, x: 0.01 }},
-    }}, {{ responsive: true, displayModeBar: false }});
+      dragmode: 'pan',
+      hovermode: hoverHidden ? false : 'closest',
+      hoverlabel: {{ bgcolor: c.hover_bg || '#1a2030', bordercolor: c.hover_border || '#2a3050', font: {{ color: c.hover_font || '#e0e6f0' }} }},
+    }}, barChartZoomConfig);
 
     const note = document.getElementById('shinhan-note');
     if (note) {{
-      note.textContent = '💡 1차=6/7 14시(11시·15시 데이터 선형보간 추정) · 2차=6/14 14시 · 신한 값은 PDF 합산 득표수에서 공식 득표수를 뺀 추정치입니다.';
+      const scrollHint = players.length > INITIAL_VISIBLE
+        ? ` 처음엔 상위 ${{INITIAL_VISIBLE}}명만 표시되며, 좌우로 드래그하면 더 많은 후보를 볼 수 있습니다.`
+        : '';
+      note.textContent = `💡 1차=6/7 14시(11시·15시 데이터 선형보간 추정) · 2차=6/14 14시 · 신한 값은 PDF 합산 득표수에서 공식 득표수를 뺀 추정치입니다.${{scrollHint}}`;
     }}
   }}
 
