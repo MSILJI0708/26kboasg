@@ -1,0 +1,1507 @@
+{
+  "timestamp": "2026-06-14T14:01:12",
+  "source_json": "2026-06-14_14-01-12.json",
+  "note": "SHINHAN_VOTE = COMBINED_VOTE(PDF엑셀) - OFFICIAL_VOTE(JSON). 음수는 null 처리.",
+  "positions": {
+    "SP": {
+      "nanum": [
+        {
+          "P_ID": 51111,
+          "P_NM": "송승기",
+          "T_NM": "LG",
+          "POS_ID": "SP",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 629374,
+          "COMBINED_VOTE": 967414,
+          "SHINHAN_VOTE": 338040,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56719,
+          "P_NM": "왕옌청",
+          "T_NM": "한화",
+          "POS_ID": "SP",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 535711,
+          "COMBINED_VOTE": 852287,
+          "SHINHAN_VOTE": 316576,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 55633,
+          "P_NM": "올러",
+          "T_NM": "KIA",
+          "POS_ID": "SP",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 447298,
+          "COMBINED_VOTE": 904071,
+          "SHINHAN_VOTE": 456773,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65933,
+          "P_NM": "구창모",
+          "T_NM": "NC",
+          "POS_ID": "SP",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 147507,
+          "COMBINED_VOTE": 266816,
+          "SHINHAN_VOTE": 119309,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68341,
+          "P_NM": "안우진",
+          "T_NM": "키움",
+          "POS_ID": "SP",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 143054,
+          "COMBINED_VOTE": 289568,
+          "SHINHAN_VOTE": 146514,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 68220,
+          "P_NM": "곽빈",
+          "T_NM": "두산",
+          "POS_ID": "SP",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 929659,
+          "COMBINED_VOTE": 1560674,
+          "SHINHAN_VOTE": 631015,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 69446,
+          "P_NM": "원태인",
+          "T_NM": "삼성",
+          "POS_ID": "SP",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 470282,
+          "COMBINED_VOTE": 803845,
+          "SHINHAN_VOTE": 333563,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51516,
+          "P_NM": "김진욱",
+          "T_NM": "롯데",
+          "POS_ID": "SP",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 185163,
+          "COMBINED_VOTE": 325728,
+          "SHINHAN_VOTE": 140565,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51867,
+          "P_NM": "김건우",
+          "T_NM": "SSG",
+          "POS_ID": "SP",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 163228,
+          "COMBINED_VOTE": 298470,
+          "SHINHAN_VOTE": 135242,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56036,
+          "P_NM": "보쉴리",
+          "T_NM": "KT",
+          "POS_ID": "SP",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 154612,
+          "COMBINED_VOTE": 291439,
+          "SHINHAN_VOTE": 136827,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "MP": {
+      "nanum": [
+        {
+          "P_ID": 50662,
+          "P_NM": "정해영",
+          "T_NM": "KIA",
+          "POS_ID": "MP",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 638752,
+          "COMBINED_VOTE": 1146769,
+          "SHINHAN_VOTE": 508017,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51526,
+          "P_NM": "우강훈",
+          "T_NM": "LG",
+          "POS_ID": "MP",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 612048,
+          "COMBINED_VOTE": 999198,
+          "SHINHAN_VOTE": 387150,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65117,
+          "P_NM": "이상규",
+          "T_NM": "한화",
+          "POS_ID": "MP",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 416421,
+          "COMBINED_VOTE": 672876,
+          "SHINHAN_VOTE": 256455,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 64995,
+          "P_NM": "배재환",
+          "T_NM": "NC",
+          "POS_ID": "MP",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 118858,
+          "COMBINED_VOTE": 216239,
+          "SHINHAN_VOTE": 97381,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 76118,
+          "P_NM": "원종현",
+          "T_NM": "키움",
+          "POS_ID": "MP",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 116865,
+          "COMBINED_VOTE": 245077,
+          "SHINHAN_VOTE": 128212,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 68830,
+          "P_NM": "김정우",
+          "T_NM": "두산",
+          "POS_ID": "MP",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 716033,
+          "COMBINED_VOTE": 1052092,
+          "SHINHAN_VOTE": 336059,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50464,
+          "P_NM": "이승민",
+          "T_NM": "삼성",
+          "POS_ID": "MP",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 454401,
+          "COMBINED_VOTE": 883677,
+          "SHINHAN_VOTE": 429276,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 61666,
+          "P_NM": "한승혁",
+          "T_NM": "KT",
+          "POS_ID": "MP",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 342434,
+          "COMBINED_VOTE": 600887,
+          "SHINHAN_VOTE": 258453,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 62869,
+          "P_NM": "문승원",
+          "T_NM": "SSG",
+          "POS_ID": "MP",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 199823,
+          "COMBINED_VOTE": 391468,
+          "SHINHAN_VOTE": 191645,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56536,
+          "P_NM": "박정민",
+          "T_NM": "롯데",
+          "POS_ID": "MP",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 190253,
+          "COMBINED_VOTE": 352032,
+          "SHINHAN_VOTE": 161779,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "CP": {
+      "nanum": [
+        {
+          "P_ID": 54610,
+          "P_NM": "성영탁",
+          "T_NM": "KIA",
+          "POS_ID": "CP",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 667565,
+          "COMBINED_VOTE": 1179769,
+          "SHINHAN_VOTE": 512204,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 67143,
+          "P_NM": "손주영",
+          "T_NM": "LG",
+          "POS_ID": "CP",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 637740,
+          "COMBINED_VOTE": 1080697,
+          "SHINHAN_VOTE": 442957,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65616,
+          "P_NM": "이민우",
+          "T_NM": "한화",
+          "POS_ID": "CP",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 394450,
+          "COMBINED_VOTE": 634813,
+          "SHINHAN_VOTE": 240363,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65949,
+          "P_NM": "류진욱",
+          "T_NM": "NC",
+          "POS_ID": "CP",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 106141,
+          "COMBINED_VOTE": 195015,
+          "SHINHAN_VOTE": 88874,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56348,
+          "P_NM": "유토",
+          "T_NM": "키움",
+          "POS_ID": "CP",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 97048,
+          "COMBINED_VOTE": 189862,
+          "SHINHAN_VOTE": 92814,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 66291,
+          "P_NM": "이영하",
+          "T_NM": "두산",
+          "POS_ID": "CP",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 724347,
+          "COMBINED_VOTE": 1084110,
+          "SHINHAN_VOTE": 359763,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51897,
+          "P_NM": "조병현",
+          "T_NM": "SSG",
+          "POS_ID": "CP",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 418661,
+          "COMBINED_VOTE": 854665,
+          "SHINHAN_VOTE": 436004,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65062,
+          "P_NM": "김재윤",
+          "T_NM": "삼성",
+          "POS_ID": "CP",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 378107,
+          "COMBINED_VOTE": 609915,
+          "SHINHAN_VOTE": 231808,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 52060,
+          "P_NM": "박영현",
+          "T_NM": "KT",
+          "POS_ID": "CP",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 204325,
+          "COMBINED_VOTE": 418871,
+          "SHINHAN_VOTE": 214546,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50556,
+          "P_NM": "최준용",
+          "T_NM": "롯데",
+          "POS_ID": "CP",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 177504,
+          "COMBINED_VOTE": 312595,
+          "SHINHAN_VOTE": 135091,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "C": {
+      "nanum": [
+        {
+          "P_ID": 79365,
+          "P_NM": "박동원",
+          "T_NM": "LG",
+          "POS_ID": "C",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 670891,
+          "COMBINED_VOTE": 1066445,
+          "SHINHAN_VOTE": 395554,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 52764,
+          "P_NM": "허인서",
+          "T_NM": "한화",
+          "POS_ID": "C",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 596076,
+          "COMBINED_VOTE": 1118303,
+          "SHINHAN_VOTE": 522227,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68646,
+          "P_NM": "한준수",
+          "T_NM": "KIA",
+          "POS_ID": "C",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 382729,
+          "COMBINED_VOTE": 643671,
+          "SHINHAN_VOTE": 260942,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68912,
+          "P_NM": "김형준",
+          "T_NM": "NC",
+          "POS_ID": "C",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 135162,
+          "COMBINED_VOTE": 234830,
+          "SHINHAN_VOTE": 99668,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 53312,
+          "P_NM": "김건희",
+          "T_NM": "키움",
+          "POS_ID": "C",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 118086,
+          "COMBINED_VOTE": 216907,
+          "SHINHAN_VOTE": 98821,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 76232,
+          "P_NM": "양의지",
+          "T_NM": "두산",
+          "POS_ID": "C",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 1013150,
+          "COMBINED_VOTE": 1734348,
+          "SHINHAN_VOTE": 721198,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 74540,
+          "P_NM": "강민호",
+          "T_NM": "삼성",
+          "POS_ID": "C",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 426766,
+          "COMBINED_VOTE": 731451,
+          "SHINHAN_VOTE": 304685,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51865,
+          "P_NM": "조형우",
+          "T_NM": "SSG",
+          "POS_ID": "C",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 215145,
+          "COMBINED_VOTE": 366651,
+          "SHINHAN_VOTE": 151506,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51528,
+          "P_NM": "손성빈",
+          "T_NM": "롯데",
+          "POS_ID": "C",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 126924,
+          "COMBINED_VOTE": 233634,
+          "SHINHAN_VOTE": 106710,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 63722,
+          "P_NM": "한승택",
+          "T_NM": "KT",
+          "POS_ID": "C",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 120959,
+          "COMBINED_VOTE": 214072,
+          "SHINHAN_VOTE": 93113,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "1B": {
+      "nanum": [
+        {
+          "P_ID": 53123,
+          "P_NM": "오스틴",
+          "T_NM": "LG",
+          "POS_ID": "1B",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 851619,
+          "COMBINED_VOTE": 1542774,
+          "SHINHAN_VOTE": 691155,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 66704,
+          "P_NM": "김태연",
+          "T_NM": "한화",
+          "POS_ID": "1B",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 438584,
+          "COMBINED_VOTE": 709392,
+          "SHINHAN_VOTE": 270808,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 52634,
+          "P_NM": "박상준",
+          "T_NM": "KIA",
+          "POS_ID": "1B",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 346491,
+          "COMBINED_VOTE": 556901,
+          "SHINHAN_VOTE": 210410,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 76267,
+          "P_NM": "최주환",
+          "T_NM": "키움",
+          "POS_ID": "1B",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 137220,
+          "COMBINED_VOTE": 261708,
+          "SHINHAN_VOTE": 124488,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 54944,
+          "P_NM": "데이비슨",
+          "T_NM": "NC",
+          "POS_ID": "1B",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 129030,
+          "COMBINED_VOTE": 209381,
+          "SHINHAN_VOTE": 80351,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 54400,
+          "P_NM": "디아즈",
+          "T_NM": "삼성",
+          "POS_ID": "1B",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 709300,
+          "COMBINED_VOTE": 1328240,
+          "SHINHAN_VOTE": 618940,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 63123,
+          "P_NM": "강승호",
+          "T_NM": "두산",
+          "POS_ID": "1B",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 640457,
+          "COMBINED_VOTE": 960464,
+          "SHINHAN_VOTE": 320007,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 76290,
+          "P_NM": "김현수",
+          "T_NM": "KT",
+          "POS_ID": "1B",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 298106,
+          "COMBINED_VOTE": 534882,
+          "SHINHAN_VOTE": 236776,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 60558,
+          "P_NM": "오태곤",
+          "T_NM": "SSG",
+          "POS_ID": "1B",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 155317,
+          "COMBINED_VOTE": 281237,
+          "SHINHAN_VOTE": 125920,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51551,
+          "P_NM": "나승엽",
+          "T_NM": "롯데",
+          "POS_ID": "1B",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 99764,
+          "COMBINED_VOTE": 175333,
+          "SHINHAN_VOTE": 75569,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "2B": {
+      "nanum": [
+        {
+          "P_ID": 65207,
+          "P_NM": "신민재",
+          "T_NM": "LG",
+          "POS_ID": "2B",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 661541,
+          "COMBINED_VOTE": 1175618,
+          "SHINHAN_VOTE": 514077,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 62907,
+          "P_NM": "박민우",
+          "T_NM": "NC",
+          "POS_ID": "2B",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 394019,
+          "COMBINED_VOTE": 678562,
+          "SHINHAN_VOTE": 284543,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65703,
+          "P_NM": "이도윤",
+          "T_NM": "한화",
+          "POS_ID": "2B",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 375743,
+          "COMBINED_VOTE": 621078,
+          "SHINHAN_VOTE": 245335,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 55926,
+          "P_NM": "정현창",
+          "T_NM": "KIA",
+          "POS_ID": "2B",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 361504,
+          "COMBINED_VOTE": 581259,
+          "SHINHAN_VOTE": 219755,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 79608,
+          "P_NM": "안치홍",
+          "T_NM": "키움",
+          "POS_ID": "2B",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 110137,
+          "COMBINED_VOTE": 223639,
+          "SHINHAN_VOTE": 113502,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 55252,
+          "P_NM": "박준순",
+          "T_NM": "두산",
+          "POS_ID": "2B",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 892630,
+          "COMBINED_VOTE": 1503038,
+          "SHINHAN_VOTE": 610408,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 62234,
+          "P_NM": "류지혁",
+          "T_NM": "삼성",
+          "POS_ID": "2B",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 565347,
+          "COMBINED_VOTE": 972689,
+          "SHINHAN_VOTE": 407342,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 54812,
+          "P_NM": "정준재",
+          "T_NM": "SSG",
+          "POS_ID": "2B",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 232676,
+          "COMBINED_VOTE": 391839,
+          "SHINHAN_VOTE": 159163,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 79402,
+          "P_NM": "김상수",
+          "T_NM": "KT",
+          "POS_ID": "2B",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 116520,
+          "COMBINED_VOTE": 229674,
+          "SHINHAN_VOTE": 113154,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 69517,
+          "P_NM": "고승민",
+          "T_NM": "롯데",
+          "POS_ID": "2B",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 95771,
+          "COMBINED_VOTE": 182916,
+          "SHINHAN_VOTE": 87145,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "3B": {
+      "nanum": [
+        {
+          "P_ID": 52605,
+          "P_NM": "김도영",
+          "T_NM": "KIA",
+          "POS_ID": "3B",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 770952,
+          "COMBINED_VOTE": 1420075,
+          "SHINHAN_VOTE": 649123,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50054,
+          "P_NM": "천성호",
+          "T_NM": "LG",
+          "POS_ID": "3B",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 507044,
+          "COMBINED_VOTE": 799965,
+          "SHINHAN_VOTE": 292921,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 69737,
+          "P_NM": "노시환",
+          "T_NM": "한화",
+          "POS_ID": "3B",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 409427,
+          "COMBINED_VOTE": 678641,
+          "SHINHAN_VOTE": 269214,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51344,
+          "P_NM": "김휘집",
+          "T_NM": "NC",
+          "POS_ID": "3B",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 125308,
+          "COMBINED_VOTE": 211587,
+          "SHINHAN_VOTE": 86279,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65898,
+          "P_NM": "김웅빈",
+          "T_NM": "키움",
+          "POS_ID": "3B",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 90213,
+          "COMBINED_VOTE": 169888,
+          "SHINHAN_VOTE": 79675,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 50204,
+          "P_NM": "박지훈",
+          "T_NM": "두산",
+          "POS_ID": "3B",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 726476,
+          "COMBINED_VOTE": 1086367,
+          "SHINHAN_VOTE": 359891,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 75847,
+          "P_NM": "최정",
+          "T_NM": "SSG",
+          "POS_ID": "3B",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 598441,
+          "COMBINED_VOTE": 1186480,
+          "SHINHAN_VOTE": 588039,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65586,
+          "P_NM": "전병우",
+          "T_NM": "삼성",
+          "POS_ID": "3B",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 320875,
+          "COMBINED_VOTE": 527716,
+          "SHINHAN_VOTE": 206841,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 79240,
+          "P_NM": "허경민",
+          "T_NM": "KT",
+          "POS_ID": "3B",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 133212,
+          "COMBINED_VOTE": 262273,
+          "SHINHAN_VOTE": 129061,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68525,
+          "P_NM": "한동희",
+          "T_NM": "롯데",
+          "POS_ID": "3B",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 123940,
+          "COMBINED_VOTE": 216720,
+          "SHINHAN_VOTE": 92780,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "SS": {
+      "nanum": [
+        {
+          "P_ID": 79109,
+          "P_NM": "오지환",
+          "T_NM": "LG",
+          "POS_ID": "SS",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 630232,
+          "COMBINED_VOTE": 1134146,
+          "SHINHAN_VOTE": 503914,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 51907,
+          "P_NM": "김주원",
+          "T_NM": "NC",
+          "POS_ID": "SS",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 460781,
+          "COMBINED_VOTE": 771107,
+          "SHINHAN_VOTE": 310326,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 64006,
+          "P_NM": "심우준",
+          "T_NM": "한화",
+          "POS_ID": "SS",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 378074,
+          "COMBINED_VOTE": 637423,
+          "SHINHAN_VOTE": 259349,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50657,
+          "P_NM": "박민",
+          "T_NM": "KIA",
+          "POS_ID": "SS",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 350378,
+          "COMBINED_VOTE": 579817,
+          "SHINHAN_VOTE": 229439,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 55371,
+          "P_NM": "권혁빈",
+          "T_NM": "키움",
+          "POS_ID": "SS",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 83479,
+          "COMBINED_VOTE": 157663,
+          "SHINHAN_VOTE": 74184,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 64646,
+          "P_NM": "박찬호",
+          "T_NM": "두산",
+          "POS_ID": "SS",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 894347,
+          "COMBINED_VOTE": 1526720,
+          "SHINHAN_VOTE": 632373,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 52415,
+          "P_NM": "이재현",
+          "T_NM": "삼성",
+          "POS_ID": "SS",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 395344,
+          "COMBINED_VOTE": 625953,
+          "SHINHAN_VOTE": 230609,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 67893,
+          "P_NM": "박성한",
+          "T_NM": "SSG",
+          "POS_ID": "SS",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 362633,
+          "COMBINED_VOTE": 688055,
+          "SHINHAN_VOTE": 325422,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56006,
+          "P_NM": "이강민",
+          "T_NM": "KT",
+          "POS_ID": "SS",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 127085,
+          "COMBINED_VOTE": 218141,
+          "SHINHAN_VOTE": 91056,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68205,
+          "P_NM": "전민재",
+          "T_NM": "롯데",
+          "POS_ID": "SS",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 123535,
+          "COMBINED_VOTE": 221287,
+          "SHINHAN_VOTE": 97752,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "OF": {
+      "nanum": [
+        {
+          "P_ID": 62415,
+          "P_NM": "박해민",
+          "T_NM": "LG",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 785719,
+          "COMBINED_VOTE": 1389304,
+          "SHINHAN_VOTE": 603585,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 55636,
+          "P_NM": "박재현",
+          "T_NM": "KIA",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 649444,
+          "COMBINED_VOTE": 1138902,
+          "SHINHAN_VOTE": 489458,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 53764,
+          "P_NM": "문현빈",
+          "T_NM": "한화",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 647351,
+          "COMBINED_VOTE": 1095446,
+          "SHINHAN_VOTE": 448095,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 66108,
+          "P_NM": "홍창기",
+          "T_NM": "LG",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 600835,
+          "COMBINED_VOTE": 960513,
+          "SHINHAN_VOTE": 359678,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 65653,
+          "P_NM": "김호령",
+          "T_NM": "KIA",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 588362,
+          "COMBINED_VOTE": 1060326,
+          "SHINHAN_VOTE": 471964,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 54730,
+          "P_NM": "페라자",
+          "T_NM": "한화",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 6,
+          "OFFICIAL_VOTE": 491481,
+          "COMBINED_VOTE": 875011,
+          "SHINHAN_VOTE": 383530,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68110,
+          "P_NM": "송찬의",
+          "T_NM": "LG",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 7,
+          "OFFICIAL_VOTE": 475525,
+          "COMBINED_VOTE": 765166,
+          "SHINHAN_VOTE": 289641,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 62947,
+          "P_NM": "나성범",
+          "T_NM": "KIA",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 8,
+          "OFFICIAL_VOTE": 355819,
+          "COMBINED_VOTE": 602173,
+          "SHINHAN_VOTE": 246354,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68700,
+          "P_NM": "이원석",
+          "T_NM": "한화",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 9,
+          "OFFICIAL_VOTE": 349364,
+          "COMBINED_VOTE": 565528,
+          "SHINHAN_VOTE": 216164,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 79215,
+          "P_NM": "박건우",
+          "T_NM": "NC",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 10,
+          "OFFICIAL_VOTE": 332177,
+          "COMBINED_VOTE": 572212,
+          "SHINHAN_VOTE": 240035,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 63260,
+          "P_NM": "이우성",
+          "T_NM": "NC",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 11,
+          "OFFICIAL_VOTE": 96872,
+          "COMBINED_VOTE": 180993,
+          "SHINHAN_VOTE": 84121,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 69992,
+          "P_NM": "최정원",
+          "T_NM": "NC",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 12,
+          "OFFICIAL_VOTE": 91103,
+          "COMBINED_VOTE": 164778,
+          "SHINHAN_VOTE": 73675,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50167,
+          "P_NM": "이주형",
+          "T_NM": "키움",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 13,
+          "OFFICIAL_VOTE": 85315,
+          "COMBINED_VOTE": 170762,
+          "SHINHAN_VOTE": 85447,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50357,
+          "P_NM": "박주홍",
+          "T_NM": "키움",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 14,
+          "OFFICIAL_VOTE": 79923,
+          "COMBINED_VOTE": 150117,
+          "SHINHAN_VOTE": 70194,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 64346,
+          "P_NM": "임병욱",
+          "T_NM": "키움",
+          "POS_ID": "OF",
+          "TEAM": "nanum",
+          "RANK_CN": 15,
+          "OFFICIAL_VOTE": 79542,
+          "COMBINED_VOTE": 149297,
+          "SHINHAN_VOTE": 69755,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 79231,
+          "P_NM": "정수빈",
+          "T_NM": "두산",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 908936,
+          "COMBINED_VOTE": 1508107,
+          "SHINHAN_VOTE": 599171,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 53554,
+          "P_NM": "김민석",
+          "T_NM": "두산",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 777937,
+          "COMBINED_VOTE": 1252413,
+          "SHINHAN_VOTE": 474476,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 62404,
+          "P_NM": "구자욱",
+          "T_NM": "삼성",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 729402,
+          "COMBINED_VOTE": 1320346,
+          "SHINHAN_VOTE": 590944,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56251,
+          "P_NM": "카메론",
+          "T_NM": "두산",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 598067,
+          "COMBINED_VOTE": 926224,
+          "SHINHAN_VOTE": 328157,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 69418,
+          "P_NM": "박승규",
+          "T_NM": "삼성",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 449690,
+          "COMBINED_VOTE": 721772,
+          "SHINHAN_VOTE": 272082,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 66606,
+          "P_NM": "최원준",
+          "T_NM": "KT",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 6,
+          "OFFICIAL_VOTE": 369701,
+          "COMBINED_VOTE": 685482,
+          "SHINHAN_VOTE": 315781,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 67449,
+          "P_NM": "김성윤",
+          "T_NM": "삼성",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 7,
+          "OFFICIAL_VOTE": 369322,
+          "COMBINED_VOTE": 589966,
+          "SHINHAN_VOTE": 220644,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 54529,
+          "P_NM": "레이예스",
+          "T_NM": "롯데",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 8,
+          "OFFICIAL_VOTE": 275263,
+          "COMBINED_VOTE": 527093,
+          "SHINHAN_VOTE": 251830,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 52001,
+          "P_NM": "안현민",
+          "T_NM": "KT",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 9,
+          "OFFICIAL_VOTE": 248875,
+          "COMBINED_VOTE": 480642,
+          "SHINHAN_VOTE": 231767,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 50854,
+          "P_NM": "최지훈",
+          "T_NM": "SSG",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 10,
+          "OFFICIAL_VOTE": 229504,
+          "COMBINED_VOTE": 434980,
+          "SHINHAN_VOTE": 205476,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 52591,
+          "P_NM": "윤동희",
+          "T_NM": "롯데",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 11,
+          "OFFICIAL_VOTE": 177211,
+          "COMBINED_VOTE": 312685,
+          "SHINHAN_VOTE": 135474,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 53827,
+          "P_NM": "에레디아",
+          "T_NM": "SSG",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 12,
+          "OFFICIAL_VOTE": 160805,
+          "COMBINED_VOTE": 320640,
+          "SHINHAN_VOTE": 159835,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 56034,
+          "P_NM": "힐리어드",
+          "T_NM": "KT",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 13,
+          "OFFICIAL_VOTE": 145536,
+          "COMBINED_VOTE": 282752,
+          "SHINHAN_VOTE": 137216,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 62895,
+          "P_NM": "한유섬",
+          "T_NM": "SSG",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 14,
+          "OFFICIAL_VOTE": 140338,
+          "COMBINED_VOTE": 252561,
+          "SHINHAN_VOTE": 112223,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68507,
+          "P_NM": "장두성",
+          "T_NM": "롯데",
+          "POS_ID": "OF",
+          "TEAM": "dream",
+          "RANK_CN": 15,
+          "OFFICIAL_VOTE": 128245,
+          "COMBINED_VOTE": 224805,
+          "SHINHAN_VOTE": 96560,
+          "NOTE": "역산완료"
+        }
+      ]
+    },
+    "DH": {
+      "nanum": [
+        {
+          "P_ID": 69102,
+          "P_NM": "문보경",
+          "T_NM": "LG",
+          "POS_ID": "DH",
+          "TEAM": "nanum",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 730374,
+          "COMBINED_VOTE": 1132888,
+          "SHINHAN_VOTE": 402514,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68050,
+          "P_NM": "강백호",
+          "T_NM": "한화",
+          "POS_ID": "DH",
+          "TEAM": "nanum",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 656569,
+          "COMBINED_VOTE": 1264878,
+          "SHINHAN_VOTE": 608309,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 78603,
+          "P_NM": "김선빈",
+          "T_NM": "KIA",
+          "POS_ID": "DH",
+          "TEAM": "nanum",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 354713,
+          "COMBINED_VOTE": 583927,
+          "SHINHAN_VOTE": 229214,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 78168,
+          "P_NM": "서건창",
+          "T_NM": "키움",
+          "POS_ID": "DH",
+          "TEAM": "nanum",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 80749,
+          "COMBINED_VOTE": 165263,
+          "SHINHAN_VOTE": 84514,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 68904,
+          "P_NM": "오영수",
+          "T_NM": "NC",
+          "POS_ID": "DH",
+          "TEAM": "nanum",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 80539,
+          "COMBINED_VOTE": 133200,
+          "SHINHAN_VOTE": 52661,
+          "NOTE": "역산완료"
+        }
+      ],
+      "dream": [
+        {
+          "P_ID": 77532,
+          "P_NM": "손아섭",
+          "T_NM": "두산",
+          "POS_ID": "DH",
+          "TEAM": "dream",
+          "RANK_CN": 1,
+          "OFFICIAL_VOTE": 989798,
+          "COMBINED_VOTE": 1594281,
+          "SHINHAN_VOTE": 604483,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 72443,
+          "P_NM": "최형우",
+          "T_NM": "삼성",
+          "POS_ID": "DH",
+          "TEAM": "dream",
+          "RANK_CN": 2,
+          "OFFICIAL_VOTE": 648175,
+          "COMBINED_VOTE": 1175633,
+          "SHINHAN_VOTE": 527458,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 78513,
+          "P_NM": "전준우",
+          "T_NM": "롯데",
+          "POS_ID": "DH",
+          "TEAM": "dream",
+          "RANK_CN": 3,
+          "OFFICIAL_VOTE": 116368,
+          "COMBINED_VOTE": 219730,
+          "SHINHAN_VOTE": 103362,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 78224,
+          "P_NM": "김재환",
+          "T_NM": "SSG",
+          "POS_ID": "DH",
+          "TEAM": "dream",
+          "RANK_CN": 4,
+          "OFFICIAL_VOTE": 76428,
+          "COMBINED_VOTE": 157870,
+          "SHINHAN_VOTE": 81442,
+          "NOTE": "역산완료"
+        },
+        {
+          "P_ID": 78548,
+          "P_NM": "장성우",
+          "T_NM": "KT",
+          "POS_ID": "DH",
+          "TEAM": "dream",
+          "RANK_CN": 5,
+          "OFFICIAL_VOTE": 72175,
+          "COMBINED_VOTE": 132642,
+          "SHINHAN_VOTE": 60467,
+          "NOTE": "역산완료"
+        }
+      ]
+    }
+  }
+}
