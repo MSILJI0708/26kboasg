@@ -44,9 +44,14 @@ jobs:
       # 차트가 빌드되어 배포되는 문제가 있었다 (데이터 양이 늘며 수집 시간이 길어지자 더 심해짐).
       # trigger.py가 이제 dispatch 후 해당 run이 completed/success가 될 때까지
       # 폴링하며 대기하므로, 이 단계가 끝난 시점에는 수집이 100% 완료된 상태가 보장된다.
+      #
+      # 주의: 기본 제공되는 secrets.GITHUB_TOKEN은 보안상 다른 워크플로를
+      # workflow_dispatch로 트리거할 권한이 없다 (403 Resource not accessible by integration).
+      # 그래서 별도로 발급한 PAT(Fine-grained, Actions: Read&Write / Contents: Read&Write)를
+      # WORKFLOW_PAT라는 이름의 저장소 시크릿으로 등록해 사용한다.
       - name: Trigger & wait for data collection
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
         run: python trigger.py
 
       # 수집이 끝난 뒤에야 main을 전체 체크아웃한다.
