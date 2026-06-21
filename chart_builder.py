@@ -411,6 +411,19 @@ def build_chart(df):
 </div>
 <div class="updated">마지막 업데이트: {last_updated} KST</div>
 
+<!-- ══════════════════════════════════════════════
+     최상단 모드 탭: 실시간 집계 / 중간집계(신한) 비교
+     ══════════════════════════════════════════════ -->
+<div class="main-tabs">
+  <button class="main-tab-btn active" id="main-tab-live"     onclick="setMainTab('live')">📡 실시간 집계</button>
+  <button class="main-tab-btn"        id="main-tab-shinhan"  onclick="setMainTab('shinhan')">🏦 중간집계 비교</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     실시간 집계 탭 콘텐츠
+     ══════════════════════════════════════════════ -->
+<div id="main-panel-live">
+
 <div class="controls">
   <div class="control-group" id="selector-group">
     <label id="selector-label">포지션</label>
@@ -506,6 +519,8 @@ def build_chart(df):
   <div id="chart-total"></div>
 </div>
 
+</div> <!-- /#main-panel-live -->
+
 <!-- ══════════════════════════════════════════════
      포지션×팀 데이터 lazy-load 저장소
      application/json 타입은 브라우저가 자동 파싱/실행하지 않으므로
@@ -513,11 +528,11 @@ def build_chart(df):
      ══════════════════════════════════════════════ -->
 {agg_data_scripts}
 
-<hr class="divider">
-
 <!-- ══════════════════════════════════════════════
-     신한은행 vs 공식 비교 차트 (1차/2차 통합 — 선수당 4막대)
+     중간집계(신한) 비교 탭 콘텐츠
      ══════════════════════════════════════════════ -->
+<div id="main-panel-shinhan" style="display:none">
+
 <div class="chart-container" id="shinhan-section">
   <div class="chart-title">🏦 신한 SOL트래블 vs 공식 비교 <span style="font-size:0.8rem;font-weight:400;color:var(--text-muted)">(1차 6/7 14시 · 2차 6/14 14시, 선수별 1차공식·1차신한·2차공식·2차신한)</span></div>
 
@@ -531,7 +546,18 @@ def build_chart(df):
   <div id="shinhan-note" style="font-size:0.75rem;color:var(--text-muted);margin-top:6px;"></div>
 </div>
 
+</div> <!-- /#main-panel-shinhan -->
+
 <style>
+  .main-tabs {{
+    display:flex; gap:8px; margin: 16px 0 20px 0;
+  }}
+  .main-tab-btn {{
+    padding:10px 20px;border-radius:8px;border:1px solid var(--border2);
+    background:var(--bg3);color:var(--text-muted);cursor:pointer;
+    font-size:0.95rem;font-weight:700;transition:all .15s;
+  }}
+  .main-tab-btn.active {{ background:var(--active-bg);color:#fff;border-color:var(--active-bg); }}
   .sh-team-btn {{
     padding:6px 14px;border-radius:6px;border:1px solid var(--border2);
     background:var(--bg3);color:var(--text-muted);cursor:pointer;
@@ -1447,6 +1473,8 @@ if (IS_MOBILE) {{
   if (!SHINHAN_COMPARE) {{
     const sec = document.getElementById('shinhan-section');
     if (sec) sec.style.display = 'none';
+    const tabBtn = document.getElementById('main-tab-shinhan');
+    if (tabBtn) tabBtn.style.display = 'none'; // 데이터 없으면 탭 자체를 숨김
     return;
   }}
 
@@ -1592,8 +1620,43 @@ if (IS_MOBILE) {{
 
   buildPosTabs();
   document.getElementById('sh-team-nanum').classList.add('active');
-  requestAnimationFrame(renderShinhanChart);
+  // 신한 탭은 처음엔 숨겨져 있으므로 자동 렌더하지 않음.
+  // setMainTab('shinhan')에서 최초 진입 시 1회 호출됨 (window.renderShinhanChart로 노출).
+  window.renderShinhanChart = renderShinhanChart;
 }})();
+
+// ── 메인 탭 전환: 실시간 집계 ↔ 중간집계(신한) 비교 ──
+let _shinhanRendered = false;
+function setMainTab(tab) {{
+  document.getElementById('main-tab-live').classList.toggle('active', tab === 'live');
+  document.getElementById('main-tab-shinhan').classList.toggle('active', tab === 'shinhan');
+  document.getElementById('main-panel-live').style.display    = tab === 'live'    ? '' : 'none';
+  document.getElementById('main-panel-shinhan').style.display = tab === 'shinhan' ? '' : 'none';
+
+  if (tab === 'shinhan') {{
+    // 숨겨진 상태(width:0)에서 Plotly가 그려지면 레이아웃이 깨지므로
+    // 탭이 보이게 된 직후(1프레임 뒤)에 최초 1회만 렌더한다.
+    if (!_shinhanRendered && typeof window.renderShinhanChart === 'function') {{
+      _shinhanRendered = true;
+      requestAnimationFrame(() => window.renderShinhanChart());
+    }} else {{
+      // 이미 렌더된 적 있으면 크기만 재계산 (컨테이너가 display:none이었다가 풀렸으므로)
+      requestAnimationFrame(() => {{
+        const gd = document.getElementById('chart-shinhan');
+        if (gd && gd.data) Plotly.Plots.resize(gd);
+      }});
+    }}
+  }} else {{
+    // 실시간 탭으로 복귀 시에도 동일하게 차트 크기 재계산
+    requestAnimationFrame(() => {{
+      ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream',
+       'chart-of2-nanum','chart-of2-dream','chart-total'].forEach(id => {{
+        const gd = document.getElementById(id);
+        if (gd && gd.data) Plotly.Plots.resize(gd);
+      }});
+    }});
+  }}
+}}
 </script>
 </body>
 </html>"""
