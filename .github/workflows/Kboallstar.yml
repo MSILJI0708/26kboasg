@@ -1,20 +1,23 @@
-name: KBO 올스타 투표 수집
-
-
+name: KBO 올스타 투표 수집 및 배포
 
 on:
   workflow_dispatch:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: kbo-allstar
   cancel-in-progress: false
 
 jobs:
-  collect:
+  collect-build-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: 저장소 체크아웃
@@ -30,19 +33,31 @@ jobs:
 
       - name: 의존성 설치
         run: |
-          pip install requests openpyxl
+          pip install requests openpyxl plotly pandas --quiet
 
       - name: 투표 데이터 수집
         run: |
           python collector.py
-          
+
       - name: 엑셀 파일 생성
         run: |
           python processor.py
 
-      - name: 차트 생성
+      # ── 핵심 변경점 ──
+      # 이전에는 static.yml이라는 별도 워크플로가 이 워크플로(Kboallstar.yml)를
+      # API로 호출(workflow_dispatch)한 뒤 완료를 기다리려 했다. 그러나 기본 제공
+      # GITHUB_TOKEN은 다른 워크플로를 트리거할 권한이 없어 403이 났고, 이를
+      # 우회하려 별도 PAT를 쓰면 401(자격 증명 문제) 등 불필요하게 복잡했다.
+      #
+      # 대신 수집(collector.py) → 가공(processor.py) → 빌드(chart_builder.py) →
+      # 배포(GitHub Pages)를 전부 이 워크플로 "한 번의 실행" 안에서 순서대로
+      # 처리한다. 같은 job의 step들은 항상 위에서 아래로 순차 실행되므로,
+      # "수집이 끝나기 전에 배포가 시작되는" 문제 자체가 구조적으로 발생할 수 없다.
+      - name: 차트 생성 (GitHub Pages용)
+        env:
+          GITHUB_PAGES_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          GITHUB_REPO_URL: "https://github.com/${{ github.repository }}"
         run: |
-          pip install plotly pandas --quiet
           python chart_builder.py
 
       - name: 엑셀 아티팩트 업로드
@@ -66,11 +81,11 @@ jobs:
           if git diff --staged --quiet; then
             echo "변경사항 없음"
           else
-            git commit -m "chore: 투표 데이터 수집 $(date +'%Y-%m-%d %H:%M UTC') [skip ci]"
+            git commit -m "chore: 투표 데이터 수집 $(date +'%Y-%m-%d %H:%M UTC')"
             git pull --rebase origin main
             git push
           fi
-          
+
       - name: rclone 설치
         run: |
           curl https://rclone.org/install.sh | sudo bash
@@ -86,3 +101,16 @@ jobs:
       - name: 구글 드라이브 업로드 (차트)
         run: |
           rclone copyto output/chart.html gdrive:chart.html
+
+      # ── 여기서부터 GitHub Pages 배포 (기존 static.yml의 역할) ──
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'output'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
