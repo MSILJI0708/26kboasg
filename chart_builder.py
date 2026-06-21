@@ -1491,18 +1491,20 @@ if (IS_MOBILE) {{
     }}
 
     const sorted = [...rows].sort((a,b) => (a.rank2||99) - (b.rank2||99) || (a.rank1||99) - (b.rank1||99));
-    const players = sorted.map(r => `${{r.player}}<br><span style="font-size:9px">(${{r.club}})</span>`);
+    // x축 카테고리 라벨은 선수명만 (구단 표시는 아래 annotations 배지로 대체)
+    const players = sorted.map(r => r.player);
 
     const mk = (key, name, color) => ({{
       x: players,
       y: sorted.map(r => r[key]),
+      customdata: sorted.map(r => r.club),
       name: name,
       type: 'bar',
       marker: {{ color: color, opacity: 0.9 }},
       text: sorted.map(r => r[key] != null ? r[key].toLocaleString() : '-'),
       textposition: 'outside',
       textfont: {{ size: 9 }},
-      hovertemplate: `%{{x}}<br>${{name}}: %{{y:,}}표<extra></extra>`,
+      hovertemplate: `%{{x}} (%{{customdata}})<br>${{name}}: %{{y:,}}표<extra></extra>`,
     }});
 
     const traces = [
@@ -1511,6 +1513,37 @@ if (IS_MOBILE) {{
       mk('off2', '2차 공식 (6/14)', '#2e6fd4'),
       mk('sh2',  '2차 신한 (6/14)', '#ff9500'),
     ];
+
+    // 구단별 배경색 배지: 선수명 x축 라벨 아래에 구단색 박스 + 구단명을 그려
+    // 어느 팀 소속인지 한눈에 구분되게 한다. xref:'x'라 막대와 함께 줌/드래그된다.
+    function readableTextColor(hexColor) {{
+      const hex = (hexColor || '#4a6fa5').replace('#', '');
+      const r = parseInt(hex.substring(0,2), 16) || 0;
+      const g = parseInt(hex.substring(2,4), 16) || 0;
+      const b = parseInt(hex.substring(4,6), 16) || 0;
+      const luminance = (0.299*r + 0.587*g + 0.114*b) / 255;
+      return luminance > 0.55 ? '#1a1a2e' : '#ffffff';
+    }}
+
+    const clubAnnotations = sorted.map((r, i) => {{
+      const clubColor = TEAM_COLORS[r.club] || '#4a6fa5';
+      return {{
+        x: i,
+        y: 0,
+        xref: 'x',
+        yref: 'paper',
+        yanchor: 'top',
+        xanchor: 'center',
+        yshift: -42,
+        text: r.club,
+        showarrow: false,
+        font: {{ size: 10, color: readableTextColor(clubColor), weight: 600 }},
+        bgcolor: clubColor,
+        borderpad: 4,
+        borderwidth: 0,
+        opacity: 0.95,
+      }};
+    }});
 
     // 다른 차트들과 동일한 줌/팬 동작 통일:
     // - 스크롤: 전체 줌 (scrollZoomConfig)
@@ -1530,8 +1563,8 @@ if (IS_MOBILE) {{
       barmode: 'group',
       bargap: 0.18,
       bargroupgap: 0.08,
-      height: Math.max(360, sorted.length > 8 ? 420 : 360),
-      margin: {{ t: 40, b: 70, l: 50, r: 20 }},
+      height: Math.max(390, sorted.length > 8 ? 450 : 390),
+      margin: {{ t: 40, b: 90, l: 50, r: 20 }},
       xaxis: {{
         gridcolor: c.grid || '#1e2640',
         tickfont: {{ size: 10 }},
@@ -1539,9 +1572,10 @@ if (IS_MOBILE) {{
         fixedrange: false,
       }},
       yaxis: {{ gridcolor: c.grid || '#1e2640', title: {{ text: '득표수', font: {{ size: 10 }} }}, rangemode: 'nonnegative', fixedrange: false }},
-      legend: {{ orientation: 'h', y: -0.22, bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }} }},
+      legend: {{ orientation: 'h', y: -0.3, bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }} }},
       title: {{ text: `${{teamLabel}} · ${{POS_LABEL[currentPos]}}(${{currentPos}}) — 1차 vs 2차 공식·신한 비교`,
                 font: {{ size: 13, color: c.font || '#a0b0d0' }}, x: 0.01 }},
+      annotations: clubAnnotations,
       dragmode: 'pan',
       hovermode: hoverHidden ? false : 'closest',
       hoverlabel: {{ bgcolor: c.hover_bg || '#1a2030', bordercolor: c.hover_border || '#2a3050', font: {{ color: c.hover_font || '#e0e6f0' }} }},
