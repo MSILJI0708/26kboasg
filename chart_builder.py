@@ -394,6 +394,71 @@ def build_chart(df):
     .zoom-hint .desktop-hint {{ display: inline; }}
     .zoom-hint .mobile-hint  {{ display: none; }}
   }}
+
+  /* ── 모바일 전용: 선수 on/off 토글 칩 패널 ── */
+  .player-toggle-panel {{
+    margin: 4px 0 14px 0;
+    padding: 10px 10px 8px 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+  }}
+  .player-toggle-hint {{
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }}
+  .player-toggle-row {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }}
+  .player-toggle-chip {{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
+    border-radius: 16px;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity .15s, background .15s;
+  }}
+  .player-toggle-chip .chip-dot {{
+    width: 9px; height: 9px; border-radius: 50%;
+    flex-shrink: 0;
+  }}
+  .player-toggle-chip.off {{
+    opacity: 0.4;
+    background: var(--bg3);
+    text-decoration: line-through;
+  }}
+  .player-toggle-actions {{
+    display: flex;
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border2);
+  }}
+  .player-toggle-action-btn {{
+    flex: 1;
+    padding: 7px 0;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }}
+  .player-toggle-action-btn:active {{
+    background: var(--bg2);
+  }}
 </style>
 </head>
 <body>
@@ -860,6 +925,79 @@ function setViewMode(mode) {{
   updateCharts();
 }}
 
+// ── 모바일 전용: 범례 대신 터치하기 쉬운 "선수 토글 칩" 패널 ──
+// Plotly 범례는 모바일에서 글자가 작고 줄바꿈이 많아 어떤 선수를 껐는지 알아보기 어렵다.
+// 차트 바로 아래에 큼직한 칩 버튼을 만들어 누르면 해당 선수 선만 숨기고,
+// 칩 자체의 색이 옅어지는 것으로 "꺼짐" 상태를 명확히 보여준다.
+function attachMobilePlayerToggle(chartId, traces) {{
+  if (!IS_MOBILE) return;
+  const gd = document.getElementById(chartId);
+  if (!gd) return;
+
+  let panel = document.getElementById(`toggle-panel-${{chartId}}`);
+  if (!panel) {{
+    panel = document.createElement('div');
+    panel.id = `toggle-panel-${{chartId}}`;
+    panel.className = 'player-toggle-panel';
+    gd.insertAdjacentElement('afterend', panel);
+  }}
+  panel.innerHTML = '';
+
+  // 안내 문구 (최초 1회성 느낌으로 항상 표시 — 작고 은은하게)
+  const hint = document.createElement('div');
+  hint.className = 'player-toggle-hint';
+  hint.textContent = '👆 칩을 탭하면 해당 선수를 숨기거나 다시 표시할 수 있어요';
+  panel.appendChild(hint);
+
+  const chipRow = document.createElement('div');
+  chipRow.className = 'player-toggle-row';
+  panel.appendChild(chipRow);
+
+  traces.forEach((t, idx) => {{
+    const chip = document.createElement('button');
+    chip.className = 'player-toggle-chip';
+    chip.type = 'button';
+    const dotColor = (t.line && t.line.color) || (t.marker && t.marker.color) || '#4a6fa5';
+    chip.innerHTML = `<span class="chip-dot" style="background:${{dotColor}}"></span>${{t.name || ''}}`;
+    chip.dataset.active = 'true';
+    chip.onclick = () => {{
+      const isActive = chip.dataset.active === 'true';
+      const nextVisible = isActive ? 'legendonly' : true;
+      chip.dataset.active = isActive ? 'false' : 'true';
+      chip.classList.toggle('off', isActive);
+      Plotly.restyle(gd, {{ visible: nextVisible }}, [idx]);
+    }};
+    chipRow.appendChild(chip);
+  }});
+
+  // 전체 보기 / 전체 숨기기 단축 버튼
+  const actionRow = document.createElement('div');
+  actionRow.className = 'player-toggle-actions';
+  const showAllBtn = document.createElement('button');
+  showAllBtn.className = 'player-toggle-action-btn';
+  showAllBtn.textContent = '전체 표시';
+  showAllBtn.onclick = () => {{
+    Plotly.restyle(gd, {{ visible: true }}, traces.map((_, i) => i));
+    chipRow.querySelectorAll('.player-toggle-chip').forEach(c => {{
+      c.dataset.active = 'true';
+      c.classList.remove('off');
+    }});
+  }};
+  const hideAllBtn = document.createElement('button');
+  hideAllBtn.className = 'player-toggle-action-btn';
+  hideAllBtn.textContent = '전체 숨기기';
+  hideAllBtn.onclick = () => {{
+    Plotly.restyle(gd, {{ visible: 'legendonly' }}, traces.map((_, i) => i));
+    chipRow.querySelectorAll('.player-toggle-chip').forEach(c => {{
+      c.dataset.active = 'false';
+      c.classList.add('off');
+    }});
+  }};
+  actionRow.appendChild(showAllBtn);
+  actionRow.appendChild(hideAllBtn);
+  panel.appendChild(actionRow);
+}}
+
 function renderTeamChart(chartId, traces, xAxisBase, title) {{
   const c = (typeof getPlotlyColors === 'function') ? getPlotlyColors() : {{}};
   const grid  = c.grid  || '#1e2640';
@@ -883,6 +1021,7 @@ function renderTeamChart(chartId, traces, xAxisBase, title) {{
     title: {{ text: title, font: {{ color: font, size: 13 }}, x: 0.01, xanchor: 'left' }}
   }};
   Plotly.react(chartId, traces, layout, scrollZoomConfig);
+  attachMobilePlayerToggle(chartId, traces);
 }}
 
 function buildChartTraces(data) {{
@@ -952,6 +1091,7 @@ function updateCharts() {{
         dragmode: IS_MOBILE ? false : 'pan'
       }};
       Plotly.react(`chart-${{team}}`, traces, layout, scrollZoomConfig);
+      attachMobilePlayerToggle(`chart-${{team}}`, traces);
     }});
   }} else {{
     // 구단별 모드
