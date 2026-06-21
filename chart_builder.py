@@ -668,7 +668,24 @@ function getAggData(key) {{
 }}
 
 const SHINHAN_COMPARE = {shinhan_compare_js};
-const TEAM_COLORS = {team_colors_js};
+const TEAM_COLORS_BASE = {team_colors_js};
+
+// 구단 색상 조회 함수.
+// KT는 다크모드에서는 흰색, 라이트모드에서는 검은색으로 테마에 따라 달라진다
+// (그 외 구단은 고정색을 그대로 사용).
+function getTeamColor(club) {{
+  if (club === 'KT') {{
+    const isLight = document.body.classList.contains('light-mode');
+    return isLight ? '#1a1a1a' : '#ffffff';
+  }}
+  return TEAM_COLORS_BASE[club] || '#4a6fa5';
+}}
+
+// 기존 코드 호환용: TEAM_COLORS[club] 형태로 쓰던 곳들을 위한 Proxy.
+// club 키로 접근하면 getTeamColor()를 호출해 테마별 색을 즉시 반환한다.
+const TEAM_COLORS = new Proxy({{}}, {{
+  get(_, club) {{ return getTeamColor(club); }}
+}});
 const TEAM_MARKERS = {team_markers_js};
 const TOTAL_DATA = {total_per_snap.to_json(orient='records', date_format='iso', force_ascii=False)};
 
@@ -1441,8 +1458,12 @@ function toggleTheme() {{
   // 다크 모드일 때: "☀️ 라이트" (클릭하면 라이트로 전환)
   document.getElementById('theme-toggle').textContent = isLight ? '🌙 다크' : '☀️ 라이트';
   localStorage.setItem('kbo-theme', isLight ? 'light' : 'dark');
-  // 차트 재렌더 (색상 변수 재적용)
+  // 차트 재렌더 (색상 변수 재적용 — KT처럼 테마별로 달라지는 구단색 포함)
   updateCharts();
+  // 신한 비교 차트(별도 탭)도 KT 색 등이 바뀌도록 갱신
+  if (typeof window.renderShinhanChart === 'function') {{
+    window.renderShinhanChart();
+  }}
 }}
 
 // 저장된 테마 복원
