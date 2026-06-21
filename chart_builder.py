@@ -385,6 +385,13 @@ def build_chart(df):
     border: 1px solid var(--border2);
   }}
 
+  /* 모바일 전용: 좌우 여백을 최소화해 차트가 화면 폭을 최대한 차지하게 함 */
+  @media (max-width: 768px) {{
+    body {{ padding: 8px; }}
+    .chart-container {{ padding: 10px 4px; }}
+    .chart-title {{ padding-left: 6px; }}
+  }}
+
   /* 모바일/데스크탑별 zoom-hint 텍스트 분기 */
   @media (pointer: coarse) {{
     .zoom-hint .desktop-hint {{ display: none; }}
@@ -787,17 +794,21 @@ function findPrevVal(data, idx, metric, unit) {{
   return {{ val: getVal(closest, metric), diffMin }};
 }}
 
-function buildTrace(playerData, metric) {{
+function buildTrace(playerData, metric, rankDash) {{
   const data = calcNewVotes(playerData);
   const name = data[0]?.player || '';
   const club = data[0]?.club || '';
   const color = TEAM_COLORS[club] || '#4a6fa5';
   const marker = TEAM_MARKERS[club] || {{ symbol: 'circle', dash: 'solid' }};
+  // dash는 "구단 구분용"이 아니라 "차트 안 득표 순위 구분용"이다.
+  // rankDash가 주어지면(1등=실선, 2등=듬성점선, 3등 이상=촘촘점선) 그것을 우선 사용한다.
+  const dash = rankDash || marker.dash;
 
   const x = data.map(d => toKST(d.datetime));
   const y = data.map(d => getVal(d, metric));
 
-  const textArr = data.map((_, i) => i === data.length - 1 ? club : '');
+  // 모바일은 화면이 좁아 끝점 구단 라벨이 차트 우측을 압박하므로 생략 (대신 토글 칩에 표시됨)
+  const textArr = IS_MOBILE ? data.map(() => '') : data.map((_, i) => i === data.length - 1 ? club : '');
 
   const customdata = data.map((d, i) => {{
     const kst = toKST(d.datetime);
@@ -831,7 +842,7 @@ function buildTrace(playerData, metric) {{
     name: `${{name}} (${{club}})`,
     type: 'scatter',
     mode: traceMode,
-    line: {{ color, width: 2, dash: marker.dash }},
+    line: {{ color, width: 2, dash: dash }},
     marker: {{ size: markerSize, color, symbol: marker.symbol }},
     text: textArr,
     textposition: 'middle right',
@@ -1014,14 +1025,20 @@ function renderTeamChart(chartId, traces, xAxisBase, title) {{
   const hbg   = c.hover_bg     || '#1a2030';
   const hbrd  = c.hover_border || '#2a3050';
   const hfont = c.hover_font   || '#e0e6f0';
+  // 모바일: 끝점 라벨이 없으므로 우측 여백 최소화 + 좌측도 좁게 → 차트가 화면을 최대한 가로로 채움
+  // 범례는 숨기고(showlegend:false) 대신 차트 아래 토글 칩 패널로 대체 (스크롤 없는 3열 그리드)
+  const marginCfg = IS_MOBILE
+    ? {{ t: 30, b: 50, l: 38, r: 10 }}
+    : {{ t: 30, b: 60, l: 50, r: 70 }};
   const layout = {{
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: {{ color: font, size: 11 }},
     height: 320,
-    margin: {{ t: 30, b: 60, l: 50, r: 70 }},
+    margin: marginCfg,
     xaxis: {{ ...xAxisBase, gridcolor: grid, linecolor: line }},
     yaxis: {{ gridcolor: grid, linecolor: line, tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+    showlegend: !IS_MOBILE,
     legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
     hovermode: hoverHidden ? false : 'x unified',
     hoverlabel: {{ namelength: -1, bgcolor: hbg, bordercolor: hbrd, font: {{ color: hfont }} }},
@@ -1030,6 +1047,15 @@ function renderTeamChart(chartId, traces, xAxisBase, title) {{
   }};
   Plotly.react(chartId, traces, layout, scrollZoomConfig);
   attachMobilePlayerToggle(chartId, traces);
+}}
+
+// 득표 순위(차트 안에서) → dash 패턴 매핑.
+// 1등=실선, 2등=듬성 점선, 3등 이상=촘촘 점선.
+// 팀(구단)을 구분하려는 장치가 아니라, 같은 차트 안에서 보이는 선수들의 순위를 구분하기 위함이다.
+function rankToDash(rankIdx) {{
+  if (rankIdx === 0) return 'solid';
+  if (rankIdx === 1) return 'dash';
+  return 'dot';
 }}
 
 function buildChartTraces(data) {{
@@ -1042,17 +1068,19 @@ function buildChartTraces(data) {{
   }});
   const sortedPlayers = [...players].sort((a,b) => playerLatest[b] - playerLatest[a]);
 
-  // 외야수 구단별 보기: 같은 구단 3명이라 색이 같음 → 고유 색 배정
+  // 외야수 구단별 보기(같은 구단 3명)는 색도 별도로 배정해 동일 구단 내 3명을 구분.
+  // 그 외(포지션별 모드 등, 보통 서로 다른 구단)는 구단 고유색을 그대로 쓰고 dash만 순위로 구분.
   const OF_COLORS = ['#4af0c8', '#ff9f43', '#a29bfe'];
-  const OF_DASHES = ['solid', 'dash', 'dot'];
   const isOFClubMode = sortedPlayers.length > 1 &&
     data.length > 0 && data[0].pos_id === 'OF' &&
     [...new Set(data.map(d => d.club))].length === 1;
 
   return sortedPlayers.map((p, i) => {{
-    const t = buildTrace(data.filter(d => d.player === p), currentMetric);
+    const rankDash = rankToDash(i);
+    const t = buildTrace(data.filter(d => d.player === p), currentMetric, rankDash);
     if (isOFClubMode) {{
-      t.line   = {{ ...t.line,   color: OF_COLORS[i % 3], dash: OF_DASHES[i % 3] }};
+      // 같은 구단 외야수 3명: 색까지 다르게 줘서 더 명확히 구분
+      t.line   = {{ ...t.line,   color: OF_COLORS[i % 3] }};
       t.marker = {{ ...t.marker, color: OF_COLORS[i % 3] }};
       t.textfont = {{ ...t.textfont, color: OF_COLORS[i % 3] }};
     }}
@@ -1085,14 +1113,18 @@ function updateCharts() {{
     ['nanum', 'dream'].forEach(team => {{
       const teamData = resampleData(getAggData(`pos_${{pos}}_${{team}}`), currentTimeUnit);
       const traces = buildChartTraces(teamData);
+      const marginCfgPos = IS_MOBILE
+        ? {{ t: 10, b: 50, l: 38, r: 10 }}
+        : {{ t: 10, b: 60, l: 50, r: 70 }};
       const layout = {{
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
         font: {{ color: c2.font || '#a0b0d0', size: 11 }},
         height: 320,
-        margin: {{ t: 10, b: 60, l: 50, r: 70 }},
+        margin: marginCfgPos,
         xaxis: {{ ...xAxisBase }},
         yaxis: {{ gridcolor: c2.grid || '#1e2640', linecolor: c2.line || '#2a3050', tickfont: {{ size: 10 }}, rangemode: 'nonnegative', fixedrange: false }},
+        showlegend: !IS_MOBILE,
         legend: {{ bgcolor: 'rgba(0,0,0,0)', font: {{ size: 10 }}, orientation: 'h', y: -0.25 }},
         hovermode: hoverHidden ? false : 'x unified',
         hoverlabel: {{ namelength: -1, bgcolor: c2.hover_bg || '#1a2030', bordercolor: c2.hover_border || '#2a3050', font: {{ color: c2.hover_font || '#e0e6f0' }} }},
