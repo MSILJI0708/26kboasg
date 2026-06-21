@@ -409,25 +409,33 @@ def build_chart(df):
     margin-bottom: 8px;
   }}
   .player-toggle-row {{
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     margin-bottom: 8px;
   }}
   .player-toggle-chip {{
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
-    padding: 7px 11px;
-    border-radius: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 9px;
+    border-radius: 8px;
     border: 1px solid var(--border2);
     background: var(--bg2);
     color: var(--text);
-    font-size: 0.78rem;
+    font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: opacity .15s, background .15s;
+    overflow: hidden;
+  }}
+  .player-toggle-chip span:not(.chip-dot) {{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }}
   .player-toggle-chip .chip-dot {{
     width: 9px; height: 9px; border-radius: 50%;
@@ -958,7 +966,7 @@ function attachMobilePlayerToggle(chartId, traces) {{
     chip.className = 'player-toggle-chip';
     chip.type = 'button';
     const dotColor = (t.line && t.line.color) || (t.marker && t.marker.color) || '#4a6fa5';
-    chip.innerHTML = `<span class="chip-dot" style="background:${{dotColor}}"></span>${{t.name || ''}}`;
+    chip.innerHTML = `<span class="chip-dot" style="background:${{dotColor}}"></span><span>${{t.name || ''}}</span>`;
     chip.dataset.active = 'true';
     chip.onclick = () => {{
       const isActive = chip.dataset.active === 'true';
