@@ -38,8 +38,8 @@ HEADERS = {
 # 폴링 설정
 POLL_INTERVAL_SEC = 15      # 몇 초마다 상태를 확인할지
 MAX_WAIT_SEC       = 20 * 60  # 최대 대기 시간 (수집 데이터가 더 커지면 이 값을 늘릴 것)
-RUN_LOOKUP_RETRIES = 6       # dispatch 직후 run이 목록에 뜨기까지 약간의 지연이 있을 수 있어 재시도
-RUN_LOOKUP_DELAY   = 3
+RUN_LOOKUP_RETRIES = 10      # dispatch 직후 run이 목록에 뜨기까지 약간의 지연이 있을 수 있어 재시도
+RUN_LOOKUP_DELAY   = 5
 
 
 def dispatch_workflow() -> datetime:
