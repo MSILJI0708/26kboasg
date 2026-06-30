@@ -212,9 +212,11 @@ def build_chart(df):
     else:
         shinhan_compare_js = "null"
 
-    # ── 홈런더비 투표 데이터 임베드 ──
-    homerun_payload = build_homerun_payload()
-    homerun_data_js = json.dumps(homerun_payload, ensure_ascii=False) if homerun_payload else "null"
+    # ── 홈런더비 투표 데이터: 전체 빌드 시점에는 자리표시자만 심어둔다 ──
+    # (올스타 데이터가 더 이상 변하지 않으므로, 무거운 전체 빌드는 캐싱하고
+    #  홈런더비 데이터만 매 실행마다 빠르게 주입한다 → inject_homerun() 참고)
+    HOMERUN_PLACEHOLDER = "/*__HOMERUN_DATA_PLACEHOLDER__*/"
+    homerun_data_js = HOMERUN_PLACEHOLDER
 
     team_colors_js = json.dumps(
         {v: TEAM_COLORS.get(v, '#4a6fa5') for v in df['club'].unique().tolist() if isinstance(v, str)},
@@ -2073,13 +2075,62 @@ function setPageTab(tab) {{
 </html>"""
 
     os.makedirs("output", exist_ok=True)
-    with open("output/chart.html", "w", encoding="utf-8") as f:
+    template_path = "output/chart_template.html"
+    with open(template_path, "w", encoding="utf-8") as f:
         f.write(html)
+    print(f"✅ 템플릿 저장 완료: {template_path} (올스타 데이터 - 변하지 않으므로 캐싱됨)")
+
+    final_html = inject_homerun(html)
+    with open("output/chart.html", "w", encoding="utf-8") as f:
+        f.write(final_html)
     print("✅ 차트 저장 완료: output/chart.html")
 
+
+def inject_homerun(template_html):
+    """
+    템플릿 HTML(올스타 부분은 이미 완성됨)에 홈런더비 데이터만 갈아끼운다.
+    data_homerun/*.json 몇 개만 읽으면 되므로 매우 빠르다(전체 재빌드 대비).
+    """
+    HOMERUN_PLACEHOLDER = "/*__HOMERUN_DATA_PLACEHOLDER__*/"
+    homerun_payload = build_homerun_payload()
+    homerun_data_js = json.dumps(homerun_payload, ensure_ascii=False) if homerun_payload else "null"
+
+    if HOMERUN_PLACEHOLDER in template_html:
+        return template_html.replace(HOMERUN_PLACEHOLDER, homerun_data_js)
+
+    # 이미 한 번 주입된 템플릿(placeholder가 없는 구버전 chart.html)을 다시 템플릿으로
+    # 잘못 읽은 경우를 대비해, 기존 HOMERUN_DATA 선언 자체를 통째로 치환한다.
+    import re
+    return re.sub(
+        r"const HOMERUN_DATA = .*?;",
+        f"const HOMERUN_DATA = {homerun_data_js};",
+        template_html,
+        count=1,
+        flags=re.DOTALL,
+    )
+
+
 if __name__ == "__main__":
-    print("📊 데이터 로딩 중...")
-    df = load_all_data(days=0)  # 전체 기간 로드
-    print(f"✅ {len(df)}개 레코드 로드 완료")
-    df = calc_vote_rate(df)
-    build_chart(df)
+    import sys
+    template_path = "output/chart_template.html"
+    force_full = "--full" in sys.argv
+
+    if not force_full and os.path.exists(template_path):
+        # ── 빠른 경로: 올스타 데이터는 더 이상 수집하지 않으므로 캐시된 템플릿 재사용 ──
+        # data/*.json 1000개+ 를 매번 다시 읽고 pandas로 재가공하던 무거운 작업을 스킵하고,
+        # data_homerun/*.json 몇 개만 읽어 홈런더비 부분만 갱신한다.
+        print("⚡ 캐시된 올스타 템플릿 발견 - 홈런더비 데이터만 빠르게 갱신합니다.")
+        print("   (올스타 데이터를 다시 빌드하려면 `python chart_builder.py --full` 실행)")
+        with open(template_path, encoding="utf-8") as f:
+            template_html = f.read()
+        final_html = inject_homerun(template_html)
+        os.makedirs("output", exist_ok=True)
+        with open("output/chart.html", "w", encoding="utf-8") as f:
+            f.write(final_html)
+        print("✅ 차트 저장 완료: output/chart.html")
+    else:
+        print("📊 데이터 로딩 중... (전체 빌드 - 올스타 템플릿 캐시 생성)")
+        df = load_all_data(days=0)  # 전체 기간 로드
+        print(f"✅ {len(df)}개 레코드 로드 완료")
+        df = calc_vote_rate(df)
+        build_chart(df)
