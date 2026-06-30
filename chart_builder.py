@@ -35,7 +35,47 @@ TEAM_MARKERS = {
 # 2026-06-03에 수집 주기가 정착하기 전의 드문드문 파일들
 SKIP_BEFORE = "2026-06-03T15:00:00"
 
+DB_PATH = "data/allstar_votes.db"
+
+
 def load_all_data(days=7):
+    """
+    올스타 투표 기록을 불러온다.
+    - data/allstar_votes.db (SQLite, migrate_to_db.py로 생성)가 있으면 그걸 우선 사용한다.
+      data/*.json 2,800여 개를 매번 직접 파싱하는 것보다 훨씬 빠르다.
+    - DB가 없으면(아직 마이그레이션 전이거나 삭제된 경우) 기존처럼 data/*.json을 직접 읽는다.
+    """
+    if os.path.exists(DB_PATH):
+        return load_all_data_from_db(days)
+    return load_all_data_from_json(days)
+
+
+def load_all_data_from_db(days=7):
+    import sqlite3
+
+    skip_dt = datetime.fromisoformat(SKIP_BEFORE).astimezone()
+
+    conn = sqlite3.connect(DB_PATH)
+    query = "SELECT datetime, pos_id, pos_name, team, player, club, rank, votes FROM votes"
+    params = []
+    if days:
+        cutoff = datetime.now().astimezone() - timedelta(days=days)
+        query += " WHERE datetime >= ?"
+        params.append(cutoff.isoformat())
+    df = pd.read_sql_query(query, conn, params=params)
+    conn.close()
+
+    if df.empty:
+        return df
+
+    # 저장된 datetime 문자열은 +09:00 오프셋을 포함한 ISO 형식이므로 그대로 파싱하면 tz-aware가 된다.
+    df["datetime"] = pd.to_datetime(df["datetime"])
+    df = df[df["datetime"] >= skip_dt]
+
+    return df.reset_index(drop=True)
+
+
+def load_all_data_from_json(days=7):
     files = sorted(glob.glob("data/*.json"))
     cutoff = datetime.now().astimezone() - timedelta(days=days)
     skip_dt = datetime.fromisoformat(SKIP_BEFORE).astimezone()
