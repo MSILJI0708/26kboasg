@@ -78,6 +78,74 @@ def load_all_data(days=7):
             continue
     return pd.DataFrame(records)
 
+def load_homerun_data(days=0):
+    """
+    홈런더비 투표 스냅샷(data_homerun/*.json) 전체를 로드한다.
+    구조는 homerun_collector.py의 normalize() 결과와 동일:
+    {timestamp, state, updateDtTm, playerList:[{pNm,pId,seasonId,tId,tNm,rankNo,votes}]}
+    """
+    files = sorted(glob.glob("data_homerun/*.json"))
+    cutoff = datetime.now().astimezone() - timedelta(days=days) if days else None
+
+    snapshots = []
+    for f in files:
+        try:
+            with open(f, encoding="utf-8") as fp:
+                d = json.load(fp)
+            ts = d.get("timestamp", "")
+            if not ts:
+                continue
+            dt = datetime.fromisoformat(ts)
+            if cutoff and dt.astimezone() < cutoff:
+                continue
+            if not d.get("playerList"):
+                continue
+            snapshots.append((dt, d))
+        except Exception as e:
+            print(f"홈런더비 파일 로드 오류 {f}: {e}")
+            continue
+
+    snapshots.sort(key=lambda x: x[0])
+    return snapshots
+
+
+def build_homerun_payload():
+    """
+    홈런더비 탭에 임베드할 JSON 페이로드 생성.
+    - players: 최신 스냅샷의 선수별 순위/득표 (바 차트용)
+    - history: 스냅샷별 총득표 추이 (트렌드 차트용)
+    - state/updateDtTm: 투표 상태 표시용
+    데이터가 없으면 None을 반환해 JS에서 "수집 전" 안내만 보여준다.
+    """
+    snapshots = load_homerun_data(days=0)
+    if not snapshots:
+        return None
+
+    latest_dt, latest = snapshots[-1]
+    players = sorted(latest.get("playerList", []), key=lambda p: p.get("rankNo") or 999)
+
+    history = []
+    for dt, snap in snapshots:
+        total = sum(p.get("votes", 0) for p in snap.get("playerList", []))
+        history.append({"datetime": dt.strftime("%Y-%m-%d %H:%M"), "total": total})
+
+    return {
+        "state": latest.get("state"),
+        "updateDtTm": latest.get("updateDtTm", ""),
+        "lastCollected": latest_dt.strftime("%Y-%m-%d %H:%M"),
+        "players": [
+            {
+                "name": p.get("pNm", ""),
+                "team": p.get("tNm", ""),
+                "rank": p.get("rankNo", 0),
+                "votes": p.get("votes", 0),
+            }
+            for p in players
+        ],
+        "history": history,
+    }
+
+
 def calc_total_votes_per_snapshot(df):
     # 드림팀 한 포지션(SP)의 전체 득표합 = 해당 스냅샷의 실제 총투표수
     # (포지션별 투표가 독립적이므로 SP dream 전체합이 총투표 대리값)
@@ -143,6 +211,10 @@ def build_chart(df):
         shinhan_compare_js = json.dumps(shinhan_compare, ensure_ascii=False)
     else:
         shinhan_compare_js = "null"
+
+    # ── 홈런더비 투표 데이터 임베드 ──
+    homerun_payload = build_homerun_payload()
+    homerun_data_js = json.dumps(homerun_payload, ensure_ascii=False) if homerun_payload else "null"
 
     team_colors_js = json.dumps(
         {v: TEAM_COLORS.get(v, '#4a6fa5') for v in df['club'].unique().tolist() if isinstance(v, str)},
@@ -492,6 +564,19 @@ def build_chart(df):
 <div class="updated">마지막 업데이트: {last_updated} KST</div>
 
 <!-- ══════════════════════════════════════════════
+     최상위 페이지 탭: 올스타 투표 / 홈런더비 투표
+     ══════════════════════════════════════════════ -->
+<div class="page-tabs">
+  <button class="page-tab-btn active" id="page-tab-allstar" onclick="setPageTab('allstar')">⭐ 올스타 투표</button>
+  <button class="page-tab-btn"        id="page-tab-homerun" onclick="setPageTab('homerun')">🏟 홈런더비 투표</button>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     올스타 투표 페이지
+     ══════════════════════════════════════════════ -->
+<div id="page-panel-allstar">
+
+<!-- ══════════════════════════════════════════════
      최상단 모드 탭: 실시간 집계 / 중간집계(신한) 비교
      ══════════════════════════════════════════════ -->
 <div class="main-tabs">
@@ -628,7 +713,38 @@ def build_chart(df):
 
 </div> <!-- /#main-panel-shinhan -->
 
+</div> <!-- /#page-panel-allstar -->
+
+<!-- ══════════════════════════════════════════════
+     홈런더비 투표 페이지
+     ══════════════════════════════════════════════ -->
+<div id="page-panel-homerun" style="display:none">
+
+<div class="chart-container" id="homerun-section">
+  <div class="chart-title">🏟 2026 홈런더비 투표 현황 <span id="homerun-status" style="font-size:0.8rem;font-weight:400;color:var(--text-muted)"></span></div>
+  <div id="homerun-empty" style="display:none;color:var(--text-muted);padding:24px 0;text-align:center;">
+    아직 홈런더비 투표 데이터가 수집되지 않았습니다. (homerun_collector.py 수집 시작 후 표시됩니다)
+  </div>
+  <div id="homerun-charts" style="display:none">
+    <div id="chart-homerun-bar"></div>
+    <hr class="divider">
+    <div class="chart-title" style="font-size:0.95rem;">📈 전체 득표 추이</div>
+    <div id="chart-homerun-total"></div>
+  </div>
+</div>
+
+</div> <!-- /#page-panel-homerun -->
+
 <style>
+  .page-tabs {{
+    display:flex; gap:8px; margin: 0 0 16px 0;
+  }}
+  .page-tab-btn {{
+    padding:10px 20px; border-radius:8px; border:1px solid var(--border-color);
+    background:var(--card-bg); color:var(--text-main); font-size:0.95rem; font-weight:600;
+    cursor:pointer; transition:all .15s;
+  }}
+  .page-tab-btn.active {{ background:var(--active-bg);color:#fff;border-color:var(--active-bg); }}
   .main-tabs {{
     display:flex; gap:8px; margin: 16px 0 20px 0;
   }}
@@ -668,6 +784,7 @@ function getAggData(key) {{
 }}
 
 const SHINHAN_COMPARE = {shinhan_compare_js};
+const HOMERUN_DATA = {homerun_data_js};
 const TEAM_COLORS_BASE = {team_colors_js};
 
 // 구단 색상 조회 함수.
@@ -1826,7 +1943,65 @@ if (IS_MOBILE) {{
   window.renderShinhanChart = renderShinhanChart;
 }})();
 
-// ── 메인 탭 전환: 실시간 집계 ↔ 중간집계(신한) 비교 ──
+// ── 홈런더비 투표 차트 렌더링 ──
+function renderHomerunChart() {{
+  const empty = document.getElementById('homerun-empty');
+  const charts = document.getElementById('homerun-charts');
+  const statusEl = document.getElementById('homerun-status');
+
+  if (!HOMERUN_DATA || !HOMERUN_DATA.players || HOMERUN_DATA.players.length === 0) {{
+    empty.style.display = '';
+    charts.style.display = 'none';
+    return;
+  }}
+  empty.style.display = 'none';
+  charts.style.display = '';
+
+  const stateLabel = {{0: '투표 시작 전', 1: '실시간 집계중', 2: '최종 결과'}}[HOMERUN_DATA.state] || '';
+  const updateTxt = HOMERUN_DATA.updateDtTm || HOMERUN_DATA.lastCollected;
+  statusEl.textContent = `(${{stateLabel}} · 마지막 갱신 ${{updateTxt}})`;
+
+  const players = HOMERUN_DATA.players;
+  const colors = players.map(p => TEAM_COLORS[p.team] || '#4a6fa5');
+
+  Plotly.newPlot('chart-homerun-bar', [{{
+    type: 'bar',
+    x: players.map(p => `${{p.name}} (${{p.team}})`),
+    y: players.map(p => p.votes),
+    marker: {{ color: colors }},
+    text: players.map(p => `${{p.rank}}위 · ${{p.votes.toLocaleString()}}표`),
+    textposition: 'outside',
+    hovertemplate: '%{{x}}<br>%{{y:,}}표<extra></extra>',
+  }}], {{
+    margin: {{ t: 10, r: 10, l: 50, b: 90 }},
+    height: 420,
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
+    xaxis: {{ tickangle: -35 }},
+    yaxis: {{ title: '득표수' }},
+  }}, {{ responsive: true, displaylogo: false }});
+
+  const hist = HOMERUN_DATA.history || [];
+  Plotly.newPlot('chart-homerun-total', [{{
+    type: 'scatter',
+    mode: 'lines+markers',
+    x: hist.map(h => h.datetime),
+    y: hist.map(h => h.total),
+    line: {{ color: '#E84C4C', width: 2 }},
+    marker: {{ size: 4 }},
+    hovertemplate: '%{{x}}<br>%{{y:,}}표<extra></extra>',
+  }}], {{
+    margin: {{ t: 10, r: 10, l: 50, b: 50 }},
+    height: 300,
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
+    yaxis: {{ title: '총 득표수' }},
+  }}, {{ responsive: true, displaylogo: false }});
+}}
+
+// ── 모드 탭 전환(올스타 페이지 내부): 실시간 집계 ↔ 중간집계(신한) 비교 ──
 let _shinhanRendered = false;
 function setMainTab(tab) {{
   document.getElementById('main-tab-live').classList.toggle('active', tab === 'live');
@@ -1852,6 +2027,41 @@ function setMainTab(tab) {{
     requestAnimationFrame(() => {{
       ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream',
        'chart-of2-nanum','chart-of2-dream','chart-total'].forEach(id => {{
+        const gd = document.getElementById(id);
+        if (gd && gd.data) Plotly.Plots.resize(gd);
+      }});
+    }});
+  }}
+}}
+
+// ── 최상위 페이지 탭 전환: 올스타 투표 ↔ 홈런더비 투표 ──
+let _homerunRendered = false;
+function setPageTab(tab) {{
+  document.getElementById('page-tab-allstar').classList.toggle('active', tab === 'allstar');
+  document.getElementById('page-tab-homerun').classList.toggle('active', tab === 'homerun');
+  document.getElementById('page-panel-allstar').style.display = tab === 'allstar' ? '' : 'none';
+  document.getElementById('page-panel-homerun').style.display = tab === 'homerun' ? '' : 'none';
+
+  if (tab === 'homerun') {{
+    if (!_homerunRendered) {{
+      _homerunRendered = true;
+      requestAnimationFrame(() => renderHomerunChart());
+    }} else {{
+      requestAnimationFrame(() => {{
+        ['chart-homerun-bar', 'chart-homerun-total'].forEach(id => {{
+          const gd = document.getElementById(id);
+          if (gd && gd.data) Plotly.Plots.resize(gd);
+        }});
+      }});
+    }}
+  }} else {{
+    // 올스타 페이지로 복귀 시 현재 활성 모드 탭(live/shinhan)의 차트 크기 재계산
+    requestAnimationFrame(() => {{
+      const liveActive = document.getElementById('main-tab-live').classList.contains('active');
+      const ids = liveActive
+        ? ['chart-nanum','chart-dream','chart-of-nanum','chart-of-dream','chart-of2-nanum','chart-of2-dream','chart-total']
+        : ['chart-shinhan'];
+      ids.forEach(id => {{
         const gd = document.getElementById(id);
         if (gd && gd.data) Plotly.Plots.resize(gd);
       }});
