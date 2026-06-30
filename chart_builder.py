@@ -561,7 +561,7 @@ def build_chart(df):
 <h1>⚾ 2026 KBO 올스타 팬투표 현황</h1>
 <div class="header-links">
   <a href="https://allstar.koreabaseball.com/Allstar/Vote.aspx" target="_blank" rel="noopener">🔗 KBO 공식 투표</a>
-  <a href="https://github.com/msilji0708" target="_blank" rel="noopener" id="github-link">📁 GitHub</a>
+  <a href="https://github.com/your-repo" target="_blank" rel="noopener" id="github-link">📁 GitHub</a>
 </div>
 <div class="updated">마지막 업데이트: {last_updated} KST</div>
 
@@ -1960,8 +1960,7 @@ function renderHomerunChart() {{
   charts.style.display = '';
 
   const stateLabel = {{0: '투표 시작 전', 1: '실시간 집계중', 2: '최종 결과'}}[HOMERUN_DATA.state] || '';
-  const updateTxt = HOMERUN_DATA.updateDtTm || HOMERUN_DATA.lastCollected;
-  statusEl.textContent = `(${{stateLabel}} · 마지막 갱신 ${{updateTxt}})`;
+  statusEl.textContent = `(${{stateLabel}})`;
 
   const players = HOMERUN_DATA.players;
   const colors = players.map(p => TEAM_COLORS[p.team] || '#4a6fa5');
