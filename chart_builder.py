@@ -235,6 +235,7 @@ def build_chart(df):
     x_range_end   = (dt_max + timedelta(hours=1)).strftime('%Y-%m-%d %H:%M')
 
     last_updated = df['datetime'].max().strftime('%Y-%m-%d %H:%M') if not df.empty else '-'
+    LAST_UPDATED_PLACEHOLDER = "__LAST_UPDATED_PLACEHOLDER__"
 
     html = f"""<!DOCTYPE html>
 <html lang="ko">
@@ -563,7 +564,8 @@ def build_chart(df):
   <a href="https://allstar.koreabaseball.com/Allstar/Vote.aspx" target="_blank" rel="noopener">🔗 KBO 공식 투표</a>
   <a href="https://github.com/your-repo" target="_blank" rel="noopener" id="github-link">📁 GitHub</a>
 </div>
-<div class="updated">마지막 업데이트: {last_updated} KST</div>
+<!--ALLSTAR_LAST_UPDATED:{last_updated}-->
+<div class="updated">마지막 업데이트: {LAST_UPDATED_PLACEHOLDER} KST</div>
 
 <!-- ══════════════════════════════════════════════
      최상위 페이지 탭: 올스타 투표 / 홈런더비 투표
@@ -2087,26 +2089,53 @@ function setPageTab(tab) {{
 
 def inject_homerun(template_html):
     """
-    템플릿 HTML(올스타 부분은 이미 완성됨)에 홈런더비 데이터만 갈아끼운다.
+    템플릿 HTML(올스타 부분은 이미 완성됨)에 홈런더비 데이터와
+    "마지막 업데이트" 시각을 갈아끼운다.
     data_homerun/*.json 몇 개만 읽으면 되므로 매우 빠르다(전체 재빌드 대비).
     """
+    import re
+
     HOMERUN_PLACEHOLDER = "/*__HOMERUN_DATA_PLACEHOLDER__*/"
+    LAST_UPDATED_PLACEHOLDER = "__LAST_UPDATED_PLACEHOLDER__"
+
     homerun_payload = build_homerun_payload()
     homerun_data_js = json.dumps(homerun_payload, ensure_ascii=False) if homerun_payload else "null"
 
     if HOMERUN_PLACEHOLDER in template_html:
-        return template_html.replace(HOMERUN_PLACEHOLDER, homerun_data_js)
+        template_html = template_html.replace(HOMERUN_PLACEHOLDER, homerun_data_js)
+    else:
+        # 이미 한 번 주입된 템플릿(placeholder가 없는 구버전 chart.html)을 다시 템플릿으로
+        # 잘못 읽은 경우를 대비해, 기존 HOMERUN_DATA 선언 자체를 통째로 치환한다.
+        template_html = re.sub(
+            r"const HOMERUN_DATA = .*?;",
+            f"const HOMERUN_DATA = {homerun_data_js};",
+            template_html,
+            count=1,
+            flags=re.DOTALL,
+        )
 
-    # 이미 한 번 주입된 템플릿(placeholder가 없는 구버전 chart.html)을 다시 템플릿으로
-    # 잘못 읽은 경우를 대비해, 기존 HOMERUN_DATA 선언 자체를 통째로 치환한다.
-    import re
-    return re.sub(
-        r"const HOMERUN_DATA = .*?;",
-        f"const HOMERUN_DATA = {homerun_data_js};",
-        template_html,
-        count=1,
-        flags=re.DOTALL,
-    )
+    # ── "마지막 업데이트" 시각: 올스타(고정값) vs 홈런더비(매번 갱신) 중 더 최근 것을 표시 ──
+    m = re.search(r"<!--ALLSTAR_LAST_UPDATED:(.*?)-->", template_html)
+    allstar_last_updated = m.group(1) if m else "-"
+
+    candidates = [allstar_last_updated]
+    if homerun_payload and homerun_payload.get("lastCollected"):
+        candidates.append(homerun_payload["lastCollected"])
+    display_updated = max(c for c in candidates if c and c != "-")
+
+    if LAST_UPDATED_PLACEHOLDER in template_html:
+        template_html = template_html.replace(LAST_UPDATED_PLACEHOLDER, display_updated)
+    else:
+        # 구버전 템플릿(placeholder 없음) 대비: "마지막 업데이트: ..." 텍스트 자체를 치환
+        template_html = re.sub(
+            r"(마지막 업데이트: ).*?( KST)",
+            rf"\g<1>{display_updated}\g<2>",
+            template_html,
+            count=1,
+        )
+
+    return template_html
+
 
 
 if __name__ == "__main__":
