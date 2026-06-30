@@ -40,7 +40,7 @@ DB_PATH = "data/allstar_votes.db"
 # 캐시된 output/chart_template.html이 현재 코드와 같은 버전인지 확인하기 위한 값.
 # 템플릿(HTML 구조/CSS/JS)에 영향을 주는 코드를 고칠 때마다 이 숫자를 1씩 올린다.
 # → 캐시가 구버전이면 --full 없이도 자동으로 전체 재빌드된다 (사람이 깜빡해도 안전).
-TEMPLATE_VERSION = 2
+TEMPLATE_VERSION = 3
 
 
 def load_all_data(days=7):
@@ -327,6 +327,7 @@ def build_chart(df):
     --active-text: #fff;
     --grid:        #1e2640;
     --grid2:       #2a3050;
+    --chart-text:  #ffffff;
     --kbd-bg:      #1e2a40;
     --kbd-border:  #3a4a6a;
     --kbd-text:    #8090b0;
@@ -349,6 +350,7 @@ def build_chart(df):
     --active-text: #fff;
     --grid:        #dde5f0;
     --grid2:       #c8d4e8;
+    --chart-text:  #000000;
     --kbd-bg:      #dde5f0;
     --kbd-border:  #b0bdd4;
     --kbd-text:    #5a6a88;
@@ -2044,6 +2046,11 @@ function renderHomerunChart() {{
   const barLineColors = colors;
   const barLineWidths = players.map((p, i) => isBottom4(i) ? 2.5 : 0);
 
+  // 글씨(밝고 약간 굵게 · 라이트모드에선 완전 검정)와 grid(연한 회색 얇은 선)를 분리한 색상
+  const bodyStyle = getComputedStyle(document.body);
+  const chartTextColor = bodyStyle.getPropertyValue('--chart-text').trim() || '#ffffff';
+  const chartGridColor = bodyStyle.getPropertyValue('--grid').trim() || '#888888';
+
   Plotly.newPlot('chart-homerun-bar', [{{
     type: 'bar',
     x: players.map(p => `${{p.rank}}위 ${{p.name}} (${{p.team}})`),
@@ -2051,7 +2058,7 @@ function renderHomerunChart() {{
     marker: {{ color: barColors, line: {{ color: barLineColors, width: barLineWidths }} }},
     text: players.map(p => p.votes.toLocaleString()),
     textposition: 'outside',
-    textfont: {{ color: '#ffffff', size: 14, family: 'Arial, sans-serif' }},
+    textfont: {{ color: chartTextColor, size: 14, weight: 600, family: 'Arial, sans-serif' }},
     cliponaxis: false,
     constraintext: 'none',
     hovertemplate: '%{{x}}<br>%{{y:,}}표<extra></extra>',
@@ -2060,10 +2067,10 @@ function renderHomerunChart() {{
     height: 460,
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
+    font: {{ color: chartTextColor, weight: 600 }},
     bargap: 0.35,
-    xaxis: {{ tickangle: -35, color: '#ffffff' }},
-    yaxis: {{ title: '득표수', range: [0, maxVotes * 1.25], color: '#ffffff' }},
+    xaxis: {{ tickangle: -35, color: chartTextColor, tickfont: {{ color: chartTextColor, weight: 600 }}, gridcolor: chartGridColor, gridwidth: 1, linecolor: chartGridColor }},
+    yaxis: {{ title: '득표수', range: [0, maxVotes * 1.25], color: chartTextColor, tickfont: {{ color: chartTextColor, weight: 600 }}, gridcolor: chartGridColor, gridwidth: 1, linecolor: chartGridColor }},
   }}, {{ responsive: true, displaylogo: false }});
 
   // ── 후보별 시간대별 득표 추이 (막대 그래프 아래에 표시, 하위 4명은 x 마커) ──
@@ -2091,10 +2098,10 @@ function renderHomerunChart() {{
       height: 380,
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
-      font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
-      legend: {{ orientation: 'h', y: -0.25 }},
-      yaxis: {{ title: '득표수', color: '#ffffff' }},
-      xaxis: {{ color: '#ffffff' }},
+      font: {{ color: chartTextColor, weight: 600 }},
+      legend: {{ orientation: 'h', y: -0.25, font: {{ color: chartTextColor, weight: 600 }} }},
+      yaxis: {{ title: '득표수', color: chartTextColor, tickfont: {{ color: chartTextColor, weight: 600 }}, gridcolor: chartGridColor, gridwidth: 1, linecolor: chartGridColor }},
+      xaxis: {{ color: chartTextColor, tickfont: {{ color: chartTextColor, weight: 600 }}, gridcolor: chartGridColor, gridwidth: 1, linecolor: chartGridColor }},
     }}, {{ responsive: true, displaylogo: false }});
   }}
 
@@ -2112,8 +2119,9 @@ function renderHomerunChart() {{
     height: 300,
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
-    yaxis: {{ title: '총 득표수' }},
+    font: {{ color: chartTextColor, weight: 600 }},
+    yaxis: {{ title: '총 득표수', color: chartTextColor, tickfont: {{ color: chartTextColor, weight: 600 }}, gridcolor: chartGridColor, gridwidth: 1, linecolor: chartGridColor }},
+    xaxis: {{ color: chartTextColor, tickfont: {{ color: chartTextColor, weight: 600 }}, gridcolor: chartGridColor, gridwidth: 1, linecolor: chartGridColor }},
   }}, {{ responsive: true, displaylogo: false }});
 }}
 
