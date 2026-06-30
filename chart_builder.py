@@ -37,6 +37,11 @@ SKIP_BEFORE = "2026-06-03T15:00:00"
 
 DB_PATH = "data/allstar_votes.db"
 
+# 캐시된 output/chart_template.html이 현재 코드와 같은 버전인지 확인하기 위한 값.
+# 템플릿(HTML 구조/CSS/JS)에 영향을 주는 코드를 고칠 때마다 이 숫자를 1씩 올린다.
+# → 캐시가 구버전이면 --full 없이도 자동으로 전체 재빌드된다 (사람이 깜빡해도 안전).
+TEMPLATE_VERSION = 2
+
 
 def load_all_data(days=7):
     """
@@ -2185,11 +2190,12 @@ function setPageTab(tab) {{
 
     os.makedirs("output", exist_ok=True)
     template_path = "output/chart_template.html"
+    html_with_version = f"<!--TEMPLATE_VERSION:{TEMPLATE_VERSION}-->\n" + html
     with open(template_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"✅ 템플릿 저장 완료: {template_path} (올스타 데이터 - 변하지 않으므로 캐싱됨)")
+        f.write(html_with_version)
+    print(f"✅ 템플릿 저장 완료: {template_path} (v{TEMPLATE_VERSION}, 올스타 데이터 - 변하지 않으므로 캐싱됨)")
 
-    final_html = inject_homerun(html)
+    final_html = inject_homerun(html_with_version)
     with open("output/chart.html", "w", encoding="utf-8") as f:
         f.write(final_html)
     print("✅ 차트 저장 완료: output/chart.html")
@@ -2247,19 +2253,30 @@ def inject_homerun(template_html):
 
 
 if __name__ == "__main__":
+    import re
     import sys
+
     template_path = "output/chart_template.html"
     force_full = "--full" in sys.argv
 
+    cached_html = None
+    cache_is_current = False
     if not force_full and os.path.exists(template_path):
+        with open(template_path, encoding="utf-8") as f:
+            cached_html = f.read()
+        m = re.match(r"<!--TEMPLATE_VERSION:(\d+)-->", cached_html)
+        cached_version = int(m.group(1)) if m else None
+        cache_is_current = (cached_version == TEMPLATE_VERSION)
+        if not cache_is_current:
+            print(f"⚠️ 캐시된 템플릿 버전 불일치(캐시={cached_version}, 현재={TEMPLATE_VERSION}) "
+                  f"- 자동으로 전체 재빌드합니다.")
+
+    if cache_is_current:
         # ── 빠른 경로: 올스타 데이터는 더 이상 수집하지 않으므로 캐시된 템플릿 재사용 ──
         # data/*.json 1000개+ 를 매번 다시 읽고 pandas로 재가공하던 무거운 작업을 스킵하고,
         # data_homerun/*.json 몇 개만 읽어 홈런더비 부분만 갱신한다.
-        print("⚡ 캐시된 올스타 템플릿 발견 - 홈런더비 데이터만 빠르게 갱신합니다.")
-        print("   (올스타 데이터를 다시 빌드하려면 `python chart_builder.py --full` 실행)")
-        with open(template_path, encoding="utf-8") as f:
-            template_html = f.read()
-        final_html = inject_homerun(template_html)
+        print(f"⚡ 캐시된 올스타 템플릿(v{TEMPLATE_VERSION}) 발견 - 홈런더비 데이터만 빠르게 갱신합니다.")
+        final_html = inject_homerun(cached_html)
         os.makedirs("output", exist_ok=True)
         with open("output/chart.html", "w", encoding="utf-8") as f:
             f.write(final_html)
