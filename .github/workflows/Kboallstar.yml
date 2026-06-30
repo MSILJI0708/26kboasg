@@ -45,7 +45,6 @@ jobs:
       - name: 홈런더비 투표 데이터 수집
         run: |
           python homerun_collector.py
-        continue-on-error: true
 
       # - name: 엑셀 파일 생성
       #   run: |
@@ -60,6 +59,12 @@ jobs:
       # 현재는 올스타 투표(collector.py/processor.py)가 마감되어 비활성화되었고,
       # 홈런더비 수집(homerun_collector.py) → 차트 빌드(chart_builder.py) →
       # 배포(GitHub Pages)만 이 워크플로 "한 번의 실행" 안에서 순서대로 처리한다.
+      # ── 올스타 데이터는 더 이상 수집하지 않으므로 매번 무겁게 재빌드할 필요가 없다 ──
+      # chart_builder.py는 output/chart_template.html(올스타 부분, 캐시)이 이미 존재하면
+      # 그걸 재사용하고 홈런더비 데이터만 빠르게 갈아끼운다(수 초 내 완료).
+      # 이 템플릿 파일은 아래 "수집 데이터 커밋" 단계에서 output/ 와 함께 커밋되므로,
+      # 다음 워크플로 실행의 체크아웃 시점에 그대로 복원되어 캐시처럼 동작한다.
+      # (올스타 차트를 다시 빌드해야 하면 `python chart_builder.py --full` 로 수동 실행)
       - name: 차트 생성 (GitHub Pages용)
         env:
           GITHUB_PAGES_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
@@ -79,6 +84,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          mkdir -p data data_homerun output
           git add data/ data_homerun/ output/
           echo "=== git status ==="
           git status
