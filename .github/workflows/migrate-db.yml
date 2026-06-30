@@ -1,0 +1,72 @@
+name: 올스타 데이터 SQLite 마이그레이션 (1회용)
+
+# 로컬/Codespace에서 data/*.json 2,894개 + output/ 안의 수백 개 xlsx를 그대로 pull/push
+# 하다가 느려지거나 실패하는 걸 피하기 위해, 마이그레이션 자체를 Actions 러너 안에서 실행한다.
+# 러너는 GitHub 내부망에서 체크아웃하므로 사람 로컬 환경보다 훨씬 빠르고 안전하다.
+#
+# 실행 후에도 data/*.json 원본 파일은 그대로 둔다(요청에 따라 나중에 직접 정리 예정).
+# 다시 실행할 필요가 없으므로 매번 자동으로 도는 트리거 없이 workflow_dispatch만 둔다.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1   # 마이그레이션엔 현재 파일들만 필요 → 히스토리 전체를 받지 않아 빠름
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 이미 마이그레이션 되어있는지 확인
+        id: check
+        run: |
+          if [ -f data/allstar_votes.db ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "⚠️ data/allstar_votes.db 가 이미 존재합니다. 이 워크플로는 더 실행할 필요가 없습니다."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 마이그레이션 실행 (data/*.json → data/allstar_votes.db)
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          python migrate_to_db.py
+
+      - name: 검증 (레코드 수 비교)
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          python migrate_to_db.py --verify
+
+      - name: data/allstar_votes.db 커밋 및 푸시
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add data/allstar_votes.db
+          git status
+
+          if git diff --staged --quiet; then
+            echo "변경사항 없음"
+          else
+            git commit -m "chore: 올스타 투표 데이터 SQLite로 마이그레이션 (data/allstar_votes.db)"
+            git pull --rebase origin main
+            git push
+          fi
+
+      - name: 결과 안내
+        run: |
+          echo "✅ 완료. 이제 Kboallstar.yml의 chart_builder.py가 자동으로 data/allstar_votes.db를 우선 사용합니다."
+          echo "   data/*.json 원본 파일들은 검증 후 원하실 때 직접 정리하시면 됩니다."
