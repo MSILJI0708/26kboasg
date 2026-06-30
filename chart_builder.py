@@ -113,7 +113,8 @@ def build_homerun_payload():
     """
     홈런더비 탭에 임베드할 JSON 페이로드 생성.
     - players: 최신 스냅샷의 선수별 순위/득표 (바 차트용)
-    - history: 스냅샷별 총득표 추이 (트렌드 차트용)
+    - trend: 선수별 시간대별 득표 추이 (현재 순위 기준 후보들, 라인 차트용)
+    - history: 스냅샷별 총득표 추이 (전체 추이 차트용)
     - state/updateDtTm: 투표 상태 표시용
     데이터가 없으면 None을 반환해 JS에서 "수집 전" 안내만 보여준다.
     """
@@ -129,10 +130,31 @@ def build_homerun_payload():
         total = sum(p.get("votes", 0) for p in snap.get("playerList", []))
         history.append({"datetime": dt.strftime("%Y-%m-%d %H:%M"), "total": total})
 
+    # ── 선수별 시간대별 득표 추이 (현재 후보 명단 기준) ──
+    trend_keys = [(p.get("pNm", ""), p.get("tNm", "")) for p in players]
+    trend_datetimes = [dt.strftime("%Y-%m-%d %H:%M") for dt, _ in snapshots]
+    trend_series_map = {k: [] for k in trend_keys}
+    for dt, snap in snapshots:
+        vote_lookup = {
+            (p.get("pNm", ""), p.get("tNm", "")): p.get("votes", 0)
+            for p in snap.get("playerList", [])
+        }
+        for k in trend_keys:
+            trend_series_map[k].append(vote_lookup.get(k))
+
+    trend = {
+        "datetimes": trend_datetimes,
+        "series": [
+            {"name": name, "team": team, "votes": trend_series_map[(name, team)]}
+            for (name, team) in trend_keys
+        ],
+    }
+
     return {
         "state": latest.get("state"),
         "updateDtTm": latest.get("updateDtTm", ""),
         "lastCollected": latest_dt.strftime("%Y-%m-%d %H:%M"),
+        "trend": trend,
         "players": [
             {
                 "name": p.get("pNm", ""),
@@ -730,9 +752,13 @@ def build_chart(df):
     아직 홈런더비 투표 데이터가 수집되지 않았습니다. (homerun_collector.py 수집 시작 후 표시됩니다)
   </div>
   <div id="homerun-charts" style="display:none">
+    <div class="chart-title" style="font-size:0.95rem;">📊 현재 순위 <span style="font-size:0.75rem;font-weight:400;color:var(--text-muted)">(하위 4명은 테두리만 표시)</span></div>
     <div id="chart-homerun-bar"></div>
     <hr class="divider">
-    <div class="chart-title" style="font-size:0.95rem;">📈 전체 득표 추이</div>
+    <div class="chart-title" style="font-size:0.95rem;">📈 후보별 득표 추이 <span style="font-size:0.75rem;font-weight:400;color:var(--text-muted)">(하위 4명은 × 마커로 표시)</span></div>
+    <div id="chart-homerun-trend"></div>
+    <hr class="divider">
+    <div class="chart-title" style="font-size:0.95rem;">📊 전체 득표 추이</div>
     <div id="chart-homerun-total"></div>
   </div>
 </div>
@@ -1966,24 +1992,66 @@ function renderHomerunChart() {{
 
   const players = HOMERUN_DATA.players;
   const colors = players.map(p => TEAM_COLORS[p.team] || '#4a6fa5');
+  const maxVotes = Math.max(...players.map(p => p.votes), 0);
+  const isBottom4 = (i) => players.length - i <= 4; // 순위 기준 하위 4명(리스트 끝 4개)
+
+  const barColors = players.map((p, i) => isBottom4(i) ? 'rgba(0,0,0,0)' : colors[i]);
+  const barLineColors = colors;
+  const barLineWidths = players.map((p, i) => isBottom4(i) ? 2.5 : 0);
 
   Plotly.newPlot('chart-homerun-bar', [{{
     type: 'bar',
-    x: players.map(p => `${{p.name}} (${{p.team}})`),
+    x: players.map(p => `${{p.rank}}위 ${{p.name}} (${{p.team}})`),
     y: players.map(p => p.votes),
-    marker: {{ color: colors }},
-    text: players.map(p => `${{p.rank}}위 · ${{p.votes.toLocaleString()}}표`),
+    marker: {{ color: barColors, line: {{ color: barLineColors, width: barLineWidths }} }},
+    text: players.map(p => p.votes.toLocaleString()),
     textposition: 'outside',
+    textfont: {{ color: '#ffffff', size: 14, family: 'Arial, sans-serif' }},
+    cliponaxis: false,
+    constraintext: 'none',
     hovertemplate: '%{{x}}<br>%{{y:,}}표<extra></extra>',
   }}], {{
-    margin: {{ t: 10, r: 10, l: 50, b: 90 }},
-    height: 420,
+    margin: {{ t: 60, r: 10, l: 50, b: 100 }},
+    height: 460,
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
-    xaxis: {{ tickangle: -35 }},
-    yaxis: {{ title: '득표수' }},
+    bargap: 0.35,
+    xaxis: {{ tickangle: -35, color: '#ffffff' }},
+    yaxis: {{ title: '득표수', range: [0, maxVotes * 1.25], color: '#ffffff' }},
   }}, {{ responsive: true, displaylogo: false }});
+
+  // ── 후보별 시간대별 득표 추이 (막대 그래프 아래에 표시, 하위 4명은 x 마커) ──
+  const trend = HOMERUN_DATA.trend;
+  if (trend && trend.series && trend.series.length) {{
+    const bottom4Keys = new Set(
+      players.filter((p, i) => isBottom4(i)).map(p => `${{p.name}}|${{p.team}}`)
+    );
+    const trendTraces = trend.series.map(s => {{
+      const isBottom = bottom4Keys.has(`${{s.name}}|${{s.team}}`);
+      return {{
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: `${{s.name}} (${{s.team}})`,
+        x: trend.datetimes,
+        y: s.votes,
+        line: {{ color: TEAM_COLORS[s.team] || '#4a6fa5', width: 2 }},
+        marker: {{ size: isBottom ? 7 : 5, symbol: isBottom ? 'x' : 'circle' }},
+        connectgaps: true,
+        hovertemplate: `${{s.name}} (${{s.team}})<br>%{{x}}<br>%{{y:,}}표<extra></extra>`,
+      }};
+    }});
+    Plotly.newPlot('chart-homerun-trend', trendTraces, {{
+      margin: {{ t: 10, r: 10, l: 50, b: 50 }},
+      height: 380,
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: {{ color: getComputedStyle(document.body).getPropertyValue('--text-main') }},
+      legend: {{ orientation: 'h', y: -0.25 }},
+      yaxis: {{ title: '득표수', color: '#ffffff' }},
+      xaxis: {{ color: '#ffffff' }},
+    }}, {{ responsive: true, displaylogo: false }});
+  }}
 
   const hist = HOMERUN_DATA.history || [];
   Plotly.newPlot('chart-homerun-total', [{{
@@ -2051,7 +2119,7 @@ function setPageTab(tab) {{
       requestAnimationFrame(() => renderHomerunChart());
     }} else {{
       requestAnimationFrame(() => {{
-        ['chart-homerun-bar', 'chart-homerun-total'].forEach(id => {{
+        ['chart-homerun-trend', 'chart-homerun-bar', 'chart-homerun-total'].forEach(id => {{
           const gd = document.getElementById(id);
           if (gd && gd.data) Plotly.Plots.resize(gd);
         }});
