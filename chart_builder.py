@@ -561,7 +561,7 @@ def build_chart(df):
 <h1>⚾ 2026 KBO 올스타 팬투표 현황</h1>
 <div class="header-links">
   <a href="https://allstar.koreabaseball.com/Allstar/Vote.aspx" target="_blank" rel="noopener">🔗 KBO 공식 투표</a>
-  <a href="https://github.com/your-repo" target="_blank" rel="noopener" id="github-link">📁 GitHub</a>
+  <a href="https://github.com/msilji0708" target="_blank" rel="noopener" id="github-link">📁 GitHub</a>
 </div>
 <div class="updated">마지막 업데이트: {last_updated} KST</div>
 
