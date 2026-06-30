@@ -1,0 +1,115 @@
+{
+  "timestamp": "2026-06-30T14:23:08.709514+09:00",
+  "state": 1,
+  "updateDtTm": "2026년 6월 30일 14:20",
+  "playerList": [
+    {
+      "pNm": "김도영",
+      "pId": "52605",
+      "seasonId": "2026",
+      "tId": "HT",
+      "tNm": "KIA",
+      "rankNo": 1,
+      "votes": 6976
+    },
+    {
+      "pNm": "양의지",
+      "pId": "76232",
+      "seasonId": "2026",
+      "tId": "OB",
+      "tNm": "두산",
+      "rankNo": 2,
+      "votes": 5789
+    },
+    {
+      "pNm": "박준순",
+      "pId": "55252",
+      "seasonId": "2026",
+      "tId": "OB",
+      "tNm": "두산",
+      "rankNo": 3,
+      "votes": 5270
+    },
+    {
+      "pNm": "강백호",
+      "pId": "68050",
+      "seasonId": "2026",
+      "tId": "HH",
+      "tNm": "한화",
+      "rankNo": 4,
+      "votes": 4451
+    },
+    {
+      "pNm": "오스틴",
+      "pId": "53123",
+      "seasonId": "2026",
+      "tId": "LG",
+      "tNm": "LG",
+      "rankNo": 5,
+      "votes": 4381
+    },
+    {
+      "pNm": "문현빈",
+      "pId": "53764",
+      "seasonId": "2026",
+      "tId": "HH",
+      "tNm": "한화",
+      "rankNo": 6,
+      "votes": 3758
+    },
+    {
+      "pNm": "허인서",
+      "pId": "52764",
+      "seasonId": "2026",
+      "tId": "HH",
+      "tNm": "한화",
+      "rankNo": 7,
+      "votes": 3569
+    },
+    {
+      "pNm": "김주원",
+      "pId": "51907",
+      "seasonId": "2026",
+      "tId": "NC",
+      "tNm": "NC",
+      "rankNo": 8,
+      "votes": 3168
+    },
+    {
+      "pNm": "디아즈",
+      "pId": "54400",
+      "seasonId": "2026",
+      "tId": "SS",
+      "tNm": "삼성",
+      "rankNo": 9,
+      "votes": 3163
+    },
+    {
+      "pNm": "최정",
+      "pId": "75847",
+      "seasonId": "2026",
+      "tId": "SK",
+      "tNm": "SSG",
+      "rankNo": 10,
+      "votes": 3162
+    },
+    {
+      "pNm": "최형우",
+      "pId": "72443",
+      "seasonId": "2026",
+      "tId": "SS",
+      "tNm": "삼성",
+      "rankNo": 11,
+      "votes": 3159
+    },
+    {
+      "pNm": "오태곤",
+      "pId": "60558",
+      "seasonId": "2026",
+      "tId": "SK",
+      "tNm": "SSG",
+      "rankNo": 12,
+      "votes": 2588
+    }
+  ]
+}
