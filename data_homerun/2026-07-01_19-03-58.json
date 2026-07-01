@@ -1,0 +1,115 @@
+{
+  "timestamp": "2026-07-01T19:03:58.311744+09:00",
+  "state": 1,
+  "updateDtTm": "2026년 7월 1일 19:00",
+  "playerList": [
+    {
+      "pNm": "김도영",
+      "pId": "52605",
+      "seasonId": "2026",
+      "tId": "HT",
+      "tNm": "KIA",
+      "rankNo": 1,
+      "votes": 21447
+    },
+    {
+      "pNm": "양의지",
+      "pId": "76232",
+      "seasonId": "2026",
+      "tId": "OB",
+      "tNm": "두산",
+      "rankNo": 2,
+      "votes": 17420
+    },
+    {
+      "pNm": "박준순",
+      "pId": "55252",
+      "seasonId": "2026",
+      "tId": "OB",
+      "tNm": "두산",
+      "rankNo": 3,
+      "votes": 15222
+    },
+    {
+      "pNm": "오스틴",
+      "pId": "53123",
+      "seasonId": "2026",
+      "tId": "LG",
+      "tNm": "LG",
+      "rankNo": 4,
+      "votes": 13641
+    },
+    {
+      "pNm": "강백호",
+      "pId": "68050",
+      "seasonId": "2026",
+      "tId": "HH",
+      "tNm": "한화",
+      "rankNo": 5,
+      "votes": 13584
+    },
+    {
+      "pNm": "문현빈",
+      "pId": "53764",
+      "seasonId": "2026",
+      "tId": "HH",
+      "tNm": "한화",
+      "rankNo": 6,
+      "votes": 10288
+    },
+    {
+      "pNm": "허인서",
+      "pId": "52764",
+      "seasonId": "2026",
+      "tId": "HH",
+      "tNm": "한화",
+      "rankNo": 7,
+      "votes": 9921
+    },
+    {
+      "pNm": "김주원",
+      "pId": "51907",
+      "seasonId": "2026",
+      "tId": "NC",
+      "tNm": "NC",
+      "rankNo": 8,
+      "votes": 9383
+    },
+    {
+      "pNm": "최정",
+      "pId": "75847",
+      "seasonId": "2026",
+      "tId": "SK",
+      "tNm": "SSG",
+      "rankNo": 9,
+      "votes": 9323
+    },
+    {
+      "pNm": "최형우",
+      "pId": "72443",
+      "seasonId": "2026",
+      "tId": "SS",
+      "tNm": "삼성",
+      "rankNo": 10,
+      "votes": 9242
+    },
+    {
+      "pNm": "디아즈",
+      "pId": "54400",
+      "seasonId": "2026",
+      "tId": "SS",
+      "tNm": "삼성",
+      "rankNo": 11,
+      "votes": 9239
+    },
+    {
+      "pNm": "오태곤",
+      "pId": "60558",
+      "seasonId": "2026",
+      "tId": "SK",
+      "tNm": "SSG",
+      "rankNo": 12,
+      "votes": 7279
+    }
+  ]
+}
