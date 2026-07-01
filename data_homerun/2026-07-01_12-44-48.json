@@ -1,0 +1,9 @@
+{
+  "timestamp": "2026-07-01T12:44:48.571832+09:00",
+  "state": null,
+  "updateDtTm": "",
+  "playerList": [],
+  "_debug": {
+    "error": "ConnectTimeout: HTTPSConnectionPool(host='allstar.koreabaseball.com', port=443): Max retries exceeded with url: /ws/HomerunDerby.asmx/GetMainPlayerList (Caused by ConnectTimeoutError(<HTTPSConnection(host='allstar.koreabaseball.com', port=443) at 0x7f8448264910>, 'Connection to allstar.koreabaseball.com timed out. (connect timeout=15)'))"
+  }
+}
